@@ -6,7 +6,7 @@ Editor de texto desktop em **Tauri 2 + Rust + React + TypeScript + Tiptap + Code
 
 ## Organização do projeto
 
-O código-fonte fica na raiz. A versão portátil atual está em `releases/0.8.0/Windows/Lume Notes.exe` e o pacote ZIP fica na mesma pasta da versão. `releases/` é ignorada pelo Git; os binários podem ser publicados em Releases quando o repositório remoto existir.
+O código-fonte fica na raiz. Repositório no GitHub: [educastro100/lume-notes](https://github.com/educastro100/lume-notes). A versão portátil atual está em `releases/0.8.0/Windows/Lume Notes.exe` e o pacote ZIP fica na mesma pasta da versão. `releases/` é ignorada pelo Git; os binários podem ser publicados na seção Releases do GitHub.
 
 A validação da versão está em [docs/validacao-0.8.0.md](docs/validacao-0.8.0.md).
 
@@ -130,7 +130,7 @@ A interface usa React e TypeScript. A edição visual usa Tiptap/ProseMirror, co
 
 As cores, espaçamentos, temas e tipografia são definidos em CSS próprio em `src/styles.css`. Os temas compartilham variáveis de cor para manter a mesma identidade visual. Os ícones são Lucide; as fontes são Segoe UI e Cascadia Code/Consolas, locais do Windows.
 
-O código-fonte inclui README, histórico de versões, guia de contribuição, regras de formatação e exclusões de arquivos locais para preparar uma futura publicação no GitHub. Nenhum repositório remoto foi criado por esta entrega.
+O código-fonte inclui README, histórico de versões, guia de contribuição, regras de formatação e exclusões de arquivos locais. O repositório remoto do projeto é [educastro100/lume-notes](https://github.com/educastro100/lume-notes), na branch principal `main`.
 
 ## Novidades da versão 0.6
 
