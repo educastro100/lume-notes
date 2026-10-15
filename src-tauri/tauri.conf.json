@@ -1,0 +1,35 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Lume Notes",
+  "version": "0.7.0",
+  "identifier": "com.lume.notes",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://127.0.0.1:1420",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Lume Notes",
+        "width": 1200,
+        "height": 820,
+        "minWidth": 700,
+        "minHeight": 480,
+        "center": true,
+        "dragDropEnabled": false,
+        "backgroundColor": "#fcfbf8"
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; connect-src ipc: http://ipc.localhost; img-src 'self' asset: http://asset.localhost data:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; script-src 'self'"
+    }
+  },
+  "bundle": {
+    "active": false,
+    "targets": "all",
+    "shortDescription": "Editor de texto com abas e recuperação de rascunhos.",
+    "icon": ["icons/icon.png", "icons/icon.ico"]
+  }
+}

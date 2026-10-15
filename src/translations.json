@@ -1,0 +1,1181 @@
+{
+  "Configurações": ["Settings", "Paramètres", "Einstellungen", "Ρυθμίσεις", "设置"],
+  "Fechar configurações": [
+    "Close settings",
+    "Fermer les paramètres",
+    "Einstellungen schließen",
+    "Κλείσιμο ρυθμίσεων",
+    "关闭设置"
+  ],
+  "Seu espaço, do seu jeito.": [
+    "Your space, your way.",
+    "Votre espace, à votre façon.",
+    "Dein Raum, dein Stil.",
+    "Ο χώρος σας, όπως τον θέλετε.",
+    "你的空间，由你做主。"
+  ],
+  "Idioma da interface": [
+    "Interface language",
+    "Langue de l’interface",
+    "Sprache der Oberfläche",
+    "Γλώσσα περιβάλλοντος",
+    "界面语言"
+  ],
+  "A escolha fica salva neste computador. Suas notas mantêm o texto original.": [
+    "Your choice is saved on this computer. Your notes keep their original text.",
+    "Votre choix est enregistré sur cet ordinateur. Le texte de vos notes reste inchangé.",
+    "Die Auswahl wird auf diesem Computer gespeichert. Der Text deiner Notizen bleibt erhalten.",
+    "Η επιλογή αποθηκεύεται σε αυτόν τον υπολογιστή. Το κείμενο των σημειώσεων παραμένει ίδιο.",
+    "选择将保存在此电脑上。笔记原文保持不变。"
+  ],
+  "Concluído": ["Done", "Terminé", "Fertig", "Τέλος", "完成"],
+  "Ativar modo foco": [
+    "Enter focus mode",
+    "Activer le mode concentration",
+    "Fokusmodus aktivieren",
+    "Ενεργοποίηση συγκέντρωσης",
+    "进入专注模式"
+  ],
+  "Modo foco (F8)": [
+    "Focus mode (F8)",
+    "Mode concentration (F8)",
+    "Fokusmodus (F8)",
+    "Συγκέντρωση (F8)",
+    "专注模式 (F8)"
+  ],
+  "Sair do modo foco": [
+    "Exit focus mode",
+    "Quitter le mode concentration",
+    "Fokusmodus verlassen",
+    "Έξοδος από τη συγκέντρωση",
+    "退出专注模式"
+  ],
+  "Sair do modo foco (Esc / F8)": [
+    "Exit focus mode (Esc / F8)",
+    "Quitter la concentration (Échap / F8)",
+    "Fokusmodus verlassen (Esc / F8)",
+    "Έξοδος (Esc / F8)",
+    "退出专注模式 (Esc / F8)"
+  ],
+  "Sair do foco": ["Exit focus", "Quitter", "Fokus verlassen", "Έξοδος", "退出专注"],
+  "Nenhuma nota aberta": [
+    "No notes open",
+    "Aucune note ouverte",
+    "Keine Notiz geöffnet",
+    "Καμία ανοιχτή σημείωση",
+    "没有打开的笔记"
+  ],
+  "Um espaço livre para a próxima ideia.": [
+    "A blank space for your next idea.",
+    "Un espace libre pour votre prochaine idée.",
+    "Platz für deine nächste Idee.",
+    "Χώρος για την επόμενη ιδέα σας.",
+    "为下一个灵感留出空间。"
+  ],
+  "Nova nota": ["New note", "Nouvelle note", "Neue Notiz", "Νέα σημείωση", "新建笔记"],
+  "Nova aba": ["New tab", "Nouvel onglet", "Neuer Tab", "Νέα καρτέλα", "新建标签页"],
+  "Nova nota (Ctrl+N)": [
+    "New note (Ctrl+N)",
+    "Nouvelle note (Ctrl+N)",
+    "Neue Notiz (Ctrl+N)",
+    "Νέα σημείωση (Ctrl+N)",
+    "新建笔记 (Ctrl+N)"
+  ],
+  "Abrir arquivo": [
+    "Open file",
+    "Ouvrir un fichier",
+    "Datei öffnen",
+    "Άνοιγμα αρχείου",
+    "打开文件"
+  ],
+  "Abrir arquivo…": [
+    "Open file…",
+    "Ouvrir un fichier…",
+    "Datei öffnen…",
+    "Άνοιγμα αρχείου…",
+    "打开文件…"
+  ],
+  "Abrir arquivo (Ctrl+O)": [
+    "Open file (Ctrl+O)",
+    "Ouvrir un fichier (Ctrl+O)",
+    "Datei öffnen (Ctrl+O)",
+    "Άνοιγμα αρχείου (Ctrl+O)",
+    "打开文件 (Ctrl+O)"
+  ],
+  "Salvar arquivo": [
+    "Save file",
+    "Enregistrer le fichier",
+    "Datei speichern",
+    "Αποθήκευση αρχείου",
+    "保存文件"
+  ],
+  "Novo arquivo": ["New file", "Nouveau fichier", "Neue Datei", "Νέο αρχείο", "新建文件"],
+  "Salvar": ["Save", "Enregistrer", "Speichern", "Αποθήκευση", "保存"],
+  "Salvar como…": [
+    "Save as…",
+    "Enregistrer sous…",
+    "Speichern unter…",
+    "Αποθήκευση ως…",
+    "另存为…"
+  ],
+  "Salvar cópia": [
+    "Save a copy",
+    "Enregistrer une copie",
+    "Kopie speichern",
+    "Αποθήκευση αντιγράφου",
+    "保存副本"
+  ],
+  "Salvar (Ctrl+S)": [
+    "Save (Ctrl+S)",
+    "Enregistrer (Ctrl+S)",
+    "Speichern (Ctrl+S)",
+    "Αποθήκευση (Ctrl+S)",
+    "保存 (Ctrl+S)"
+  ],
+  "Fechar aba": [
+    "Close tab",
+    "Fermer l’onglet",
+    "Tab schließen",
+    "Κλείσιμο καρτέλας",
+    "关闭标签页"
+  ],
+  "Fechar documento atual": [
+    "Close current document",
+    "Fermer le document actuel",
+    "Aktuelles Dokument schließen",
+    "Κλείσιμο τρέχοντος εγγράφου",
+    "关闭当前文档"
+  ],
+  "Fechar documento (Ctrl+W)": [
+    "Close document (Ctrl+W)",
+    "Fermer le document (Ctrl+W)",
+    "Dokument schließen (Ctrl+W)",
+    "Κλείσιμο εγγράφου (Ctrl+W)",
+    "关闭文档 (Ctrl+W)"
+  ],
+  "Menu Arquivo": ["File menu", "Menu Fichier", "Dateimenü", "Μενού αρχείου", "文件菜单"],
+  "Arquivo": ["File", "Fichier", "Datei", "Αρχείο", "文件"],
+  "Cancelar": ["Cancel", "Annuler", "Abbrechen", "Ακύρωση", "取消"],
+  "Descartar": ["Discard", "Ignorer", "Verwerfen", "Απόρριψη", "放弃"],
+  "Salvar antes de fechar?": [
+    "Save before closing?",
+    "Enregistrer avant de fermer ?",
+    "Vor dem Schließen speichern?",
+    "Αποθήκευση πριν το κλείσιμο;",
+    "关闭前保存？"
+  ],
+  "O arquivo mudou fora do Lume": [
+    "The file changed outside Lume",
+    "Le fichier a été modifié hors de Lume",
+    "Die Datei wurde außerhalb von Lume geändert",
+    "Το αρχείο άλλαξε εκτός Lume",
+    "文件已被其他程序更改"
+  ],
+  "Outra aplicação alterou ou removeu este arquivo. Você pode salvar uma cópia ou substituir a versão no disco.": [
+    "Another app changed or removed this file. Save a copy or replace the version on disk.",
+    "Une autre application a modifié ou supprimé ce fichier. Enregistrez une copie ou remplacez la version sur le disque.",
+    "Eine andere App hat diese Datei geändert oder entfernt. Speichere eine Kopie oder ersetze die Version auf dem Datenträger.",
+    "Άλλη εφαρμογή άλλαξε ή αφαίρεσε το αρχείο. Αποθηκεύστε αντίγραφο ή αντικαταστήστε την έκδοση στον δίσκο.",
+    "其他应用更改或删除了此文件。你可以保存副本或替换磁盘上的版本。"
+  ],
+  "Substituir arquivo": [
+    "Replace file",
+    "Remplacer le fichier",
+    "Datei ersetzen",
+    "Αντικατάσταση αρχείου",
+    "替换文件"
+  ],
+  "Arquivo salvo.": [
+    "File saved.",
+    "Fichier enregistré.",
+    "Datei gespeichert.",
+    "Το αρχείο αποθηκεύτηκε.",
+    "文件已保存。"
+  ],
+  "Arquivo baixado. No navegador, cada salvamento gera um download.": [
+    "File downloaded. In the browser, each save creates a download.",
+    "Fichier téléchargé. Dans le navigateur, chaque enregistrement crée un téléchargement.",
+    "Datei heruntergeladen. Im Browser erzeugt jedes Speichern einen Download.",
+    "Το αρχείο λήφθηκε. Στο πρόγραμμα περιήγησης, κάθε αποθήκευση δημιουργεί λήψη.",
+    "文件已下载。在浏览器中，每次保存都会下载文件。"
+  ],
+  "Desfazer": ["Undo", "Annuler", "Rückgängig", "Αναίρεση", "撤销"],
+  "Refazer": ["Redo", "Rétablir", "Wiederholen", "Επανάληψη", "重做"],
+  "Desfazer (Ctrl+Z)": [
+    "Undo (Ctrl+Z)",
+    "Annuler (Ctrl+Z)",
+    "Rückgängig (Ctrl+Z)",
+    "Αναίρεση (Ctrl+Z)",
+    "撤销 (Ctrl+Z)"
+  ],
+  "Refazer (Ctrl+Y)": [
+    "Redo (Ctrl+Y)",
+    "Rétablir (Ctrl+Y)",
+    "Wiederholen (Ctrl+Y)",
+    "Επανάληψη (Ctrl+Y)",
+    "重做 (Ctrl+Y)"
+  ],
+  "Buscar e substituir": [
+    "Find and replace",
+    "Rechercher et remplacer",
+    "Suchen und ersetzen",
+    "Εύρεση και αντικατάσταση",
+    "查找和替换"
+  ],
+  "Buscar e substituir (Ctrl+F)": [
+    "Find and replace (Ctrl+F)",
+    "Rechercher et remplacer (Ctrl+F)",
+    "Suchen und ersetzen (Ctrl+F)",
+    "Εύρεση και αντικατάσταση (Ctrl+F)",
+    "查找和替换 (Ctrl+F)"
+  ],
+  "Buscar": ["Find", "Rechercher", "Suchen", "Εύρεση", "查找"],
+  "Buscar…": ["Find…", "Rechercher…", "Suchen…", "Εύρεση…", "查找…"],
+  "Buscar no documento": [
+    "Find in document",
+    "Rechercher dans le document",
+    "Im Dokument suchen",
+    "Εύρεση στο έγγραφο",
+    "在文档中查找"
+  ],
+  "Buscar e substituir no texto visual": [
+    "Find and replace in visual text",
+    "Rechercher et remplacer dans le texte visuel",
+    "Im visuellen Text suchen und ersetzen",
+    "Εύρεση και αντικατάσταση στο οπτικό κείμενο",
+    "在可视文本中查找和替换"
+  ],
+  "Próximo": ["Next", "Suivant", "Weiter", "Επόμενο", "下一个"],
+  "Substituir": ["Replace", "Remplacer", "Ersetzen", "Αντικατάσταση", "替换"],
+  "Substituir por": [
+    "Replace with",
+    "Remplacer par",
+    "Ersetzen durch",
+    "Αντικατάσταση με",
+    "替换为"
+  ],
+  "Substituir por…": [
+    "Replace with…",
+    "Remplacer par…",
+    "Ersetzen durch…",
+    "Αντικατάσταση με…",
+    "替换为…"
+  ],
+  "Fechar busca": [
+    "Close search",
+    "Fermer la recherche",
+    "Suche schließen",
+    "Κλείσιμο αναζήτησης",
+    "关闭搜索"
+  ],
+  "Nenhum resultado.": [
+    "No results.",
+    "Aucun résultat.",
+    "Keine Ergebnisse.",
+    "Κανένα αποτέλεσμα.",
+    "没有结果。"
+  ],
+  "Nenhum resultado": [
+    "No matches",
+    "Aucun résultat",
+    "Keine Treffer",
+    "Κανένα αποτέλεσμα",
+    "没有匹配项"
+  ],
+  "próximo": ["next", "suivant", "weiter", "επόμενο", "下一个"],
+  "anterior": ["previous", "précédent", "zurück", "προηγούμενο", "上一个"],
+  "todos": ["all", "tous", "alle", "όλα", "全部"],
+  "diferenciar maiúsculas": [
+    "match case",
+    "respecter la casse",
+    "Groß-/Kleinschreibung",
+    "διάκριση πεζών/κεφαλαίων",
+    "区分大小写"
+  ],
+  "expressão regular": [
+    "regular expression",
+    "expression régulière",
+    "regulärer Ausdruck",
+    "κανονική έκφραση",
+    "正则表达式"
+  ],
+  "palavra inteira": ["whole word", "mot entier", "ganzes Wort", "ολόκληρη λέξη", "全字匹配"],
+  "substituir": ["replace", "remplacer", "ersetzen", "αντικατάσταση", "替换"],
+  "substituir todos": [
+    "replace all",
+    "tout remplacer",
+    "alle ersetzen",
+    "αντικατάσταση όλων",
+    "全部替换"
+  ],
+  "fechar": ["close", "fermer", "schließen", "κλείσιμο", "关闭"],
+  "resultado atual": [
+    "current match",
+    "résultat actuel",
+    "aktueller Treffer",
+    "τρέχον αποτέλεσμα",
+    "当前匹配项"
+  ],
+  "$ ocorrências substituídas": [
+    "$ matches replaced",
+    "$ occurrences remplacées",
+    "$ Treffer ersetzt",
+    "Αντικαταστάθηκαν $ αποτελέσματα",
+    "已替换 $ 个匹配项"
+  ],
+  "Quebra automática de linha": [
+    "Word wrap",
+    "Retour automatique à la ligne",
+    "Zeilenumbruch",
+    "Αυτόματη αναδίπλωση",
+    "自动换行"
+  ],
+  "Formatação Markdown": [
+    "Markdown formatting",
+    "Mise en forme Markdown",
+    "Markdown-Formatierung",
+    "Μορφοποίηση Markdown",
+    "Markdown 格式"
+  ],
+  "FORMATAR": ["FORMAT", "FORMAT", "FORMAT", "ΜΟΡΦΟΠΟΙΗΣΗ", "格式"],
+  "Negrito": ["Bold", "Gras", "Fett", "Έντονα", "粗体"],
+  "Negrito (Ctrl+B)": [
+    "Bold (Ctrl+B)",
+    "Gras (Ctrl+B)",
+    "Fett (Ctrl+B)",
+    "Έντονα (Ctrl+B)",
+    "粗体 (Ctrl+B)"
+  ],
+  "Itálico": ["Italic", "Italique", "Kursiv", "Πλάγια", "斜体"],
+  "Itálico (Ctrl+I)": [
+    "Italic (Ctrl+I)",
+    "Italique (Ctrl+I)",
+    "Kursiv (Ctrl+I)",
+    "Πλάγια (Ctrl+I)",
+    "斜体 (Ctrl+I)"
+  ],
+  "Código": ["Code", "Code", "Code", "Κώδικας", "代码"],
+  "Código em linha ou bloco (Ctrl+Shift+C)": [
+    "Inline or block code (Ctrl+Shift+C)",
+    "Code en ligne ou bloc (Ctrl+Shift+C)",
+    "Inline- oder Codeblock (Ctrl+Shift+C)",
+    "Κώδικας σε γραμμή ή μπλοκ (Ctrl+Shift+C)",
+    "行内或代码块 (Ctrl+Shift+C)"
+  ],
+  "Inserir divisória": [
+    "Insert divider",
+    "Insérer un séparateur",
+    "Trennlinie einfügen",
+    "Εισαγωγή διαχωριστικού",
+    "插入分隔线"
+  ],
+  "Inserir linha divisória": [
+    "Insert horizontal rule",
+    "Insérer une ligne horizontale",
+    "Horizontale Linie einfügen",
+    "Εισαγωγή οριζόντιας γραμμής",
+    "插入水平线"
+  ],
+  "Sublinhado": ["Underline", "Souligné", "Unterstrichen", "Υπογράμμιση", "下划线"],
+  "Lista com marcadores": [
+    "Bullet list",
+    "Liste à puces",
+    "Aufzählung",
+    "Λίστα με κουκκίδες",
+    "无序列表"
+  ],
+  "Lista numerada": [
+    "Numbered list",
+    "Liste numérotée",
+    "Nummerierte Liste",
+    "Αριθμημένη λίστα",
+    "有序列表"
+  ],
+  "Edição visual": [
+    "Visual editing",
+    "Édition visuelle",
+    "Visuelle Bearbeitung",
+    "Οπτική επεξεργασία",
+    "可视化编辑"
+  ],
+  "Modo de edição": [
+    "Editing mode",
+    "Mode d’édition",
+    "Bearbeitungsmodus",
+    "Λειτουργία επεξεργασίας",
+    "编辑模式"
+  ],
+  "Este documento contém sintaxe que deve ser preservada no código": [
+    "This document contains syntax that must be preserved in source mode",
+    "Ce document contient une syntaxe à préserver en mode code",
+    "Dieses Dokument enthält Syntax, die im Quelltext erhalten bleiben muss",
+    "Το έγγραφο περιέχει σύνταξη που πρέπει να διατηρηθεί στον κώδικα",
+    "此文档包含需要在源代码模式中保留的语法"
+  ],
+  "Editar com a formatação visível": [
+    "Edit with formatting visible",
+    "Modifier avec la mise en forme visible",
+    "Mit sichtbarer Formatierung bearbeiten",
+    "Επεξεργασία με ορατή μορφοποίηση",
+    "显示格式进行编辑"
+  ],
+  "Visual": ["Visual", "Visuel", "Visuell", "Οπτικό", "可视化"],
+  "Editar visualmente": [
+    "Edit visually",
+    "Modifier visuellement",
+    "Visuell bearbeiten",
+    "Οπτική επεξεργασία",
+    "可视化编辑"
+  ],
+  "Editar código Markdown": [
+    "Edit Markdown source",
+    "Modifier le code Markdown",
+    "Markdown-Quelltext bearbeiten",
+    "Επεξεργασία κώδικα Markdown",
+    "编辑 Markdown 源代码"
+  ],
+  "Código Markdown": [
+    "Markdown source",
+    "Code Markdown",
+    "Markdown-Quelltext",
+    "Κώδικας Markdown",
+    "Markdown 源代码"
+  ],
+  "Alternar split": [
+    "Toggle split",
+    "Activer la vue partagée",
+    "Geteilte Ansicht umschalten",
+    "Εναλλαγή διαίρεσης",
+    "切换分栏"
+  ],
+  "Split": ["Split", "Partager", "Teilen", "Διαίρεση", "分栏"],
+  "Largura do editor e da prévia Markdown": [
+    "Editor and Markdown preview width",
+    "Largeur de l’éditeur et de l’aperçu Markdown",
+    "Breite von Editor und Markdown-Vorschau",
+    "Πλάτος επεξεργαστή και προεπισκόπησης Markdown",
+    "编辑器与 Markdown 预览宽度"
+  ],
+  "Largura do painel de arquivos": [
+    "File panel width",
+    "Largeur du panneau des fichiers",
+    "Breite der Dateiseitenleiste",
+    "Πλάτος πίνακα αρχείων",
+    "文件面板宽度"
+  ],
+  "Escolher ícone da nota": [
+    "Choose note icon",
+    "Choisir l’icône de la note",
+    "Notizsymbol wählen",
+    "Επιλογή εικονιδίου σημείωσης",
+    "选择笔记图标"
+  ],
+  "ARQUIVO LOCAL": ["LOCAL FILE", "FICHIER LOCAL", "LOKALE DATEI", "ΤΟΠΙΚΟ ΑΡΧΕΙΟ", "本地文件"],
+  "SEU RASCUNHO": ["YOUR DRAFT", "VOTRE BROUILLON", "DEIN ENTWURF", "ΤΟ ΠΡΟΣΧΕΔΙΟ ΣΑΣ", "你的草稿"],
+  "Preparando seu espaço…": [
+    "Preparing your space…",
+    "Préparation de votre espace…",
+    "Dein Raum wird vorbereitet…",
+    "Προετοιμασία του χώρου σας…",
+    "正在准备你的空间…"
+  ],
+  "Um lugar tranquilo para colocar as ideias no papel.": [
+    "A quiet place to put your ideas into words.",
+    "Un endroit calme pour poser vos idées.",
+    "Ein ruhiger Ort für deine Gedanken.",
+    "Ένα ήσυχο μέρος για τις ιδέες σας.",
+    "静静记录灵感的地方。"
+  ],
+  "Alterado": ["Modified", "Modifié", "Geändert", "Τροποποιημένο", "已修改"],
+  "Salvo em arquivo": [
+    "Saved to file",
+    "Enregistré dans un fichier",
+    "In Datei gespeichert",
+    "Αποθηκεύτηκε σε αρχείο",
+    "已保存到文件"
+  ],
+  "Pronto para escrever": [
+    "Ready to write",
+    "Prêt à écrire",
+    "Bereit zum Schreiben",
+    "Έτοιμο για γραφή",
+    "准备开始写作"
+  ],
+  "Prévia no navegador · Abrir lê arquivos locais; Salvar baixa uma cópia. O aplicativo desktop salva diretamente no disco.": [
+    "Browser preview · Open reads local files; Save downloads a copy. The desktop app saves directly to disk.",
+    "Aperçu navigateur · Ouvrir lit les fichiers locaux ; Enregistrer télécharge une copie. L’application bureau enregistre sur le disque.",
+    "Browser-Vorschau · Öffnen liest lokale Dateien; Speichern lädt eine Kopie herunter. Die Desktop-App speichert direkt auf dem Datenträger.",
+    "Προεπισκόπηση περιήγησης · Το άνοιγμα διαβάζει τοπικά αρχεία, η αποθήκευση κατεβάζει αντίγραφο. Η εφαρμογή αποθηκεύει απευθείας στον δίσκο.",
+    "浏览器预览 · 打开会读取本地文件，保存会下载副本。桌面应用直接保存到磁盘。"
+  ],
+  "Este documento contém sintaxe adicional. O modo de código preserva todos os detalhes.": [
+    "This document contains additional syntax. Source mode preserves every detail.",
+    "Ce document contient une syntaxe supplémentaire. Le mode code préserve tous les détails.",
+    "Dieses Dokument enthält zusätzliche Syntax. Der Quelltextmodus erhält alle Details.",
+    "Το έγγραφο περιέχει πρόσθετη σύνταξη. Η λειτουργία κώδικα διατηρεί όλες τις λεπτομέρειες.",
+    "此文档包含额外语法。源代码模式会保留所有细节。"
+  ],
+  "palavras": ["words", "mots", "Wörter", "λέξεις", "词"],
+  "caracteres": ["characters", "caractères", "Zeichen", "χαρακτήρες", "字符"],
+  "selecionados": ["selected", "sélectionnés", "ausgewählt", "επιλεγμένα", "已选"],
+  "Texto simples": ["Plain text", "Texte brut", "Klartext", "Απλό κείμενο", "纯文本"],
+  "Fechar mensagem": [
+    "Dismiss message",
+    "Fermer le message",
+    "Meldung schließen",
+    "Κλείσιμο μηνύματος",
+    "关闭消息"
+  ],
+  "SEU ESPAÇO": ["YOUR SPACE", "VOTRE ESPACE", "DEIN RAUM", "Ο ΧΩΡΟΣ ΣΑΣ", "你的空间"],
+  "LOCAL": ["LOCAL", "LOCAL", "LOKAL", "ΤΟΠΙΚΑ", "本地"],
+  "Abrir do computador": [
+    "Open from computer",
+    "Ouvrir depuis l’ordinateur",
+    "Vom Computer öffnen",
+    "Άνοιγμα από υπολογιστή",
+    "从电脑打开"
+  ],
+  "Uma ideia de cada vez.": [
+    "One idea at a time.",
+    "Une idée à la fois.",
+    "Eine Idee nach der anderen.",
+    "Μία ιδέα τη φορά.",
+    "一次一个灵感。"
+  ],
+  "O resto pode esperar.": [
+    "The rest can wait.",
+    "Le reste peut attendre.",
+    "Der Rest kann warten.",
+    "Τα υπόλοιπα μπορούν να περιμένουν.",
+    "其他的可以等等。"
+  ],
+  "Seus textos ficam neste computador": [
+    "Your writing stays on this computer",
+    "Vos textes restent sur cet ordinateur",
+    "Deine Texte bleiben auf diesem Computer",
+    "Τα κείμενά σας μένουν σε αυτόν τον υπολογιστή",
+    "文字保存在此电脑上"
+  ],
+  "Alternar painel": [
+    "Toggle sidebar",
+    "Afficher le panneau",
+    "Seitenleiste umschalten",
+    "Εναλλαγή πλαϊνού πίνακα",
+    "切换侧边栏"
+  ],
+  "Meu espaço": ["My space", "Mon espace", "Mein Raum", "Ο χώρος μου", "我的空间"],
+  "Editor": ["Editor", "Éditeur", "Editor", "Επεξεργαστής", "编辑器"],
+  "Guardando rascunhos…": [
+    "Saving drafts…",
+    "Enregistrement des brouillons…",
+    "Entwürfe werden gespeichert…",
+    "Αποθήκευση προσχεδίων…",
+    "正在保存草稿…"
+  ],
+  "Rascunhos sem proteção": [
+    "Drafts not backed up",
+    "Brouillons non protégés",
+    "Entwürfe nicht gesichert",
+    "Μη προστατευμένα προσχέδια",
+    "草稿未受保护"
+  ],
+  "Rascunhos protegidos": [
+    "Drafts backed up",
+    "Brouillons protégés",
+    "Entwürfe gesichert",
+    "Προστατευμένα προσχέδια",
+    "草稿已备份"
+  ],
+  "Escolher tema": [
+    "Choose theme",
+    "Choisir le thème",
+    "Design wählen",
+    "Επιλογή θέματος",
+    "选择主题"
+  ],
+  "Temas": ["Themes", "Thèmes", "Designs", "Θέματα", "主题"],
+  "Tema": ["Theme", "Thème", "Design", "Θέμα", "主题"],
+  "Dia": ["Day", "Jour", "Tag", "Ημέρα", "白天"],
+  "Tarde": ["Sunset", "Crépuscule", "Abend", "Ηλιοβασίλεμα", "日落"],
+  "Noite": ["Night", "Nuit", "Nacht", "Νύχτα", "夜晚"],
+  "Madrugada": ["Midnight", "Nuit profonde", "Mitternacht", "Μεσάνυχτα", "深夜"],
+  "Tamanho da fonte": [
+    "Font size",
+    "Taille de la police",
+    "Schriftgröße",
+    "Μέγεθος γραμματοσειράς",
+    "字号"
+  ],
+  "Role para ajustar o tamanho da fonte": [
+    "Scroll to adjust font size",
+    "Faites défiler pour régler la police",
+    "Scrollen, um die Schriftgröße anzupassen",
+    "Κύλιση για αλλαγή μεγέθους γραμματοσειράς",
+    "滚动以调整字号"
+  ],
+  "Diminuir fonte": [
+    "Decrease font size",
+    "Réduire la police",
+    "Schrift verkleinern",
+    "Μείωση γραμματοσειράς",
+    "减小字号"
+  ],
+  "Aumentar fonte": [
+    "Increase font size",
+    "Agrandir la police",
+    "Schrift vergrößern",
+    "Αύξηση γραμματοσειράς",
+    "增大字号"
+  ],
+  "ARQUIVOS ABERTOS": [
+    "OPEN FILES",
+    "FICHIERS OUVERTS",
+    "GEÖFFNETE DATEIEN",
+    "ΑΝΟΙΧΤΑ ΑΡΧΕΙΑ",
+    "已打开的文件"
+  ],
+  "Arquivos abertos": [
+    "Open files",
+    "Fichiers ouverts",
+    "Geöffnete Dateien",
+    "Ανοιχτά αρχεία",
+    "已打开的文件"
+  ],
+  "Abas": ["Tabs", "Onglets", "Tabs", "Καρτέλες", "标签页"],
+  "Criar grupo": [
+    "Create group",
+    "Créer un groupe",
+    "Gruppe erstellen",
+    "Δημιουργία ομάδας",
+    "创建分组"
+  ],
+  "Criar grupo de abas": [
+    "Create tab group",
+    "Créer un groupe d’onglets",
+    "Tabgruppe erstellen",
+    "Δημιουργία ομάδας καρτελών",
+    "创建标签页分组"
+  ],
+  "Escolher ícone…": [
+    "Choose icon…",
+    "Choisir une icône…",
+    "Symbol wählen…",
+    "Επιλογή εικονιδίου…",
+    "选择图标…"
+  ],
+  "Mover para Sem grupo": [
+    "Move to Ungrouped",
+    "Déplacer vers Sans groupe",
+    "Nach Ohne Gruppe verschieben",
+    "Μετακίνηση χωρίς ομάδα",
+    "移到未分组"
+  ],
+  "Editar grupo": [
+    "Edit group",
+    "Modifier le groupe",
+    "Gruppe bearbeiten",
+    "Επεξεργασία ομάδας",
+    "编辑分组"
+  ],
+  "Desagrupar arquivos": [
+    "Ungroup files",
+    "Dégrouper les fichiers",
+    "Dateien aus Gruppe lösen",
+    "Κατάργηση ομαδοποίησης",
+    "取消文件分组"
+  ],
+  "Arraste uma aba para cá": [
+    "Drag a tab here",
+    "Glissez un onglet ici",
+    "Ziehe einen Tab hierher",
+    "Σύρετε μια καρτέλα εδώ",
+    "将标签页拖到这里"
+  ],
+  "ou use o menu ⋯ do arquivo.": [
+    "or use the file’s ⋯ menu.",
+    "ou utilisez le menu ⋯ du fichier.",
+    "oder nutze das ⋯-Menü der Datei.",
+    "ή χρησιμοποιήστε το μενού ⋯ του αρχείου.",
+    "或使用文件的 ⋯ 菜单。"
+  ],
+  "SEM GRUPO": ["UNGROUPED", "SANS GROUPE", "OHNE GRUPPE", "ΧΩΡΙΣ ΟΜΑΔΑ", "未分组"],
+  "Sem grupo": ["Ungrouped", "Sans groupe", "Ohne Gruppe", "Χωρίς ομάδα", "未分组"],
+  "Solte aqui para deixar sem grupo": [
+    "Drop here to ungroup",
+    "Déposez ici pour dégrouper",
+    "Hier ablegen, um die Gruppe zu verlassen",
+    "Αφήστε εδώ για κατάργηση ομάδας",
+    "拖到这里取消分组"
+  ],
+  "Alterações não salvas": [
+    "Unsaved changes",
+    "Modifications non enregistrées",
+    "Ungespeicherte Änderungen",
+    "Μη αποθηκευμένες αλλαγές",
+    "未保存的更改"
+  ],
+  "Opções da nota e da seleção": [
+    "Note and selection options",
+    "Options de la note et de la sélection",
+    "Optionen für Notiz und Auswahl",
+    "Επιλογές σημείωσης και επιλογής",
+    "笔记和选择选项"
+  ],
+  "Um lugar para cada assunto": [
+    "A place for every topic",
+    "Un espace pour chaque sujet",
+    "Ein Platz für jedes Thema",
+    "Μια θέση για κάθε θέμα",
+    "每个主题都有自己的位置"
+  ],
+  "Agrupe suas notas por projeto, tema ou pelo que fizer sentido para você.": [
+    "Group notes by project, topic, or whatever works for you.",
+    "Regroupez vos notes par projet, thème ou selon vos besoins.",
+    "Gruppiere deine Notizen nach Projekt, Thema oder wie es für dich passt.",
+    "Ομαδοποιήστε τις σημειώσεις ανά έργο, θέμα ή όπως σας βολεύει.",
+    "按项目、主题或你喜欢的方式分组笔记。"
+  ],
+  "Nome do grupo": ["Group name", "Nom du groupe", "Gruppenname", "Όνομα ομάδας", "分组名称"],
+  "Ex.: Trabalho, Estudos, Ideias…": [
+    "E.g. Work, Study, Ideas…",
+    "Ex. : Travail, Études, Idées…",
+    "Z. B. Arbeit, Lernen, Ideen…",
+    "Π.χ. Εργασία, Μελέτη, Ιδέες…",
+    "例如：工作、学习、灵感…"
+  ],
+  "Cor do grupo": ["Group color", "Couleur du groupe", "Gruppenfarbe", "Χρώμα ομάδας", "分组颜色"],
+  "Cancelar grupo": [
+    "Cancel group",
+    "Annuler le groupe",
+    "Gruppe abbrechen",
+    "Ακύρωση ομάδας",
+    "取消分组"
+  ],
+  "Salvar grupo": [
+    "Save group",
+    "Enregistrer le groupe",
+    "Gruppe speichern",
+    "Αποθήκευση ομάδας",
+    "保存分组"
+  ],
+  "Sálvia": ["Sage", "Sauge", "Salbei", "Φασκόμηλο", "鼠尾草绿"],
+  "Azul": ["Blue", "Bleu", "Blau", "Μπλε", "蓝色"],
+  "Rosa": ["Rose", "Rose", "Rosa", "Ροζ", "玫瑰色"],
+  "Âmbar": ["Amber", "Ambre", "Bernstein", "Κεχριμπάρι", "琥珀色"],
+  "Violeta": ["Violet", "Violet", "Violett", "Βιολετί", "紫罗兰色"],
+  "Turquesa": ["Teal", "Turquoise", "Türkis", "Τυρκουάζ", "青绿色"],
+  "Laranja": ["Orange", "Orange", "Orange", "Πορτοκαλί", "橙色"],
+  "Coral": ["Coral", "Corail", "Koralle", "Κοραλλί", "珊瑚色"],
+  "Oliva": ["Olive", "Olive", "Oliv", "Λαδί", "橄榄绿"],
+  "Ciano": ["Cyan", "Cyan", "Cyan", "Κυανό", "青色"],
+  "Lavanda": ["Lavender", "Lavande", "Lavendel", "Λεβάντα", "薰衣草紫"],
+  "Pedra": ["Stone", "Pierre", "Stein", "Πέτρα", "石灰色"],
+  "Fechar seletor de ícone": [
+    "Close icon picker",
+    "Fermer le sélecteur d’icônes",
+    "Symbolauswahl schließen",
+    "Κλείσιμο επιλογής εικονιδίου",
+    "关闭图标选择器"
+  ],
+  "Um ícone para esta nota": [
+    "An icon for this note",
+    "Une icône pour cette note",
+    "Ein Symbol für diese Notiz",
+    "Ένα εικονίδιο για αυτή τη σημείωση",
+    "为这篇笔记选择图标"
+  ],
+  "Escolha um símbolo para reconhecer o assunto nas abas e no painel.": [
+    "Choose a symbol to recognize the topic in tabs and the sidebar.",
+    "Choisissez un symbole pour reconnaître le sujet dans les onglets et le panneau.",
+    "Wähle ein Symbol, um das Thema in Tabs und Seitenleiste zu erkennen.",
+    "Επιλέξτε σύμβολο για αναγνώριση θέματος στις καρτέλες και στον πίνακα.",
+    "选择一个符号，在标签页和侧边栏中轻松识别主题。"
+  ],
+  "A escolha fica salva no Lume, sem alterar o conteúdo do arquivo.": [
+    "The choice is saved in Lume without changing the file’s contents.",
+    "Le choix est enregistré dans Lume sans modifier le contenu du fichier.",
+    "Die Auswahl wird in Lume gespeichert, ohne den Dateiinhalt zu ändern.",
+    "Η επιλογή αποθηκεύεται στο Lume χωρίς αλλαγή περιεχομένου του αρχείου.",
+    "选择保存在 Lume 中，不会更改文件内容。"
+  ],
+  "Documento": ["Document", "Document", "Dokument", "Έγγραφο", "文档"],
+  "Trabalho": ["Work", "Travail", "Arbeit", "Εργασία", "工作"],
+  "Estudos": ["Study", "Études", "Lernen", "Μελέτη", "学习"],
+  "Ideias": ["Ideas", "Idées", "Ideen", "Ιδέες", "灵感"],
+  "Tarefas": ["Tasks", "Tâches", "Aufgaben", "Εργασίες", "任务"],
+  "Pessoal": ["Personal", "Personnel", "Persönlich", "Προσωπικά", "个人"],
+  "Música": ["Music", "Musique", "Musik", "Μουσική", "音乐"],
+  "Prévia Markdown": [
+    "Markdown preview",
+    "Aperçu Markdown",
+    "Markdown-Vorschau",
+    "Προεπισκόπηση Markdown",
+    "Markdown 预览"
+  ],
+  "PRÉVIA · MARKDOWN": [
+    "PREVIEW · MARKDOWN",
+    "APERÇU · MARKDOWN",
+    "VORSCHAU · MARKDOWN",
+    "ΠΡΟΕΠΙΣΚΟΠΗΣΗ · MARKDOWN",
+    "预览 · MARKDOWN"
+  ],
+  "sem descrição": [
+    "no description",
+    "sans description",
+    "ohne Beschreibung",
+    "χωρίς περιγραφή",
+    "无描述"
+  ],
+  "*Sua prévia aparece aqui enquanto você escreve.*": [
+    "*Your preview appears here as you write.*",
+    "*L’aperçu apparaît ici pendant que vous écrivez.*",
+    "*Deine Vorschau erscheint hier beim Schreiben.*",
+    "*Η προεπισκόπηση εμφανίζεται εδώ καθώς γράφετε.*",
+    "*写作时，预览将在此显示。*"
+  ],
+  "Editar Markdown visualmente": [
+    "Edit Markdown visually",
+    "Modifier Markdown visuellement",
+    "Markdown visuell bearbeiten",
+    "Οπτική επεξεργασία Markdown",
+    "可视化编辑 Markdown"
+  ],
+  "Sem título": ["Untitled", "Sans titre", "Unbenannt", "Χωρίς τίτλο", "无标题"],
+  "Comece por aqui.txt": [
+    "Start here.txt",
+    "Commencez ici.txt",
+    "Hier beginnen.txt",
+    "Ξεκινήστε εδώ.txt",
+    "从这里开始.txt"
+  ],
+  "O rascunho anterior está danificado. Ele não foi carregado.": [
+    "The previous draft is damaged and could not be loaded.",
+    "Le brouillon précédent est endommagé et n’a pas été chargé.",
+    "Der vorherige Entwurf ist beschädigt und wurde nicht geladen.",
+    "Το προηγούμενο προσχέδιο είναι κατεστραμμένο και δεν φορτώθηκε.",
+    "上次的草稿已损坏，未能加载。"
+  ],
+  "Não foi possível recuperar a sessão anterior.": [
+    "Could not restore the previous session.",
+    "Impossible de restaurer la session précédente.",
+    "Die vorherige Sitzung konnte nicht wiederhergestellt werden.",
+    "Δεν ήταν δυνατή η επαναφορά της προηγούμενης συνεδρίας.",
+    "无法恢复上次会话。"
+  ],
+  "Não foi possível guardar os rascunhos automaticamente. Salve seus arquivos.": [
+    "Could not save drafts automatically. Please save your files.",
+    "Impossible d’enregistrer les brouillons automatiquement. Enregistrez vos fichiers.",
+    "Entwürfe konnten nicht automatisch gespeichert werden. Bitte speichere deine Dateien.",
+    "Δεν ήταν δυνατή η αυτόματη αποθήκευση προσχεδίων. Αποθηκεύστε τα αρχεία σας.",
+    "无法自动保存草稿，请保存文件。"
+  ],
+  "Aguarde a operação terminar antes de fechar.": [
+    "Wait for the operation to finish before closing.",
+    "Attendez la fin de l’opération avant de fermer.",
+    "Warte vor dem Schließen auf das Ende des Vorgangs.",
+    "Περιμένετε να ολοκληρωθεί η ενέργεια πριν κλείσετε.",
+    "请等待操作完成后再关闭。"
+  ],
+  "Seus rascunhos não foram guardados": [
+    "Your drafts were not saved",
+    "Vos brouillons n’ont pas été enregistrés",
+    "Deine Entwürfe wurden nicht gespeichert",
+    "Τα προσχέδιά σας δεν αποθηκεύτηκαν",
+    "草稿未保存"
+  ],
+  "Não foi possível guardar esta sessão. Salve seus arquivos antes de sair para evitar perder alterações.": [
+    "Could not save this session. Save your files before exiting to avoid losing changes.",
+    "Impossible d’enregistrer cette session. Enregistrez vos fichiers avant de quitter pour éviter toute perte.",
+    "Diese Sitzung konnte nicht gespeichert werden. Speichere vor dem Beenden deine Dateien, um Änderungen zu erhalten.",
+    "Δεν ήταν δυνατή η αποθήκευση της συνεδρίας. Αποθηκεύστε τα αρχεία πριν την έξοδο για να μη χάσετε αλλαγές.",
+    "无法保存此会话。请在退出前保存文件，以免丢失更改。"
+  ],
+  "Voltar ao editor": [
+    "Back to editor",
+    "Revenir à l’éditeur",
+    "Zurück zum Editor",
+    "Επιστροφή στον επεξεργαστή",
+    "返回编辑器"
+  ],
+  "Sair mesmo assim": [
+    "Exit anyway",
+    "Quitter quand même",
+    "Trotzdem beenden",
+    "Έξοδος ούτως ή άλλως",
+    "仍然退出"
+  ],
+  "Arquivos de texto": [
+    "Text files",
+    "Fichiers texte",
+    "Textdateien",
+    "Αρχεία κειμένου",
+    "文本文件"
+  ],
+  "Todos os arquivos": [
+    "All files",
+    "Tous les fichiers",
+    "Alle Dateien",
+    "Όλα τα αρχεία",
+    "所有文件"
+  ],
+  "O limite desta versão é de 16 MB por arquivo.": [
+    "The limit is 16 MB per file.",
+    "La limite est de 16 Mo par fichier.",
+    "Die Grenze beträgt 16 MB pro Datei.",
+    "Το όριο είναι 16 MB ανά αρχείο.",
+    "每个文件的大小上限为 16 MB。"
+  ],
+  "O arquivo não está em UTF-8 ou UTF-16 válido. Converta a codificação antes de abrir.": [
+    "The file is not valid UTF-8 or UTF-16. Convert its encoding before opening.",
+    "Le fichier n’est pas en UTF-8 ou UTF-16 valide. Convertissez son encodage avant de l’ouvrir.",
+    "Die Datei ist kein gültiges UTF-8 oder UTF-16. Konvertiere vor dem Öffnen die Kodierung.",
+    "Το αρχείο δεν είναι έγκυρο UTF-8 ή UTF-16. Μετατρέψτε την κωδικοποίηση πριν το ανοίξετε.",
+    "文件不是有效的 UTF-8 或 UTF-16。请转换编码后再打开。"
+  ],
+  "Este arquivo parece ser binário. Abra um arquivo de texto.": [
+    "This appears to be a binary file. Open a text file.",
+    "Ce fichier semble binaire. Ouvrez un fichier texte.",
+    "Dies scheint eine Binärdatei zu sein. Öffne eine Textdatei.",
+    "Αυτό φαίνεται δυαδικό αρχείο. Ανοίξτε αρχείο κειμένου.",
+    "这似乎是二进制文件。请打开文本文件。"
+  ],
+  "“{name}” ainda não foi salvo em arquivo.": [
+    "“{name}” has not been saved to a file yet.",
+    "« {name} » n’a pas encore été enregistré dans un fichier.",
+    "„{name}“ wurde noch nicht in einer Datei gespeichert.",
+    "Το «{name}» δεν έχει αποθηκευτεί ακόμα σε αρχείο.",
+    "“{name}”尚未保存到文件。"
+  ],
+  "“{name}” tem alterações que ainda não foram salvas em arquivo.": [
+    "“{name}” has changes that have not been saved to a file.",
+    "« {name} » contient des modifications non enregistrées.",
+    "„{name}“ hat ungespeicherte Änderungen.",
+    "Το «{name}» έχει μη αποθηκευμένες αλλαγές.",
+    "“{name}”有尚未保存的更改。"
+  ],
+  "Salvar {name} pelo painel": [
+    "Save {name} from sidebar",
+    "Enregistrer {name} depuis le panneau",
+    "{name} über Seitenleiste speichern",
+    "Αποθήκευση {name} από τον πίνακα",
+    "从侧边栏保存 {name}"
+  ],
+  "Fechar {name} pelo painel": [
+    "Close {name} from sidebar",
+    "Fermer {name} depuis le panneau",
+    "{name} über Seitenleiste schließen",
+    "Κλείσιμο {name} από τον πίνακα",
+    "从侧边栏关闭 {name}"
+  ],
+  "Opções de {name}": [
+    "Options for {name}",
+    "Options de {name}",
+    "Optionen für {name}",
+    "Επιλογές για {name}",
+    "{name} 的选项"
+  ],
+  "Fechar {name}": [
+    "Close {name}",
+    "Fermer {name}",
+    "{name} schließen",
+    "Κλείσιμο {name}",
+    "关闭 {name}"
+  ],
+  "Opções do grupo {name}": [
+    "Options for group {name}",
+    "Options du groupe {name}",
+    "Optionen für Gruppe {name}",
+    "Επιλογές ομάδας {name}",
+    "分组 {name} 的选项"
+  ],
+  "Expandir grupo {name}": [
+    "Expand group {name}",
+    "Développer le groupe {name}",
+    "Gruppe {name} aufklappen",
+    "Ανάπτυξη ομάδας {name}",
+    "展开分组 {name}"
+  ],
+  "Recolher grupo {name}": [
+    "Collapse group {name}",
+    "Réduire le groupe {name}",
+    "Gruppe {name} einklappen",
+    "Σύμπτυξη ομάδας {name}",
+    "折叠分组 {name}"
+  ],
+  "Expandir abas de {name}": [
+    "Expand tabs in {name}",
+    "Développer les onglets de {name}",
+    "Tabs in {name} aufklappen",
+    "Ανάπτυξη καρτελών {name}",
+    "展开 {name} 的标签页"
+  ],
+  "Recolher abas de {name}": [
+    "Collapse tabs in {name}",
+    "Réduire les onglets de {name}",
+    "Tabs in {name} einklappen",
+    "Σύμπτυξη καρτελών {name}",
+    "折叠 {name} 的标签页"
+  ],
+  "{count} arquivos selecionados": [
+    "{count} files selected",
+    "{count} fichiers sélectionnés",
+    "{count} Dateien ausgewählt",
+    "{count} επιλεγμένα αρχεία",
+    "已选 {count} 个文件"
+  ],
+  "{count} selecionados · use o menu ⋯": [
+    "{count} selected · use the ⋯ menu",
+    "{count} sélectionnés · utilisez le menu ⋯",
+    "{count} ausgewählt · nutze das ⋯-Menü",
+    "{count} επιλεγμένα · μενού ⋯",
+    "已选 {count} 项 · 使用 ⋯ 菜单"
+  ],
+  "Criar grupo com {count} arquivos…": [
+    "Create group with {count} files…",
+    "Créer un groupe avec {count} fichiers…",
+    "Gruppe mit {count} Dateien erstellen…",
+    "Δημιουργία ομάδας με {count} αρχεία…",
+    "用 {count} 个文件创建分组…"
+  ],
+  "Ícone {name}": [
+    "{name} icon",
+    "Icône {name}",
+    "Symbol {name}",
+    "Εικονίδιο {name}",
+    "{name} 图标"
+  ],
+  "Cor {name}": ["Color {name}", "Couleur {name}", "Farbe {name}", "Χρώμα {name}", "颜色 {name}"],
+  "Escolher ícone do documento: {name}": [
+    "Choose document icon: {name}",
+    "Choisir l’icône du document : {name}",
+    "Dokumentsymbol wählen: {name}",
+    "Επιλογή εικονιδίου εγγράφου: {name}",
+    "选择文档图标：{name}"
+  ],
+  "Shift para intervalo; Ctrl para seleção individual": [
+    "Shift for range; Ctrl for individual selection",
+    "Maj pour un intervalle ; Ctrl pour une sélection individuelle",
+    "Umschalt für Bereich; Strg für einzelne Auswahl",
+    "Shift για εύρος· Ctrl για μεμονωμένη επιλογή",
+    "Shift 选择范围；Ctrl 单独选择"
+  ],
+  "Imagem: {name}": [
+    "Image: {name}",
+    "Image : {name}",
+    "Bild: {name}",
+    "Εικόνα: {name}",
+    "图片：{name}"
+  ],
+  "Tarefa: {name}": [
+    "Task: {name}",
+    "Tâche : {name}",
+    "Aufgabe: {name}",
+    "Εργασία: {name}",
+    "任务：{name}"
+  ],
+  "Ocultar painel": [
+    "Hide sidebar",
+    "Masquer le panneau",
+    "Seitenleiste ausblenden",
+    "Απόκρυψη πίνακα",
+    "隐藏侧边栏"
+  ],
+  "Mostrar painel": [
+    "Show sidebar",
+    "Afficher le panneau",
+    "Seitenleiste anzeigen",
+    "Εμφάνιση πίνακα",
+    "显示侧边栏"
+  ],
+  "Largura do painel lateral": [
+    "Sidebar width",
+    "Largeur du panneau latéral",
+    "Breite der Seitenleiste",
+    "Πλάτος πλαϊνού πίνακα",
+    "侧边栏宽度"
+  ],
+  "Arraste para redimensionar · duplo clique para restaurar": [
+    "Drag to resize · double-click to reset",
+    "Glissez pour redimensionner · double-cliquez pour rétablir",
+    "Ziehen zum Skalieren · Doppelklick zum Zurücksetzen",
+    "Σύρετε για αλλαγή μεγέθους · διπλό κλικ για επαναφορά",
+    "拖动调整大小 · 双击重置"
+  ],
+  "Editar título da nota": [
+    "Edit note title",
+    "Modifier le titre de la note",
+    "Notiztitel bearbeiten",
+    "Επεξεργασία τίτλου σημείωσης",
+    "编辑笔记标题"
+  ],
+  "Título da nota": [
+    "Note title",
+    "Titre de la note",
+    "Notiztitel",
+    "Τίτλος σημείωσης",
+    "笔记标题"
+  ],
+  "Confirmar título": [
+    "Confirm title",
+    "Confirmer le titre",
+    "Titel bestätigen",
+    "Επιβεβαίωση τίτλου",
+    "确认标题"
+  ],
+  "Cancelar edição do título": [
+    "Cancel title editing",
+    "Annuler la modification du titre",
+    "Titelbearbeitung abbrechen",
+    "Ακύρωση επεξεργασίας τίτλου",
+    "取消编辑标题"
+  ],
+  "Enter confirma e renomeia o arquivo nesta pasta. Esc cancela.": [
+    "Enter confirms and renames the file in this folder. Esc cancels.",
+    "Entrée confirme et renomme le fichier dans ce dossier. Échap annule.",
+    "Enter bestätigt und benennt die Datei in diesem Ordner um. Esc bricht ab.",
+    "Το Enter επιβεβαιώνει και μετονομάζει το αρχείο σε αυτόν τον φάκελο. Το Esc ακυρώνει.",
+    "按 Enter 确认并重命名此文件夹中的文件，按 Esc 取消。"
+  ],
+  "Enter confirma. Este nome será sugerido ao salvar o arquivo.": [
+    "Enter confirms. This name will be suggested when saving the file.",
+    "Entrée confirme. Ce nom sera proposé lors de l’enregistrement du fichier.",
+    "Enter bestätigt. Dieser Name wird beim Speichern vorgeschlagen.",
+    "Το Enter επιβεβαιώνει. Αυτό το όνομα θα προταθεί κατά την αποθήκευση.",
+    "按 Enter 确认，保存文件时将使用此建议名称。"
+  ],
+  "Título atualizado.": [
+    "Title updated.",
+    "Titre mis à jour.",
+    "Titel aktualisiert.",
+    "Ο τίτλος ενημερώθηκε.",
+    "标题已更新。"
+  ],
+  "Escolha um título válido, sem caracteres reservados de arquivo.": [
+    "Choose a valid title without reserved file characters.",
+    "Choisissez un titre valide sans caractères réservés aux fichiers.",
+    "Wähle einen gültigen Titel ohne reservierte Dateizeichen.",
+    "Επιλέξτε έγκυρο τίτλο χωρίς δεσμευμένους χαρακτήρες αρχείου.",
+    "请输入有效标题，不要使用文件名保留字符。"
+  ],
+  "Já existe um arquivo com esse nome nesta pasta.": [
+    "A file with this name already exists in this folder.",
+    "Un fichier portant ce nom existe déjà dans ce dossier.",
+    "Eine Datei mit diesem Namen existiert bereits in diesem Ordner.",
+    "Υπάρχει ήδη αρχείο με αυτό το όνομα στον φάκελο.",
+    "此文件夹中已存在同名文件。"
+  ],
+  "O arquivo mudou fora do Lume. Reabra-o ou salve uma cópia antes de renomear.": [
+    "The file changed outside Lume. Reopen it or save a copy before renaming.",
+    "Le fichier a été modifié hors de Lume. Rouvrez-le ou enregistrez une copie avant de le renommer.",
+    "Die Datei wurde außerhalb von Lume geändert. Öffne sie erneut oder speichere vor dem Umbenennen eine Kopie.",
+    "Το αρχείο άλλαξε εκτός Lume. Ανοίξτε το ξανά ή αποθηκεύστε αντίγραφο πριν τη μετονομασία.",
+    "文件已在 Lume 外更改。请重新打开或保存副本后再重命名。"
+  ],
+  "Há novas alterações após o salvamento. A nota permaneceu aberta.": [
+    "There are new changes after saving. The note was kept open.",
+    "De nouvelles modifications ont été faites après l’enregistrement. La note reste ouverte.",
+    "Nach dem Speichern gibt es neue Änderungen. Die Notiz bleibt geöffnet.",
+    "Υπάρχουν νέες αλλαγές μετά την αποθήκευση. Η σημείωση παρέμεινε ανοιχτή.",
+    "保存后出现了新的更改，笔记仍保持打开。"
+  ]
+}
