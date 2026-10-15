@@ -1,0 +1,13 @@
+Please investigate a suspected false positive in our unpublished Lume Notes 0.9.0 Windows desktop application (Tauri 2/Rust, React). The cause is not yet established; we are keeping distribution blocked.
+
+Microsoft Defender reports Trojan:Win32/Bearfoos.A!ml on the executable extracted from the NSIS installer. A custom scan of the installer itself reported no threats, while a scan of the extracted executable reported one threat (exit code 2). The extracted application was not executed during this analysis. Real-time protection subsequently blocked access to it; we have not added exclusions or restored quarantined files.
+
+Installer SHA-256:
+5562cbc3133010fa7403408916863737d92f48df1950e75765862fa135044559
+Extracted lume-notes.exe SHA-256:
+a98cb06b80530cecb77f052bf17f147b95307cd1c8f8b9ffc145dc326ad33483
+Defender platform: 4.18.26090.9-0. Original intelligence version unavailable.
+
+The app edits local text/Markdown files. Static source review found no concrete malicious application logic. This does not prove the binary is safe. The build used Rust 1.99.0 GNU and an x64-rebuilt NSIS compiler due to local execution constraints. The installer code section matches the official NSIS stub; included NSIS plugins match the official Tauri tool package. A fresh MSVC/official-NSIS comparison build is being prepared separately.
+
+We are submitting the original installer because Windows blocks access to the extracted executable. Please extract and analyze the exact payload hash above and clarify whether this classification is correct. We will keep the package blocked pending investigation.

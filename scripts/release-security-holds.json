@@ -1,0 +1,9 @@
+{
+  "0.9.0": {
+    "status": "blocked",
+    "reason": "Detecção reproduzida pelo Microsoft Defender: Trojan:Win32/Bearfoos.A!ml no executável extraído do instalador. Investigação pendente; não publicar nem reinstalar.",
+    "installer_sha256": "5562cbc3133010fa7403408916863737d92f48df1950e75765862fa135044559",
+    "payload_sha256": "a98cb06b80530cecb77f052bf17f147b95307cd1c8f8b9ffc145dc326ad33483",
+    "report": "docs/auditoria-seguranca-0.9.0.md"
+  }
+}

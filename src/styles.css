@@ -2688,3 +2688,114 @@ h1 {
     animation: none;
   }
 }
+
+.update-panel h3 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.version-chip {
+  font-size: 10px;
+  color: var(--muted);
+  font-weight: 400;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 3px 8px;
+}
+.update-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.update-actions button,
+.update-panel .integration-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.update-install-button {
+  padding: 9px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  margin-top: 6px;
+}
+.update-release {
+  margin: 14px 0;
+  padding: 12px;
+  border: 1px solid var(--border);
+  background: var(--accent-soft);
+  border-radius: 8px;
+  font-size: 12px;
+}
+.update-notes {
+  white-space: pre-wrap;
+  max-height: 150px;
+  overflow: auto;
+  overflow-wrap: anywhere;
+}
+.update-progress {
+  margin: 14px 0;
+  font-size: 11px;
+  color: var(--muted);
+}
+.update-progress progress {
+  width: 100%;
+  height: 5px;
+  accent-color: var(--accent);
+  display: block;
+  margin-bottom: 7px;
+}
+.settings-error {
+  color: var(--accent);
+}
+.default-apps-button {
+  margin-left: 7px;
+}
+.update-notice {
+  position: fixed;
+  right: 22px;
+  bottom: 42px;
+  width: 300px;
+  z-index: 45;
+  padding: 19px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  font-size: 13px;
+  animation: selection-tools-in 180ms ease both;
+}
+.update-notice p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.update-notice > div {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+.update-notice button {
+  border-radius: 6px;
+  padding: 7px 11px;
+  font-size: 12px;
+}
+.update-lock {
+  z-index: 90;
+}
+.spin {
+  animation: update-spin 1s linear infinite;
+}
+@keyframes update-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .update-notice,
+  .spin {
+    animation: none;
+  }
+}

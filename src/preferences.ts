@@ -15,6 +15,7 @@ export interface Preferences {
   splitRatio: number;
   wrap: boolean;
   automaticTheme: boolean;
+  automaticUpdates: boolean;
 }
 export const DEFAULT_PREFERENCES: Preferences = {
   fontSize: 15,
@@ -22,6 +23,7 @@ export const DEFAULT_PREFERENCES: Preferences = {
   splitRatio: 54,
   wrap: true,
   automaticTheme: false,
+  automaticUpdates: true,
 };
 export function parsePreferences(raw: string | null): Preferences {
   try {
@@ -36,6 +38,7 @@ export function parsePreferences(raw: string | null): Preferences {
       splitRatio: number('splitRatio', 20, 80),
       wrap: typeof value?.wrap === 'boolean' ? value.wrap : true,
       automaticTheme: value?.automaticTheme === true,
+      automaticUpdates: value?.automaticUpdates !== false,
     };
   } catch {
     return { ...DEFAULT_PREFERENCES };

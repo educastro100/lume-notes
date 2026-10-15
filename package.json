@@ -1,6 +1,6 @@
 {
   "name": "lume-notes",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview --host 127.0.0.1",
     "tauri": "tauri",
-    "test": "vitest run",
+    "test": "vitest run && node --test scripts/prepare-release.checks.mjs",
     "format": "prettier --write src package.json tsconfig.json vite.config.ts src-tauri/tauri.conf.json src-tauri/capabilities/default.json *.md .prettierrc.json",
     "format:check": "prettier --check src package.json tsconfig.json vite.config.ts src-tauri/tauri.conf.json src-tauri/capabilities/default.json *.md .prettierrc.json"
   },
@@ -23,6 +23,7 @@
     "@tauri-apps/api": "^2.0.0",
     "@tauri-apps/plugin-clipboard-manager": "^2.5.0",
     "@tauri-apps/plugin-dialog": "^2.0.0",
+    "@tauri-apps/plugin-updater": "^2.14.0",
     "@tiptap/extension-list": "^3.32.0",
     "@tiptap/extension-table": "^3.32.0",
     "@tiptap/extension-underline": "^3.32.0",

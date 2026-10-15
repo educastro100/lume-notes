@@ -9,7 +9,11 @@ describe('appearance and layout preferences', () => {
   });
   it('restores font, wrap and the two pane sizes', () => {
     const value = { fontSize: 20, sidebarWidth: 380, splitRatio: 65, wrap: false };
-    expect(parsePreferences(JSON.stringify(value))).toEqual({ ...value, automaticTheme: false });
+    expect(parsePreferences(JSON.stringify(value))).toEqual({
+      ...value,
+      automaticTheme: false,
+      automaticUpdates: true,
+    });
   });
   it('limits oversized panes and fonts and ignores corrupt settings', () => {
     expect(parsePreferences('{')).toEqual(DEFAULT_PREFERENCES);
@@ -23,6 +27,7 @@ describe('appearance and layout preferences', () => {
       splitRatio: 20,
       wrap: true,
       automaticTheme: false,
+      automaticUpdates: true,
     });
   });
 });

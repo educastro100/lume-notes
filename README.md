@@ -1,24 +1,26 @@
 # Lume Notes
 
-Versão **0.8.0** — um editor local de texto e Markdown, com grupos de abas e um espaço tranquilo para escrever.
+> **0.9.0: distribuição suspensa.** O Defender detectou `Trojan:Win32/Bearfoos.A!ml` no executável do instalador. Não instalar nem publicar esse pacote. Consulte a [auditoria](docs/auditoria-seguranca-0.9.0.md) e o [diagnóstico em ambiente limpo](docs/diagnostico-windows.md).
+
+Versão **0.9.0** — um editor local de texto e Markdown, com grupos de abas e um espaço tranquilo para escrever.
 
 Editor de texto desktop em **Tauri 2 + Rust + React + TypeScript + Tiptap + CodeMirror 6**, criado para Windows x64. A interface usa fontes locais, sem depender de serviços externos.
 
 ## Organização do projeto
 
-O código-fonte fica na raiz. Repositório no GitHub: [educastro100/lume-notes](https://github.com/educastro100/lume-notes). A versão portátil atual está em `releases/0.8.0/Windows/Lume Notes.exe` e o pacote ZIP fica na mesma pasta da versão. `releases/` é ignorada pelo Git; os binários podem ser publicados na seção Releases do GitHub.
+O código-fonte fica na raiz. Repositório no GitHub: [educastro100/lume-notes](https://github.com/educastro100/lume-notes). O pacote local 0.9.0 está bloqueado para investigação. O canal público reservado para futuras versões é [Lume Releases](https://github.com/educastro100/lume-notes-releases/releases/latest). `releases/` é ignorada pelo Git; o canal público contém somente instaladores, assinaturas e metadados de atualização.
 
-A validação da versão está em [docs/validacao-0.8.0.md](docs/validacao-0.8.0.md).
+A distribuição e o processo de atualização estão documentados em [docs/distribuicao.md](docs/distribuicao.md). A validação anterior está em [docs/validacao-0.8.0.md](docs/validacao-0.8.0.md).
 
 ![Lume Notes 0.8.0](docs/images/lume-notes-0.8.0.png)
 
 ## Usar o aplicativo
 
-Extraia o pacote portátil inteiro para uma pasta e abra **Lume Notes.exe**. Mantenha **WebView2Loader.dll** ao lado do executável. O aplicativo usa o Microsoft Edge WebView2 Runtime, normalmente presente no Windows 10/11.
+A instalação da versão 0.9.0 está suspensa. Não execute esse pacote nem as amostras do workflow de diagnóstico. O instalador em desenvolvimento usa instalação por usuário, atalhos e Microsoft Edge WebView2 Runtime; a liberação depende da investigação de segurança.
 
-Esta versão é local e não exige conta. Não há sincronização ou recursos de IA. O executável desta compilação não tem assinatura comercial.
+Esta versão é local e não exige conta. Não há sincronização ou recursos de IA. A verificação de atualizações consulta apenas o canal público do GitHub; notas e nomes de arquivos não são enviados. O executável desta compilação não tem assinatura comercial.
 
-A entrega atual é portátil: não exige instalador e precisa da pasta extraída inteira. Um instalador é uma opção futura de distribuição, com atalhos e desinstalação; o aplicativo não precisa mudar de tecnologia para oferecer os dois formatos. O número completo da versão aparece no rodapé do painel e no título da janela. Feche versões anteriores antes de abrir a atualização, pois elas compartilham os dados locais.
+A distribuição principal agora usa instalador NSIS. As versões portáteis anteriores continuam disponíveis localmente. O número completo da versão aparece no rodapé do painel e no título da janela. Feche versões anteriores antes de abrir a atualização, pois elas compartilham os dados locais.
 
 ## Recursos
 
@@ -157,3 +159,13 @@ Ao selecionar texto, uma barra próxima ao trecho oferece formatação e listas 
 Para usar o **Abrir com Lume**, mantenha o portátil em uma pasta definitiva e clique em **Configurações → Adicionar ao Abrir com**. O registro é por usuário, para .txt, .md, .json, .log e .csv, e não substitui seu aplicativo padrão. A mesma seção permite removê-lo. Ao mover/atualizar o executável, adicione novamente pela versão no novo caminho. A associação aponta para essa pasta, portanto mantenha o executável e a DLL juntos. O Lume abre os arquivos enviados pelo sistema na instância já em uso; as versões antigas devem ser fechadas antes da atualização.
 
 Os ícones Roteiro, Filme e Vídeo se somam aos oito existentes. A memória de ícones usa o caminho do arquivo no armazenamento local; renomeações feitas no Lume atualizam o caminho, enquanto movimentos feitos fora dele passam a ser um novo arquivo para essa memória. Rascunhos mantêm o ícone na sessão.
+
+## Novidades da versão 0.9
+
+Instalador Windows por usuário com menu Iniciar, atalho e desinstalador. O identificador `com.lume.notes` e o armazenamento local são preservados para recuperar a sessão das versões portáteis anteriores.
+
+O instalador registra o Lume no **Abrir com** e em **Aplicativos padrão** para .txt, .md, .json, .log e .csv. Não escreve o aplicativo padrão dessas extensões nem a chave UserChoice. Em Configurações, **Escolher padrões do Windows** abre a página onde o usuário escolhe as associações; **Reparar integração** restaura o registro do Lume instalado.
+
+**Verificar atualizações** consulta o canal público de pacotes. A verificação automática pode ser desativada e ocorre após abrir o app, no máximo uma vez a cada 24 horas após uma consulta bem-sucedida. O download só começa após **Atualizar e reiniciar**. O pacote é validado com assinatura criptográfica vinculada à versão; então o editor é bloqueado, a sessão atual é gravada e o instalador é iniciado. Falhas de download, assinatura ou gravação não fecham o editor para instalar. A versão portátil não tenta se atualizar como uma instalação.
+
+Código-fonte e ferramentas de publicação permanecem no repositório privado. O canal [lume-notes-releases](https://github.com/educastro100/lume-notes-releases) recebe somente os pacotes distribuíveis.

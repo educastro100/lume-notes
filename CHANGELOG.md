@@ -1,3 +1,14 @@
+# Lume Notes 0.9.0 — em investigação, não distribuída
+
+- Publicação bloqueada por detecção reproduzida do Defender; workflow manual de diagnóstico em Windows/MSVC oficial, no repositório privado.
+
+- Instalador NSIS por usuário, em português/inglês, com atalhos, desinstalador e verificação do WebView2.
+- Canal público separado para instaladores; código-fonte privado. Pacotes assinados e validação da versão assinada, com downgrade bloqueado.
+- Atualização pelo aplicativo: consulta automática configurável, verificação manual, novidades, download com progresso e Atualizar e reiniciar.
+- A sessão mais recente é gravada após o download e antes de instalar; falhas na gravação interrompem a atualização.
+- Registro como candidato a aplicativos padrão e Abrir com sem trocar os padrões existentes. Botões para abrir a página de padrões do Windows e reparar o registro instalado.
+- Scripts de build, verificação criptográfica e publicação com lista explícita de arquivos públicos; pacotes publicados não são substituídos.
+
 # Lume Notes 0.8.0
 
 - O + das abas cria notas sem grupo, mesmo com um grupo ativo.

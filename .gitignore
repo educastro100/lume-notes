@@ -9,5 +9,18 @@ session*.json
 notes/
 *.tsbuildinfo
 
-# Pacotes locais; distribuir os binários por Releases.
+# Pacotes locais; distribuir os binÃ¡rios por Releases.
 /releases/
+
+# Chaves de assinatura nunca pertencem ao histórico.
+*.key
+*.key.pub
+*.pfx
+*.p12
+/signing/
+
+# Relatórios locais podem conter caminhos pessoais e detalhes do antivírus.
+/security-reports/
+
+# Artefatos temporários do workflow de diagnóstico.
+/diagnostics/

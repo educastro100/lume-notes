@@ -86,6 +86,7 @@ import { isUiTextField } from './noteNames';
 import { NativeTitlebar } from './components/NativeTitlebar';
 import { SelectionToolbar } from './components/SelectionToolbar';
 import { fileKey, parseFileIcons, rememberIcon } from './fileIcons';
+import { useUpdates, UpdatePreparationError } from './useUpdates';
 import { ThemeIcon } from './components/ThemeIcon';
 import { t, useLanguage } from './i18n';
 import { version as appVersion } from '../package.json';
@@ -321,6 +322,7 @@ export default function App() {
     }
   });
   const [automaticTheme, setAutomaticTheme] = useState(initialPreferences.automaticTheme);
+  const [automaticUpdates, setAutomaticUpdates] = useState(initialPreferences.automaticUpdates);
   const [clockTime, setClockTime] = useState(() => Date.now());
   const theme = automaticTheme ? themeForTime(new Date(clockTime)) : manualTheme;
   useEffect(() => {
@@ -399,10 +401,17 @@ export default function App() {
     try {
       localStorage.setItem(
         'lume.preferences.v1',
-        JSON.stringify({ fontSize, sidebarWidth, splitRatio, wrap, automaticTheme }),
+        JSON.stringify({
+          fontSize,
+          sidebarWidth,
+          splitRatio,
+          wrap,
+          automaticTheme,
+          automaticUpdates,
+        }),
       );
     } catch {}
-  }, [fontSize, sidebarWidth, splitRatio, wrap, automaticTheme]);
+  }, [fontSize, sidebarWidth, splitRatio, wrap, automaticTheme, automaticUpdates]);
   const [stats, setStats] = useState<Stats>({ line: 1, column: 1, selected: 0 });
   const [menu, setMenu] = useState<string | null>(null);
   const [toast, setToast] = useState<{ text: string; error: boolean } | null>(null);
@@ -470,6 +479,32 @@ export default function App() {
     persistQueue.current = next;
     return next;
   }, []);
+  const updates = useUpdates({
+    enabled: ready && native,
+    automatic: automaticUpdates,
+    onInstall: async (install) => {
+      if (operations.current || closing.current)
+        throw new UpdatePreparationError(t('Aguarde a operação terminar antes de atualizar.'));
+      operations.current = true;
+      setBusy(true);
+      try {
+        try {
+          await persist(serialize());
+        } catch {
+          throw new UpdatePreparationError(
+            t(
+              'Atualização cancelada: não foi possível guardar seus rascunhos. Salve seus arquivos e tente novamente.',
+            ),
+          );
+        }
+        await install();
+      } finally {
+        operations.current = false;
+        setBusy(false);
+      }
+    },
+  });
+  const installingUpdate = updates.phase === 'installing';
   useEffect(() => {
     let live = true;
     loadDrafts()
@@ -862,6 +897,7 @@ export default function App() {
   actions.current = { newTab, openFiles, saveActive, closeTab, find, applyFormat };
   useEffect(() => {
     const shortcut = (e: KeyboardEvent) => {
+      if (installingUpdate) return;
       if ((e.target as Element)?.closest?.('[data-title-editor]')) return;
       if (e.key === 'Escape') {
         if (
@@ -951,7 +987,7 @@ export default function App() {
     };
     window.addEventListener('keydown', shortcut, true);
     return () => window.removeEventListener('keydown', shortcut, true);
-  }, [prompt, groupDialog, iconTabId, settingsOpen, menu, visualSearch]);
+  }, [prompt, groupDialog, iconTabId, settingsOpen, menu, visualSearch, installingUpdate]);
   useEffect(() => {
     if (!ready) return;
     const beforeUnload = (e: BeforeUnloadEvent) => {
@@ -1037,7 +1073,15 @@ export default function App() {
         <aside
           className={`sidebar ${sidebar && !focusMode ? '' : 'collapsed'}`}
           style={{ width: sidebar && !focusMode ? visibleSidebarWidth : 0 }}
-          inert={!sidebar || focusMode || settingsOpen || !!prompt || !!groupDialog || !!iconTabId}
+          inert={
+            !sidebar ||
+            focusMode ||
+            settingsOpen ||
+            !!prompt ||
+            !!groupDialog ||
+            !!iconTabId ||
+            installingUpdate
+          }
         >
           <div className="brand">
             <div className="brand-mark">
@@ -1126,7 +1170,10 @@ export default function App() {
             onResizing={setResizing}
           />
         )}
-        <main className="main" inert={settingsOpen || !!prompt || !!groupDialog || !!iconTabId}>
+        <main
+          className="main"
+          inert={settingsOpen || !!prompt || !!groupDialog || !!iconTabId || installingUpdate}
+        >
           <div
             className="workspace-chrome"
             inert={focusMode}
@@ -1705,8 +1752,48 @@ export default function App() {
           onLanguage={setLocale}
           automaticTheme={automaticTheme}
           onAutomaticTheme={setAutomaticTheme}
-          onClose={() => setSettingsOpen(false)}
+          updates={updates}
+          automaticUpdates={automaticUpdates}
+          onAutomaticUpdates={setAutomaticUpdates}
+          onClose={() => {
+            if (!installingUpdate) setSettingsOpen(false);
+          }}
         />
+        {installingUpdate && !settingsOpen && (
+          <div className="modal-backdrop update-lock" role="alert">
+            <div className="modal">
+              <h2>{t('Atualizando o Lume')}</h2>
+              <p>{t('Guardando seus rascunhos e reiniciando para atualizar…')}</p>
+            </div>
+          </div>
+        )}
+        {native &&
+          (updates.phase === 'available' || (updates.phase === 'error' && !!updates.version)) &&
+          !updates.dismissed &&
+          !settingsOpen &&
+          !focusMode &&
+          !prompt &&
+          !iconTabId &&
+          !groupDialog && (
+            <aside className="update-notice" aria-live="polite">
+              <strong>
+                {updates.phase === 'error'
+                  ? t('Atualização não concluída')
+                  : t('Lume {version} disponível', { version: updates.version })}
+              </strong>
+              <p>
+                {updates.phase === 'error'
+                  ? updates.error
+                  : t('Uma nova versão está pronta para você.')}
+              </p>
+              <div>
+                <button className="primary" onClick={() => setSettingsOpen(true)}>
+                  {t('Ver atualização')}
+                </button>
+                <button onClick={updates.dismiss}>{t('Depois')}</button>
+              </div>
+            </aside>
+          )}
         <SelectionToolbar
           key={activeId}
           visual={isVisual ? visualViews.current.get(activeId) : undefined}

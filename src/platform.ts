@@ -158,3 +158,7 @@ export const takePendingFiles = () => invoke<string[]>('take_pending_files');
 export const subscribeOpenRequests = (callback: () => void) => listen('lume-open-files', callback);
 export const openWithStatus = () => invoke<boolean>('open_with_status');
 export const setOpenWith = (enabled: boolean) => invoke<boolean>('set_open_with', { enabled });
+
+export const isInstalled = () => invoke<boolean>('is_installed');
+export const openDefaultApps = () => invoke<void>('open_default_apps');
+export const openReleaseDownloads = () => invoke<void>('open_release_downloads');

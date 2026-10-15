@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { Languages, X } from 'lucide-react';
-import { native, openWithStatus, setOpenWith } from '../platform';
+import { native, openWithStatus, setOpenWith, openDefaultApps } from '../platform';
 import { LANGUAGES, t, type Locale } from '../i18n';
+import { UpdatePanel } from './UpdatePanel';
+import type { UpdateController } from '../useUpdates';
 
 export function SettingsDialog({
   open,
@@ -10,7 +12,13 @@ export function SettingsDialog({
   onClose,
   automaticTheme,
   onAutomaticTheme,
+  updates,
+  automaticUpdates = true,
+  onAutomaticUpdates = () => {},
 }: {
+  updates?: UpdateController;
+  automaticUpdates?: boolean;
+  onAutomaticUpdates?: (value: boolean) => void;
   open: boolean;
   automaticTheme: boolean;
   onAutomaticTheme: (value: boolean) => void;
@@ -38,6 +46,7 @@ export function SettingsDialog({
       live = false;
     };
   }, [open]);
+  const locked = updates?.phase === 'installing';
   const select = useRef<HTMLSelectElement>(null);
   const previous = useRef<HTMLElement | null>(null);
   const [present, setPresent] = useState(open);
@@ -66,13 +75,15 @@ export function SettingsDialog({
       inert={!open}
       aria-hidden={!open}
       onKeyDown={(event) => {
-        if (event.key === 'Escape') {
+        if (event.key === 'Escape' && !locked) {
           event.stopPropagation();
           onClose();
         }
         if (event.key !== 'Tab') return;
         const controls = Array.from(
-          event.currentTarget.querySelectorAll<HTMLElement>('button,select,input'),
+          event.currentTarget.querySelectorAll<HTMLElement>(
+            'button:not(:disabled),select:not(:disabled),input:not(:disabled)',
+          ),
         );
         if (event.shiftKey && document.activeElement === controls[0]) {
           event.preventDefault();
@@ -93,7 +104,12 @@ export function SettingsDialog({
           <div className="modal-icon">
             <Languages size={24} />
           </div>
-          <button className="icon-button" aria-label={t('Fechar configurações')} onClick={onClose}>
+          <button
+            className="icon-button"
+            aria-label={t('Fechar configurações')}
+            disabled={locked}
+            onClick={onClose}
+          >
             <X size={18} />
           </button>
         </div>
@@ -103,6 +119,7 @@ export function SettingsDialog({
         <select
           ref={select}
           id="interface-language"
+          disabled={locked}
           value={locale}
           onChange={(event) => onLanguage(event.target.value as Locale)}
         >
@@ -121,6 +138,7 @@ export function SettingsDialog({
             <input
               type="checkbox"
               role="switch"
+              disabled={locked}
               checked={automaticTheme}
               onChange={(event) => onAutomaticTheme(event.target.checked)}
             />
@@ -138,11 +156,11 @@ export function SettingsDialog({
             </p>
             <button
               className="integration-button"
-              disabled={integrating || registered === null}
+              disabled={locked || integrating || registered === null}
               onClick={() => {
                 setIntegrating(true);
                 setIntegrationError('');
-                void setOpenWith(!registered)
+                void setOpenWith(updates?.installed ? true : !registered)
                   .then(setRegistered)
                   .catch((error) => setIntegrationError(String(error).replace(/^Error: /, '')))
                   .finally(() => setIntegrating(false));
@@ -152,15 +170,47 @@ export function SettingsDialog({
                 integrating
                   ? 'Atualizando…'
                   : registered
-                    ? 'Remover do Abrir com'
+                    ? updates?.installed
+                      ? 'Reparar integração'
+                      : 'Remover do Abrir com'
                     : 'Adicionar ao Abrir com',
               )}
             </button>
+            <button
+              className="integration-button default-apps-button"
+              disabled={locked || integrating}
+              onClick={() => {
+                setIntegrating(true);
+                setIntegrationError('');
+                void openDefaultApps()
+                  .then(() => setRegistered(true))
+                  .catch(() =>
+                    setIntegrationError(
+                      t('Não foi possível abrir os aplicativos padrão do Windows.'),
+                    ),
+                  )
+                  .finally(() => setIntegrating(false));
+              }}
+            >
+              {t('Escolher padrões do Windows')}
+            </button>
+            <p>
+              {t(
+                'Escolha no Windows quais extensões devem abrir no Lume. Suas escolhas atuais são mantidas até você alterá-las.',
+              )}
+            </p>
             {integrationError && <p role="alert">{integrationError}</p>}
           </div>
         )}
+        {native && updates && (
+          <UpdatePanel
+            updates={updates}
+            automatic={automaticUpdates}
+            onAutomatic={onAutomaticUpdates}
+          />
+        )}
         <div className="modal-actions">
-          <button className="primary" onClick={onClose}>
+          <button className="primary" disabled={locked} onClick={onClose}>
             {t('Concluído')}
           </button>
         </div>

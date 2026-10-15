@@ -1329,5 +1329,190 @@
     "Der Inhalt konnte nicht kopiert werden.",
     "Δεν ήταν δυνατή η αντιγραφή του περιεχομένου.",
     "无法复制内容。"
+  ],
+  "Atualizações": ["Updates", "Mises à jour", "Updates", "Ενημερώσεις", "更新"],
+  "Verificar automaticamente": [
+    "Check automatically",
+    "Vérifier automatiquement",
+    "Automatisch prüfen",
+    "Αυτόματος έλεγχος",
+    "自动检查"
+  ],
+  "O Lume avisa quando há uma versão nova. Você escolhe quando instalar.": [
+    "Lume notifies you when a new version is available. You choose when to install.",
+    "Lume vous avertit des nouvelles versions. Vous choisissez quand les installer.",
+    "Lume meldet neue Versionen. Sie entscheiden, wann sie installiert werden.",
+    "Το Lume ειδοποιεί για νέες εκδόσεις. Εσείς επιλέγετε πότε θα εγκατασταθούν.",
+    "Lume 会提示新版本，由您选择安装时间。"
+  ],
+  "Instale o Lume para receber atualizações pelo aplicativo. Seus rascunhos serão recuperados.": [
+    "Install Lume to receive in-app updates. Your drafts will be restored.",
+    "Installez Lume pour recevoir les mises à jour intégrées. Vos brouillons seront récupérés.",
+    "Installieren Sie Lume für Updates in der App. Ihre Entwürfe werden wiederhergestellt.",
+    "Εγκαταστήστε το Lume για ενημερώσεις μέσα από την εφαρμογή. Τα πρόχειρά σας θα ανακτηθούν.",
+    "安装 Lume 即可在应用内更新。您的草稿将被恢复。"
+  ],
+  "Ver instaladores": [
+    "View installers",
+    "Voir les programmes d’installation",
+    "Installationsprogramme anzeigen",
+    "Προβολή προγραμμάτων εγκατάστασης",
+    "查看安装程序"
+  ],
+  "Lume {version} disponível": [
+    "Lume {version} available",
+    "Lume {version} disponible",
+    "Lume {version} verfügbar",
+    "Διαθέσιμο το Lume {version}",
+    "Lume {version} 已可用"
+  ],
+  "Progresso da atualização": [
+    "Update progress",
+    "Progression de la mise à jour",
+    "Update-Fortschritt",
+    "Πρόοδος ενημέρωσης",
+    "更新进度"
+  ],
+  "Baixando atualização…": [
+    "Downloading update…",
+    "Téléchargement de la mise à jour…",
+    "Update wird heruntergeladen…",
+    "Λήψη ενημέρωσης…",
+    "正在下载更新…"
+  ],
+  "Baixando atualização… {progress}%": [
+    "Downloading update… {progress}%",
+    "Téléchargement… {progress}%",
+    "Update wird heruntergeladen… {progress}%",
+    "Λήψη ενημέρωσης… {progress}%",
+    "正在下载更新… {progress}%"
+  ],
+  "Guardando seus rascunhos e reiniciando para atualizar…": [
+    "Saving your drafts and restarting to update…",
+    "Enregistrement des brouillons et redémarrage pour la mise à jour…",
+    "Entwürfe werden gespeichert und das Update wird gestartet…",
+    "Αποθήκευση πρόχειρων και επανεκκίνηση για ενημέρωση…",
+    "正在保存草稿并重新启动以更新…"
+  ],
+  "Você está usando a versão mais recente.": [
+    "You are using the latest version.",
+    "Vous utilisez la dernière version.",
+    "Sie verwenden die neueste Version.",
+    "Χρησιμοποιείτε την πιο πρόσφατη έκδοση.",
+    "您正在使用最新版本。"
+  ],
+  "Verificando…": ["Checking…", "Vérification…", "Wird geprüft…", "Έλεγχος…", "正在检查…"],
+  "Verificar atualizações": [
+    "Check for updates",
+    "Vérifier les mises à jour",
+    "Nach Updates suchen",
+    "Έλεγχος ενημερώσεων",
+    "检查更新"
+  ],
+  "Atualizar e reiniciar": [
+    "Update and restart",
+    "Mettre à jour et redémarrer",
+    "Aktualisieren und neu starten",
+    "Ενημέρωση και επανεκκίνηση",
+    "更新并重启"
+  ],
+  "Reparar integração": [
+    "Repair integration",
+    "Réparer l’intégration",
+    "Integration reparieren",
+    "Επιδιόρθωση ενσωμάτωσης",
+    "修复集成"
+  ],
+  "Escolher padrões do Windows": [
+    "Choose Windows defaults",
+    "Choisir les applications par défaut Windows",
+    "Windows-Standard-Apps wählen",
+    "Επιλογή προεπιλογών Windows",
+    "选择 Windows 默认应用"
+  ],
+  "Escolha no Windows quais extensões devem abrir no Lume. Suas escolhas atuais são mantidas até você alterá-las.": [
+    "Choose in Windows which file extensions should open in Lume. Your current choices stay until you change them.",
+    "Choisissez dans Windows les extensions à ouvrir avec Lume. Vos choix actuels sont conservés tant que vous ne les modifiez pas.",
+    "Wählen Sie in Windows, welche Dateiendungen mit Lume geöffnet werden. Ihre bisherigen Einstellungen bleiben bis zu einer Änderung erhalten.",
+    "Επιλέξτε στα Windows ποιες επεκτάσεις ανοίγουν με το Lume. Οι υπάρχουσες επιλογές παραμένουν μέχρι να τις αλλάξετε.",
+    "在 Windows 中选择由 Lume 打开的文件扩展名。您更改之前将保留当前选择。"
+  ],
+  "Não foi possível abrir os aplicativos padrão do Windows.": [
+    "Could not open Windows default apps.",
+    "Impossible d’ouvrir les applications par défaut Windows.",
+    "Die Windows-Standard-Apps konnten nicht geöffnet werden.",
+    "Δεν ήταν δυνατό το άνοιγμα των προεπιλεγμένων εφαρμογών των Windows.",
+    "无法打开 Windows 默认应用。"
+  ],
+  "Não foi possível verificar a instalação do Lume.": [
+    "Could not check the Lume installation.",
+    "Impossible de vérifier l’installation de Lume.",
+    "Die Lume-Installation konnte nicht geprüft werden.",
+    "Δεν ήταν δυνατός ο έλεγχος εγκατάστασης του Lume.",
+    "无法检查 Lume 安装。"
+  ],
+  "Não foi possível verificar atualizações. Confira sua conexão e tente novamente.": [
+    "Could not check for updates. Check your connection and try again.",
+    "Impossible de vérifier les mises à jour. Vérifiez votre connexion et réessayez.",
+    "Updates konnten nicht geprüft werden. Prüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
+    "Δεν ήταν δυνατός ο έλεγχος ενημερώσεων. Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά.",
+    "无法检查更新。请检查网络连接后重试。"
+  ],
+  "Não foi possível baixar ou validar a atualização. Tente novamente.": [
+    "Could not download or verify the update. Try again.",
+    "Impossible de télécharger ou de vérifier la mise à jour. Réessayez.",
+    "Das Update konnte nicht heruntergeladen oder geprüft werden. Versuchen Sie es erneut.",
+    "Δεν ήταν δυνατή η λήψη ή επαλήθευση της ενημέρωσης. Δοκιμάστε ξανά.",
+    "无法下载或验证更新。请重试。"
+  ],
+  "Não foi possível instalar a atualização. Tente novamente.": [
+    "Could not install the update. Try again.",
+    "Impossible d’installer la mise à jour. Réessayez.",
+    "Das Update konnte nicht installiert werden. Versuchen Sie es erneut.",
+    "Δεν ήταν δυνατή η εγκατάσταση της ενημέρωσης. Δοκιμάστε ξανά.",
+    "无法安装更新。请重试。"
+  ],
+  "Aguarde a operação terminar antes de atualizar.": [
+    "Wait for the operation to finish before updating.",
+    "Attendez la fin de l’opération avant la mise à jour.",
+    "Warten Sie vor dem Update, bis der Vorgang abgeschlossen ist.",
+    "Περιμένετε να ολοκληρωθεί η λειτουργία πριν από την ενημέρωση.",
+    "请等待当前操作完成后再更新。"
+  ],
+  "Atualização cancelada: não foi possível guardar seus rascunhos. Salve seus arquivos e tente novamente.": [
+    "Update canceled: your drafts could not be saved. Save your files and try again.",
+    "Mise à jour annulée : vos brouillons n’ont pas pu être enregistrés. Enregistrez vos fichiers et réessayez.",
+    "Update abgebrochen: Ihre Entwürfe konnten nicht gespeichert werden. Speichern Sie Ihre Dateien und versuchen Sie es erneut.",
+    "Η ενημέρωση ακυρώθηκε: δεν αποθηκεύτηκαν τα πρόχειρα. Αποθηκεύστε τα αρχεία σας και δοκιμάστε ξανά.",
+    "更新已取消：无法保存草稿。请保存文件后重试。"
+  ],
+  "Atualizando o Lume": [
+    "Updating Lume",
+    "Mise à jour de Lume",
+    "Lume wird aktualisiert",
+    "Ενημέρωση του Lume",
+    "正在更新 Lume"
+  ],
+  "Uma nova versão está pronta para você.": [
+    "A new version is ready for you.",
+    "Une nouvelle version vous attend.",
+    "Eine neue Version ist verfügbar.",
+    "Μια νέα έκδοση είναι έτοιμη για εσάς.",
+    "新版本已准备就绪。"
+  ],
+  "Ver atualização": [
+    "View update",
+    "Voir la mise à jour",
+    "Update ansehen",
+    "Προβολή ενημέρωσης",
+    "查看更新"
+  ],
+  "Depois": ["Later", "Plus tard", "Später", "Αργότερα", "稍后"],
+  "Atualização não concluída": [
+    "Update not completed",
+    "Mise à jour incomplète",
+    "Update nicht abgeschlossen",
+    "Η ενημέρωση δεν ολοκληρώθηκε",
+    "更新未完成"
   ]
 }
