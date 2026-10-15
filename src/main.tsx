@@ -1,10 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import { parseTheme } from './preferences';
+import { parseTheme, parsePreferences, themeForTime } from './preferences';
 import './styles.css';
+import { native } from './platform';
+document.documentElement.dataset.native = String(native);
 try {
-  document.documentElement.dataset.theme = parseTheme(localStorage.getItem('lume.theme'));
+  document.documentElement.dataset.theme = parsePreferences(
+    localStorage.getItem('lume.preferences.v1'),
+  ).automaticTheme
+    ? themeForTime()
+    : parseTheme(localStorage.getItem('lume.theme'));
 } catch {
   document.documentElement.dataset.theme = 'light';
 }

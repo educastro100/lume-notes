@@ -7,6 +7,9 @@ import {
   ListTodo,
   Heart,
   Music2,
+  ScrollText,
+  Film,
+  Video,
 } from 'lucide-react';
 import { type DocumentIcon } from '../documents';
 
@@ -19,6 +22,9 @@ const symbols = {
   tasks: ListTodo,
   personal: Heart,
   music: Music2,
+  script: ScrollText,
+  film: Film,
+  video: Video,
 };
 export function DocumentSymbol({ icon, size = 16 }: { icon: DocumentIcon; size?: number }) {
   const Symbol = symbols[icon];

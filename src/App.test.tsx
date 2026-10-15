@@ -3,11 +3,19 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { beforeEach, afterEach, expect, it, vi } from 'vitest';
 import { newDocument } from './documents';
-import { loadDrafts, storeDrafts, saveDocument, openDocuments, renameDocument } from './platform';
+import {
+  loadDrafts,
+  storeDrafts,
+  saveDocument,
+  openDocuments,
+  renameDocument,
+  copyContent,
+} from './platform';
 import { setLanguage } from './i18n';
 import App from './App';
 vi.mock('./platform', () => ({
   native: false,
+  copyContent: vi.fn().mockResolvedValue(undefined),
   loadDrafts: vi.fn(),
   storeDrafts: vi.fn().mockResolvedValue(undefined),
   openDocuments: vi.fn().mockResolvedValue([]),
@@ -229,4 +237,58 @@ it('keeps the old title and content when renaming fails', async () => {
     await new Promise((resolve) => setTimeout(resolve, 550));
   });
   expect(JSON.parse(vi.mocked(storeDrafts).mock.calls.at(-1)![0]).tabs[0]).toEqual(tab);
+});
+
+it('creates tab-strip notes outside the active group and closes empty drafts without a prompt', async () => {
+  const tab = { ...newDocument('Grouped.md', 'text'), groupId: 'g' };
+  vi.mocked(loadDrafts).mockResolvedValue(
+    JSON.stringify({
+      version: 2,
+      tabs: [tab],
+      activeId: tab.id,
+      groups: [{ id: 'g', name: 'Group', color: 'mint', collapsed: false }],
+    }),
+  );
+  await act(async () => root.render(<App />));
+  await act(async () => host.querySelector<HTMLButtonElement>('.tabbar .add-tab')!.click());
+  await act(async () => {
+    await new Promise((resolve) => setTimeout(resolve, 550));
+  });
+  const saved = JSON.parse(vi.mocked(storeDrafts).mock.calls.at(-1)![0]);
+  expect(saved.tabs.find((item: any) => item.id === saved.activeId).groupId).toBeNull();
+  await click('Fechar documento atual');
+  expect(host.querySelector('[role="dialog"]')).toBeNull();
+  expect(host.querySelectorAll('[role="tab"]')).toHaveLength(1);
+});
+it('still confirms an emptied saved file and copies the current complete source', async () => {
+  const tab = {
+    ...newDocument('Saved.md', ''),
+    path: 'C:/notes/saved.md',
+    savedContent: 'previous',
+    digest: 'hash',
+  };
+  vi.mocked(loadDrafts).mockResolvedValue(
+    JSON.stringify({ version: 2, tabs: [tab], activeId: tab.id, groups: [] }),
+  );
+  await act(async () => root.render(<App />));
+  await click('Copiar todo o conteúdo');
+  expect(copyContent).toHaveBeenCalledWith('');
+  await click('Fechar documento atual');
+  expect(host.querySelector('[role="dialog"]')).not.toBeNull();
+});
+it('reuses the remembered file icon after the tab has been closed', async () => {
+  localStorage.setItem('lume.file-icons.v1', JSON.stringify({ 'c:/notes/movie.md': 'film' }));
+  vi.mocked(loadDrafts).mockResolvedValue(
+    JSON.stringify({ version: 2, tabs: [], activeId: '', groups: [] }),
+  );
+  vi.mocked(openDocuments).mockResolvedValue([
+    { ...newDocument('movie.md', 'text'), path: 'C:/Notes/Movie.md', digest: 'hash' },
+  ]);
+  await act(async () => root.render(<App />));
+  await click('Abrir arquivo');
+  await act(async () => {
+    await new Promise((resolve) => setTimeout(resolve, 550));
+  });
+  const saved = JSON.parse(vi.mocked(storeDrafts).mock.calls.at(-1)![0]);
+  expect(saved.tabs[0].icon).toBe('film');
 });

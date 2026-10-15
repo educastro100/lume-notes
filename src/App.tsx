@@ -1,6 +1,7 @@
 import {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -46,6 +47,7 @@ import {
   Settings,
   Scan,
   Minimize2,
+  Copy,
   Eye,
   CodeXml,
 } from 'lucide-react';
@@ -65,6 +67,10 @@ import {
   renameDocument,
   loadDrafts,
   storeDrafts,
+  copyContent,
+  readDocumentsFromPaths,
+  takePendingFiles,
+  subscribeOpenRequests,
 } from './platform';
 import { formatEdit, type FormatAction } from './formatting';
 import { GroupDialog } from './components/GroupDialog';
@@ -77,6 +83,9 @@ import { DOCUMENT_ICONS, type DocumentIcon } from './documents';
 import { SettingsDialog } from './components/SettingsDialog';
 import { NoteTitle } from './components/NoteTitle';
 import { isUiTextField } from './noteNames';
+import { NativeTitlebar } from './components/NativeTitlebar';
+import { SelectionToolbar } from './components/SelectionToolbar';
+import { fileKey, parseFileIcons, rememberIcon } from './fileIcons';
 import { ThemeIcon } from './components/ThemeIcon';
 import { t, useLanguage } from './i18n';
 import { version as appVersion } from '../package.json';
@@ -90,6 +99,7 @@ import { FontSizeControl } from './components/FontSizeControl';
 import {
   parsePreferences,
   parseTheme,
+  themeForTime,
   THEME_NAMES,
   FONT_MIN,
   FONT_MAX,
@@ -303,13 +313,60 @@ export default function App() {
       return parsePreferences(null);
     }
   });
-  const [theme, setTheme] = useState<Theme>(() => {
+  const [manualTheme, setManualTheme] = useState<Theme>(() => {
     try {
       return parseTheme(localStorage.getItem('lume.theme'));
     } catch {
       return 'light';
     }
   });
+  const [automaticTheme, setAutomaticTheme] = useState(initialPreferences.automaticTheme);
+  const [clockTime, setClockTime] = useState(() => Date.now());
+  const theme = automaticTheme ? themeForTime(new Date(clockTime)) : manualTheme;
+  useEffect(() => {
+    if (!automaticTheme) return;
+    const update = () => setClockTime(Date.now());
+    update();
+    const timer = setInterval(update, 60_000);
+    window.addEventListener('focus', update);
+    document.addEventListener('visibilitychange', update);
+    return () => {
+      clearInterval(timer);
+      window.removeEventListener('focus', update);
+      document.removeEventListener('visibilitychange', update);
+    };
+  }, [automaticTheme]);
+  const [fileIcons, setFileIcons] = useState(() => {
+    try {
+      return parseFileIcons(localStorage.getItem('lume.file-icons.v1'));
+    } catch {
+      return {};
+    }
+  });
+  const iconMemory = useRef(fileIcons);
+  iconMemory.current = fileIcons;
+  const recordIcon = (path: string, icon: DocumentIcon, oldPath?: string | null) => {
+    const next = rememberIcon(iconMemory.current, path, icon, oldPath);
+    iconMemory.current = next;
+    setFileIcons(next);
+  };
+  useEffect(() => {
+    try {
+      localStorage.setItem('lume.file-icons.v1', JSON.stringify(fileIcons));
+    } catch {}
+  }, [fileIcons]);
+  const [externalPaths, setExternalPaths] = useState<string[]>([]);
+  const chromeContent = useRef<HTMLDivElement>(null);
+  const [chromeHeight, setChromeHeight] = useState(360);
+  useLayoutEffect(() => {
+    const element = chromeContent.current;
+    if (!element) return;
+    const update = () => setChromeHeight(element.scrollHeight);
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
   const [sidebar, setSidebar] = useState(true);
   const [wrap, setWrap] = useState(initialPreferences.wrap);
   const [fontSize, setFontSize] = useState(initialPreferences.fontSize);
@@ -342,10 +399,10 @@ export default function App() {
     try {
       localStorage.setItem(
         'lume.preferences.v1',
-        JSON.stringify({ fontSize, sidebarWidth, splitRatio, wrap }),
+        JSON.stringify({ fontSize, sidebarWidth, splitRatio, wrap, automaticTheme }),
       );
     } catch {}
-  }, [fontSize, sidebarWidth, splitRatio, wrap]);
+  }, [fontSize, sidebarWidth, splitRatio, wrap, automaticTheme]);
   const [stats, setStats] = useState<Stats>({ line: 1, column: 1, selected: 0 });
   const [menu, setMenu] = useState<string | null>(null);
   const [toast, setToast] = useState<{ text: string; error: boolean } | null>(null);
@@ -421,6 +478,7 @@ export default function App() {
         const restored = restoreSession(raw);
         if (restored) {
           setTabs(restored.tabs);
+          for (const tab of restored.tabs) if (tab.path) recordIcon(tab.path, tab.icon);
           setActiveId(restored.activeId);
           setGroups(restored.groups);
           setSelectedIds(restored.activeId ? [restored.activeId] : []);
@@ -449,9 +507,9 @@ export default function App() {
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
     try {
-      localStorage.setItem('lume.theme', theme);
+      localStorage.setItem('lume.theme', manualTheme);
     } catch {}
-  }, [theme]);
+  }, [theme, manualTheme]);
   useEffect(() => {
     document.documentElement.lang = locale;
   }, [locale]);
@@ -505,7 +563,7 @@ export default function App() {
 
   const editTab = (id: string, value: string) =>
     setTabs((current) => current.map((t) => (t.id === id ? { ...t, content: value } : t)));
-  const newTab = () => {
+  const newTab = (placement: 'current' | 'ungrouped' = 'current') => {
     const names = new Set(state.current.tabs.map((tab) => tab.name));
     const untitled = t('Sem título');
     let name = untitled;
@@ -513,7 +571,10 @@ export default function App() {
     while (names.has(name) || names.has(name + '.md') || names.has(name + '.txt'))
       name = `${untitled} ${number++}`;
     const tab = newDocument(name + '.md');
-    tab.groupId = state.current.tabs.find((t) => t.id === state.current.activeId)?.groupId || null;
+    tab.groupId =
+      placement === 'ungrouped'
+        ? null
+        : state.current.tabs.find((t) => t.id === state.current.activeId)?.groupId || null;
     setTabs((current) => [...current, tab]);
     setActiveId(tab.id);
     setSelectedIds([tab.id]);
@@ -533,6 +594,8 @@ export default function App() {
   };
   const chooseIcon = (icon: DocumentIcon) => {
     setTabs((current) => current.map((tab) => (tab.id === iconTabId ? { ...tab, icon } : tab)));
+    const tab = state.current.tabs.find((tab) => tab.id === iconTabId);
+    if (tab?.path) recordIcon(tab.path, icon);
     setIconTabId(null);
   };
   const toggleGroup = (id: string) =>
@@ -573,36 +636,70 @@ export default function App() {
       setBusy(false);
     }
   };
-  const openFiles = () =>
-    run(async () => {
-      const incoming = await openDocuments();
-      if (!incoming.length) return;
-      const current = state.current.tabs;
-      const additions: DocumentTab[] = [];
-      let nextId = '';
-      for (const tab of incoming) {
-        const duplicate = [...current, ...additions].find(
-          (t) => t.path && tab.path && t.path.toLocaleLowerCase() === tab.path.toLocaleLowerCase(),
-        );
-        if (duplicate) {
-          nextId = duplicate.id;
-        } else {
-          additions.push(tab);
-          nextId = tab.id;
-        }
+  const acceptIncoming = (incoming: DocumentTab[]) => {
+    if (!incoming.length) return;
+    const current = state.current.tabs;
+    const additions: DocumentTab[] = [];
+    let nextId = '';
+    for (const tab of incoming) {
+      const duplicate = [...current, ...additions].find(
+        (item) => item.path && tab.path && fileKey(item.path) === fileKey(tab.path),
+      );
+      if (duplicate) nextId = duplicate.id;
+      else {
+        const icon = tab.path ? iconMemory.current[fileKey(tab.path)] || tab.icon : tab.icon;
+        additions.push({ ...tab, icon });
+        nextId = tab.id;
       }
-      setTabs((existing) => [...existing, ...additions]);
-      setActiveId(nextId);
-      setSelectedIds([nextId]);
-      selectionAnchor.current = nextId;
-      const activeGroup = [...current, ...additions].find((tab) => tab.id === nextId)?.groupId;
-      if (activeGroup)
-        setGroups((groups) =>
-          groups.map((group) =>
-            group.id === activeGroup ? { ...group, collapsed: false } : group,
-          ),
-        );
-    });
+    }
+    setTabs((existing) => [...existing, ...additions]);
+    setActiveId(nextId);
+    setSelectedIds([nextId]);
+    selectionAnchor.current = nextId;
+    const activeGroup = [...current, ...additions].find((tab) => tab.id === nextId)?.groupId;
+    if (activeGroup)
+      setGroups((groups) =>
+        groups.map((group) => (group.id === activeGroup ? { ...group, collapsed: false } : group)),
+      );
+  };
+  const openFiles = () => run(async () => acceptIncoming(await openDocuments()));
+  useEffect(() => {
+    if (!native || !ready) return;
+    let live = true,
+      stop: (() => void) | undefined;
+    const drain = async () => {
+      try {
+        const paths = await takePendingFiles();
+        if (live && paths.length) setExternalPaths((existing) => [...existing, ...paths]);
+      } catch (error) {
+        if (live) notify(String(error), true);
+      }
+    };
+    void subscribeOpenRequests(() => {
+      void drain();
+    })
+      .then((unlisten) => {
+        if (!live) {
+          unlisten();
+          return;
+        }
+        stop = unlisten;
+        void drain();
+      })
+      .catch((error) => {
+        if (live) notify(String(error), true);
+      });
+    return () => {
+      live = false;
+      stop?.();
+    };
+  }, [ready, notify]);
+  useEffect(() => {
+    if (!ready || busy || !externalPaths.length || operations.current) return;
+    const paths = externalPaths;
+    setExternalPaths([]);
+    void run(async () => acceptIncoming(await readDocumentsFromPaths(paths)));
+  }, [externalPaths, ready, busy]);
   const saveTab = async (id: string, as = false): Promise<boolean> => {
     const tab = state.current.tabs.find((t) => t.id === id);
     if (!tab) return false;
@@ -627,6 +724,7 @@ export default function App() {
       } else throw e;
     }
     if (!result) return false;
+    if (result.path) recordIcon(result.path, tab.icon);
     setTabs((current) =>
       current.map((t) => (t.id === id ? { ...t, ...result, savedContent: tab.content } : t)),
     );
@@ -646,6 +744,7 @@ export default function App() {
     setBusy(true);
     try {
       const result = await renameDocument(tab, name);
+      if (result.path) recordIcon(result.path, tab.icon, tab.path);
       setTabs((current) => current.map((tab) => (tab.id === id ? { ...tab, ...result } : tab)));
       notify(t('Título atualizado.'));
       return true;
@@ -665,7 +764,7 @@ export default function App() {
     run(async () => {
       const tab = state.current.tabs.find((t) => t.id === id);
       if (!tab) return;
-      if (isDirty(tab) || !tab.path) {
+      if ((isDirty(tab) || !tab.path) && !(!tab.path && tab.content.length === 0)) {
         const choice = await ask(
           t('Salvar antes de fechar?'),
           !tab.path
@@ -765,6 +864,16 @@ export default function App() {
     const shortcut = (e: KeyboardEvent) => {
       if ((e.target as Element)?.closest?.('[data-title-editor]')) return;
       if (e.key === 'Escape') {
+        if (
+          !prompt &&
+          !groupDialog &&
+          !iconTabId &&
+          !settingsOpen &&
+          document.querySelector('.selection-toolbar')
+        ) {
+          window.dispatchEvent(new Event('lume-dismiss-formatting'));
+          return;
+        }
         if (prompt) {
           prompt.resolve('cancel');
           setPrompt(null);
@@ -909,732 +1018,782 @@ export default function App() {
           ? 'JavaScript / TypeScript'
           : t('Texto simples');
   const fileMenu = [
-    [t('Novo arquivo'), 'Ctrl N', newTab],
+    [t('Novo arquivo'), 'Ctrl N', () => newTab()],
     [t('Abrir arquivo…'), 'Ctrl O', () => void openFiles()],
     [t('Salvar'), 'Ctrl S', () => void saveActive()],
     [t('Salvar como…'), 'Ctrl Shift S', () => void saveActive(true)],
     [t('Fechar aba'), 'Ctrl W', () => void closeTab(activeId)],
   ] as const;
   return (
-    <div
-      className={`app-shell ${resizing ? 'is-resizing' : ''} ${focusMode ? 'focus-mode' : ''} ${focusMotion ? `focus-${focusMotion}` : ''} ${!active && ready ? 'is-empty' : ''}`}
-      lang={locale}
-      style={{ '--split-basis': `${visibleSplitRatio}%` } as CSSProperties}
-    >
-      <aside
-        className={`sidebar ${sidebar && !focusMode ? '' : 'collapsed'}`}
-        style={{ width: sidebar && !focusMode ? visibleSidebarWidth : 0 }}
-        inert={!sidebar || focusMode || settingsOpen || !!prompt || !!groupDialog || !!iconTabId}
+    <>
+      <NativeTitlebar
+        title={`${active && isDirty(active) ? '● ' : ''}${active?.name || 'Lume Notes'} — Lume Notes ${appVersion}`}
+      />
+      <div
+        className={`app-shell ${resizing ? 'is-resizing' : ''} ${focusMode ? 'focus-mode' : ''} ${focusMotion ? `focus-${focusMotion}` : ''} ${!active && ready ? 'is-empty' : ''}`}
+        lang={locale}
+        style={{ '--split-basis': `${visibleSplitRatio}%` } as CSSProperties}
       >
-        <div className="brand">
-          <div className="brand-mark">
-            <span />
-            <span />
-            <span />
+        <aside
+          className={`sidebar ${sidebar && !focusMode ? '' : 'collapsed'}`}
+          style={{ width: sidebar && !focusMode ? visibleSidebarWidth : 0 }}
+          inert={!sidebar || focusMode || settingsOpen || !!prompt || !!groupDialog || !!iconTabId}
+        >
+          <div className="brand">
+            <div className="brand-mark">
+              <span />
+              <span />
+              <span />
+            </div>
+            <span>
+              lume<span className="brand-dot">.</span>
+            </span>
+            <span className="brand-tag">NOTES</span>
           </div>
-          <span>
-            lume<span className="brand-dot">.</span>
-          </span>
-          <span className="brand-tag">NOTES</span>
-        </div>
-        <div className="workspace-label">
-          {t('SEU ESPAÇO')}
-          <span>{t('LOCAL')}</span>
-        </div>
-        <button className="new-note" onClick={newTab} disabled={!ready || busy}>
-          <Plus size={17} />
-          <span>{t('Nova nota')}</span>
-          <kbd>Ctrl N</kbd>
-        </button>
-        <SidebarFiles
-          tabs={tabs}
-          groups={groups}
-          activeId={activeId}
-          busy={busy}
-          onSelect={selectTab}
-          selectedIds={selectedIds}
-          onClose={(id) => void closeTab(id)}
-          onSave={(id) =>
-            void run(async () => {
-              await saveTab(id);
-            })
-          }
-          onAssign={assignGroup}
-          onNewGroup={(tabIds) => setGroupDialog({ group: null, tabIds })}
-          onToggleGroup={toggleGroup}
-          onEditGroup={(group) => setGroupDialog({ group })}
-          onRemoveGroup={removeGroup}
-          onChooseIcon={setIconTabId}
-        />
-        <button className="open-sidebar" onClick={() => void openFiles()} disabled={!ready || busy}>
-          <FolderOpen size={16} />
-          {t('Abrir do computador')}
-          <ArrowUpRight size={14} />
-        </button>
-        <div className="sidebar-bottom">
-          <div className="quiet-card">
-            <Sparkles size={18} />
-            <p>
-              {t('Uma ideia de cada vez.')}
-              <br />
-              <span>{t('O resto pode esperar.')}</span>
-            </p>
+          <div className="workspace-label">
+            {t('SEU ESPAÇO')}
+            <span>{t('LOCAL')}</span>
           </div>
-          <div className="local-badge">
-            <span className="status-dot" />
-            {t('Seus textos ficam neste computador')}
-          </div>
-          <button
-            className="settings-button"
-            onClick={() => setSettingsOpen(true)}
-            aria-label={t('Configurações')}
-          >
-            <Settings size={16} />
-            <span>{t('Configurações')}</span>
+          <button className="new-note" onClick={() => newTab()} disabled={!ready || busy}>
+            <Plus size={17} />
+            <span>{t('Nova nota')}</span>
+            <kbd>Ctrl N</kbd>
           </button>
-          <div className="sidebar-footer">
-            <span>LUME NOTES</span>
-            <span>v{appVersion}</span>
-          </div>
-        </div>
-      </aside>
-      {sidebar && !focusMode && (
-        <ResizeDivider
-          label={t('Largura do painel lateral')}
-          value={visibleSidebarWidth}
-          min={200}
-          max={sidebarMax}
-          reset={246}
-          onChange={setSidebarWidth}
-          onResizing={setResizing}
-        />
-      )}
-      <main className="main" inert={settingsOpen || !!prompt || !!groupDialog || !!iconTabId}>
-        <div className="workspace-chrome" inert={focusMode}>
-          <header className="topbar">
-            <div className="topbar-left">
-              <button
-                className="icon-button"
-                aria-label={t(sidebar ? 'Ocultar painel' : 'Mostrar painel')}
-                title={t('Alternar painel')}
-                onClick={() => setSidebar((v) => !v)}
-              >
-                {sidebar ? <PanelLeftClose size={17} /> : <PanelLeftOpen size={17} />}
-              </button>
-              <div className="top-divider" />
-              <span className="workspace-breadcrumb">
-                {t('Meu espaço')}
-                <span>/</span> <strong>{t('Editor')}</strong>
-              </span>
-            </div>
-            <div className="topbar-right">
-              <span className="recovery-label">
-                <span className={`status-dot ${recovery === 'error' ? 'warning' : ''}`} />
-                {recovery === 'saving'
-                  ? t('Guardando rascunhos…')
-                  : recovery === 'error'
-                    ? t('Rascunhos sem proteção')
-                    : t('Rascunhos protegidos')}
-              </span>
-              <div className="menu-container" data-menu>
-                <button
-                  className="icon-button"
-                  aria-label={t('Escolher tema')}
-                  title={`${t('Tema')} ${t(THEME_NAMES[theme])}`}
-                  onClick={() => setMenu(menu === 'theme' ? null : 'theme')}
-                >
-                  <ThemeIcon theme={theme} />
-                </button>
-                {menu === 'theme' && (
-                  <div className="dropdown theme-menu" role="menu" aria-label={t('Temas')}>
-                    {(['light', 'sunset', 'dark', 'midnight'] as Theme[]).map((value) => (
-                      <button
-                        key={value}
-                        role="menuitemradio"
-                        aria-checked={theme === value}
-                        onClick={() => {
-                          setTheme(value);
-                          setMenu(null);
-                        }}
-                      >
-                        <ThemeIcon theme={value} />
-                        {t(THEME_NAMES[value])}
-                        {theme === value && <Check size={13} />}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          </header>
-          <TabStrip
+          <SidebarFiles
             tabs={tabs}
             groups={groups}
             activeId={activeId}
-            busy={!ready || busy}
+            busy={busy}
             onSelect={selectTab}
             selectedIds={selectedIds}
             onClose={(id) => void closeTab(id)}
-            onNew={newTab}
-            onToggleGroup={toggleGroup}
+            onSave={(id) =>
+              void run(async () => {
+                await saveTab(id);
+              })
+            }
             onAssign={assignGroup}
+            onNewGroup={(tabIds) => setGroupDialog({ group: null, tabIds })}
+            onToggleGroup={toggleGroup}
+            onEditGroup={(group) => setGroupDialog({ group })}
+            onRemoveGroup={removeGroup}
+            onChooseIcon={setIconTabId}
           />
-          <div className="toolbar">
-            <div className="menus">
-              <div className="menu-container" data-menu>
-                <button
-                  className={`icon-button ${menu === 'file' ? 'toggled' : ''}`}
-                  aria-label={t('Menu Arquivo')}
-                  title={t('Arquivo')}
-                  onClick={() => setMenu(menu === 'file' ? null : 'file')}
-                  disabled={!ready || busy}
-                >
-                  <span className="file-settings-icon">
-                    <FileText size={19} />
-                    <Settings size={10} />
-                  </span>
-                </button>
-                {menu === 'file' && (
-                  <div className="dropdown">
-                    {fileMenu.map(([label, shortcut, action]) => (
-                      <button key={label} onClick={action}>
-                        {label}
-                        <kbd>{shortcut}</kbd>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-              <div className="toolbar-divider" />
-              <button
-                className="icon-button"
-                title={t('Abrir arquivo (Ctrl+O)')}
-                aria-label={t('Abrir arquivo')}
-                onClick={() => void openFiles()}
-                disabled={!ready || busy}
-              >
-                <FolderOpen size={17} />
-              </button>
-              <button
-                className="icon-button"
-                title={t('Salvar (Ctrl+S)')}
-                aria-label={t('Salvar arquivo')}
-                onClick={() => void saveActive()}
-                disabled={!ready || busy}
-              >
-                <Save size={17} />
-              </button>
-              <button
-                className="icon-button"
-                aria-label={t('Ativar modo foco')}
-                title={t('Modo foco (F8)')}
-                onClick={() => setFocusMode(true)}
-                disabled={!active}
-              >
-                <Scan size={17} />
-              </button>
-            </div>
-            <div className="editor-tools">
-              <button
-                className="icon-button"
-                title={t('Desfazer (Ctrl+Z)')}
-                aria-label={t('Desfazer')}
-                onMouseDown={(event) => event.preventDefault()}
-                onClick={() => editCommand(undo)}
-                disabled={!ready || busy}
-              >
-                <RotateCcw size={17} />
-              </button>
-              <button
-                className="icon-button"
-                title={t('Refazer (Ctrl+Y)')}
-                aria-label={t('Refazer')}
-                onMouseDown={(event) => event.preventDefault()}
-                onClick={() => editCommand(redo)}
-                disabled={!ready || busy}
-              >
-                <RotateCw size={17} />
-              </button>
-              <button
-                className="icon-button"
-                title={t('Buscar e substituir (Ctrl+F)')}
-                aria-label={t('Buscar e substituir')}
-                onClick={find}
-              >
-                <Search size={17} />
-              </button>
-              <button
-                className={`icon-button ${wrap ? 'toggled' : ''}`}
-                title={t('Quebra automática de linha')}
-                aria-label={t('Quebra automática de linha')}
-                aria-pressed={wrap}
-                onClick={() => setWrap((v) => !v)}
-              >
-                <WrapText size={17} />
-              </button>
-              <div className="toolbar-divider" />
-              <FontSizeControl value={fontSize} onChange={setFontSize} />
-            </div>
-          </div>
-          <div className="formatbar" role="toolbar" aria-label={t('Formatação Markdown')}>
-            <span className="formatbar-label">{t('FORMATAR')}</span>
-            <button
-              className="icon-button"
-              aria-label={t('Negrito')}
-              aria-pressed={
-                isVisual ? visualViews.current.get(activeId)?.isActive('bold') : undefined
-              }
-              title={t('Negrito (Ctrl+B)')}
-              onMouseDown={(event) => event.preventDefault()}
-              onClick={() => applyFormat('bold')}
-              disabled={!ready || busy}
-            >
-              <Bold size={16} />
-            </button>
-            <button
-              className="icon-button"
-              aria-label={t('Itálico')}
-              aria-pressed={
-                isVisual ? visualViews.current.get(activeId)?.isActive('italic') : undefined
-              }
-              title={t('Itálico (Ctrl+I)')}
-              onMouseDown={(event) => event.preventDefault()}
-              onClick={() => applyFormat('italic')}
-              disabled={!ready || busy}
-            >
-              <Italic size={16} />
-            </button>
-            <button
-              className="icon-button"
-              aria-label={t('Código')}
-              aria-pressed={
-                isVisual
-                  ? visualViews.current.get(activeId)?.isActive('code') ||
-                    visualViews.current.get(activeId)?.isActive('codeBlock')
-                  : undefined
-              }
-              title={t('Código em linha ou bloco (Ctrl+Shift+C)')}
-              onMouseDown={(event) => event.preventDefault()}
-              onClick={() => applyFormat('code')}
-              disabled={!ready || busy}
-            >
-              <Code2 size={17} />
-            </button>
-            <button
-              className="icon-button"
-              aria-label={t('Inserir divisória')}
-              title={t('Inserir linha divisória')}
-              onMouseDown={(event) => event.preventDefault()}
-              onClick={() => applyFormat('rule')}
-              disabled={!ready || busy}
-            >
-              <SeparatorHorizontal size={17} />
-            </button>
-            {[
-              ['underline', t('Sublinhado'), Underline],
-              ['bullet', t('Lista com marcadores'), List],
-              ['ordered', t('Lista numerada'), ListOrdered],
-            ].map(([action, label, Icon]) => {
-              const Glyph = Icon as typeof Underline;
-              return (
-                <button
-                  key={action as string}
-                  className="icon-button"
-                  aria-label={label as string}
-                  aria-pressed={
-                    isVisual
-                      ? visualViews.current
-                          .get(activeId)
-                          ?.isActive(
-                            action === 'bullet'
-                              ? 'bulletList'
-                              : action === 'ordered'
-                                ? 'orderedList'
-                                : 'underline',
-                          )
-                      : undefined
-                  }
-                  title={label as string}
-                  onMouseDown={(event) => event.preventDefault()}
-                  onClick={() => applyFormat(action as FormatAction)}
-                  disabled={!ready || busy}
-                >
-                  <Glyph size={16} />
-                </button>
-              );
-            })}
-            <span className="format-help">{isVisual ? t('Edição visual') : t('Código')}</span>
-            {active?.mode === 'markdown' && (
-              <div className="editing-mode" role="group" aria-label={t('Modo de edição')}>
-                <button
-                  className={isVisual ? 'toggled' : ''}
-                  aria-label={t('Editar visualmente')}
-                  aria-pressed={isVisual}
-                  disabled={!!sourceRequired}
-                  title={
-                    sourceRequired
-                      ? t('Este documento contém sintaxe que deve ser preservada no código')
-                      : t('Editar com a formatação visível')
-                  }
-                  onClick={() => updatePresentation('visual')}
-                >
-                  <Eye size={14} />
-                  <span>{t('Visual')}</span>
-                </button>
-                <button
-                  className={!isVisual ? 'toggled' : ''}
-                  aria-label={t('Editar código Markdown')}
-                  aria-pressed={!isVisual}
-                  onClick={() => updatePresentation('source')}
-                >
-                  <CodeXml size={14} />
-                  <span>{t('Código Markdown')}</span>
-                </button>
-              </div>
-            )}
-            {active?.mode === 'markdown' && !isVisual && (
-              <button
-                className={`preview-toggle ${showPreview ? 'toggled' : ''}`}
-                aria-label={t('Alternar split')}
-                aria-pressed={showPreview}
-                onClick={() =>
-                  setTabs((current) =>
-                    current.map((tab) =>
-                      tab.id === activeId ? { ...tab, split: !tab.split } : tab,
-                    ),
-                  )
-                }
-              >
-                {showPreview ? <PanelRightClose size={15} /> : <PanelRightOpen size={15} />}
-                <span>{t('Split')}</span>
-              </button>
-            )}
-          </div>
-          <section className="document-heading">
-            <div>
-              <div className="eyebrow">{active?.path ? t('ARQUIVO LOCAL') : t('SEU RASCUNHO')}</div>
-              <div className="document-title-row">
-                {active && (
-                  <button
-                    className="document-icon-button"
-                    aria-label={t('Escolher ícone do documento: {name}', {
-                      name: t(DOCUMENT_ICONS[active.icon]),
-                    })}
-                    title={t('Escolher ícone da nota')}
-                    onClick={() => setIconTabId(active.id)}
-                    disabled={busy}
-                  >
-                    <DocumentSymbol icon={active.icon} size={24} />
-                  </button>
-                )}
-                {active ? (
-                  <NoteTitle
-                    key={active.id}
-                    tab={active}
-                    disabled={busy}
-                    onRename={(name) => renameTab(active.id, name)}
-                  />
-                ) : (
-                  <h1>{ready ? t('Nenhuma nota aberta') : t('Preparando seu espaço…')}</h1>
-                )}
-              </div>
-              <p className="document-path" title={active?.path || ''}>
-                {active?.path || t('Um lugar tranquilo para colocar as ideias no papel.')}
+          <button
+            className="open-sidebar"
+            onClick={() => void openFiles()}
+            disabled={!ready || busy}
+          >
+            <FolderOpen size={16} />
+            {t('Abrir do computador')}
+            <ArrowUpRight size={14} />
+          </button>
+          <div className="sidebar-bottom">
+            <div className="quiet-card">
+              <Sparkles size={18} />
+              <p>
+                {t('Uma ideia de cada vez.')}
+                <br />
+                <span>{t('O resto pode esperar.')}</span>
               </p>
             </div>
-            <div className="document-heading-actions">
-              <span className={`document-badge ${active && isDirty(active) ? 'modified' : ''}`}>
-                {active && isDirty(active) ? (
-                  <>
-                    <span className="dirty-dot" />
-                    {t('Alterado')}
-                  </>
-                ) : (
-                  <>
-                    <Check size={12} />
-                    {active?.path ? t('Salvo em arquivo') : t('Pronto para escrever')}
-                  </>
+            <div className="local-badge">
+              <span className="status-dot" />
+              {t('Seus textos ficam neste computador')}
+            </div>
+            <button
+              className="settings-button"
+              onClick={() => setSettingsOpen(true)}
+              aria-label={t('Configurações')}
+            >
+              <Settings size={16} />
+              <span>{t('Configurações')}</span>
+            </button>
+            <div className="sidebar-footer">
+              <span>LUME NOTES</span>
+              <span>v{appVersion}</span>
+            </div>
+          </div>
+        </aside>
+        {sidebar && !focusMode && (
+          <ResizeDivider
+            label={t('Largura do painel lateral')}
+            value={visibleSidebarWidth}
+            min={200}
+            max={sidebarMax}
+            reset={246}
+            onChange={setSidebarWidth}
+            onResizing={setResizing}
+          />
+        )}
+        <main className="main" inert={settingsOpen || !!prompt || !!groupDialog || !!iconTabId}>
+          <div
+            className="workspace-chrome"
+            inert={focusMode}
+            style={{ height: focusMode ? 0 : chromeHeight }}
+          >
+            <div className="workspace-chrome-content" ref={chromeContent}>
+              <header className="topbar">
+                <div className="topbar-left">
+                  <button
+                    className="icon-button"
+                    aria-label={t(sidebar ? 'Ocultar painel' : 'Mostrar painel')}
+                    title={t('Alternar painel')}
+                    onClick={() => setSidebar((v) => !v)}
+                  >
+                    {sidebar ? <PanelLeftClose size={17} /> : <PanelLeftOpen size={17} />}
+                  </button>
+                  <div className="top-divider" />
+                  <span className="workspace-breadcrumb">
+                    {t('Meu espaço')}
+                    <span>/</span> <strong>{t('Editor')}</strong>
+                  </span>
+                </div>
+                <div className="topbar-right">
+                  <span className="recovery-label">
+                    <span className={`status-dot ${recovery === 'error' ? 'warning' : ''}`} />
+                    {recovery === 'saving'
+                      ? t('Guardando rascunhos…')
+                      : recovery === 'error'
+                        ? t('Rascunhos sem proteção')
+                        : t('Rascunhos protegidos')}
+                  </span>
+                  <div className="menu-container" data-menu>
+                    <button
+                      className="icon-button"
+                      aria-label={t('Escolher tema')}
+                      title={`${t('Tema')} ${t(THEME_NAMES[theme])}`}
+                      onClick={() => setMenu(menu === 'theme' ? null : 'theme')}
+                    >
+                      <ThemeIcon theme={theme} />
+                    </button>
+                    {menu === 'theme' && (
+                      <div className="dropdown theme-menu" role="menu" aria-label={t('Temas')}>
+                        {(['light', 'sunset', 'dark', 'midnight'] as Theme[]).map((value) => (
+                          <button
+                            key={value}
+                            role="menuitemradio"
+                            aria-checked={theme === value}
+                            onClick={() => {
+                              setAutomaticTheme(false);
+                              setManualTheme(value);
+                              setMenu(null);
+                            }}
+                          >
+                            <ThemeIcon theme={value} />
+                            {t(THEME_NAMES[value])}
+                            {theme === value && <Check size={13} />}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </header>
+              <TabStrip
+                tabs={tabs}
+                groups={groups}
+                activeId={activeId}
+                busy={!ready || busy}
+                onSelect={selectTab}
+                selectedIds={selectedIds}
+                onClose={(id) => void closeTab(id)}
+                onNew={() => newTab('ungrouped')}
+                onToggleGroup={toggleGroup}
+                onAssign={assignGroup}
+              />
+              <div className="toolbar">
+                <div className="menus">
+                  <div className="menu-container" data-menu>
+                    <button
+                      className={`icon-button ${menu === 'file' ? 'toggled' : ''}`}
+                      aria-label={t('Menu Arquivo')}
+                      title={t('Arquivo')}
+                      onClick={() => setMenu(menu === 'file' ? null : 'file')}
+                      disabled={!ready || busy}
+                    >
+                      <span className="file-settings-icon">
+                        <FileText size={19} />
+                        <Settings size={10} />
+                      </span>
+                    </button>
+                    {menu === 'file' && (
+                      <div className="dropdown">
+                        {fileMenu.map(([label, shortcut, action]) => (
+                          <button key={label} onClick={action}>
+                            {label}
+                            <kbd>{shortcut}</kbd>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <div className="toolbar-divider" />
+                  <button
+                    className="icon-button"
+                    title={t('Abrir arquivo (Ctrl+O)')}
+                    aria-label={t('Abrir arquivo')}
+                    onClick={() => void openFiles()}
+                    disabled={!ready || busy}
+                  >
+                    <FolderOpen size={17} />
+                  </button>
+                  <button
+                    className="icon-button"
+                    title={t('Salvar (Ctrl+S)')}
+                    aria-label={t('Salvar arquivo')}
+                    onClick={() => void saveActive()}
+                    disabled={!ready || busy}
+                  >
+                    <Save size={17} />
+                  </button>
+                  <button
+                    className="icon-button"
+                    aria-label={t('Ativar modo foco')}
+                    title={t('Modo foco (F8)')}
+                    onClick={() => setFocusMode(true)}
+                    disabled={!active}
+                  >
+                    <Scan size={17} />
+                  </button>
+                  <button
+                    className="icon-button"
+                    aria-label={t('Copiar todo o conteúdo')}
+                    title={t('Copiar todo o conteúdo')}
+                    disabled={!active || busy}
+                    onClick={() => {
+                      if (!active) return;
+                      void copyContent(active.content)
+                        .then(() => notify(t('Conteúdo copiado.')))
+                        .catch(() => notify(t('Não foi possível copiar o conteúdo.'), true));
+                    }}
+                  >
+                    <Copy size={17} />
+                  </button>
+                </div>
+                <div className="editor-tools">
+                  <button
+                    className="icon-button"
+                    title={t('Desfazer (Ctrl+Z)')}
+                    aria-label={t('Desfazer')}
+                    onMouseDown={(event) => event.preventDefault()}
+                    onClick={() => editCommand(undo)}
+                    disabled={!ready || busy}
+                  >
+                    <RotateCcw size={17} />
+                  </button>
+                  <button
+                    className="icon-button"
+                    title={t('Refazer (Ctrl+Y)')}
+                    aria-label={t('Refazer')}
+                    onMouseDown={(event) => event.preventDefault()}
+                    onClick={() => editCommand(redo)}
+                    disabled={!ready || busy}
+                  >
+                    <RotateCw size={17} />
+                  </button>
+                  <button
+                    className="icon-button"
+                    title={t('Buscar e substituir (Ctrl+F)')}
+                    aria-label={t('Buscar e substituir')}
+                    onClick={find}
+                  >
+                    <Search size={17} />
+                  </button>
+                  <button
+                    className={`icon-button ${wrap ? 'toggled' : ''}`}
+                    title={t('Quebra automática de linha')}
+                    aria-label={t('Quebra automática de linha')}
+                    aria-pressed={wrap}
+                    onClick={() => setWrap((v) => !v)}
+                  >
+                    <WrapText size={17} />
+                  </button>
+                  <div className="toolbar-divider" />
+                  <FontSizeControl value={fontSize} onChange={setFontSize} />
+                </div>
+              </div>
+              <div className="formatbar" role="toolbar" aria-label={t('Formatação Markdown')}>
+                <span className="formatbar-label">{t('FORMATAR')}</span>
+                <button
+                  className="icon-button"
+                  aria-label={t('Negrito')}
+                  aria-pressed={
+                    isVisual ? visualViews.current.get(activeId)?.isActive('bold') : undefined
+                  }
+                  title={t('Negrito (Ctrl+B)')}
+                  onMouseDown={(event) => event.preventDefault()}
+                  onClick={() => applyFormat('bold')}
+                  disabled={!ready || busy}
+                >
+                  <Bold size={16} />
+                </button>
+                <button
+                  className="icon-button"
+                  aria-label={t('Itálico')}
+                  aria-pressed={
+                    isVisual ? visualViews.current.get(activeId)?.isActive('italic') : undefined
+                  }
+                  title={t('Itálico (Ctrl+I)')}
+                  onMouseDown={(event) => event.preventDefault()}
+                  onClick={() => applyFormat('italic')}
+                  disabled={!ready || busy}
+                >
+                  <Italic size={16} />
+                </button>
+                <button
+                  className="icon-button"
+                  aria-label={t('Código')}
+                  aria-pressed={
+                    isVisual
+                      ? visualViews.current.get(activeId)?.isActive('code') ||
+                        visualViews.current.get(activeId)?.isActive('codeBlock')
+                      : undefined
+                  }
+                  title={t('Código em linha ou bloco (Ctrl+Shift+C)')}
+                  onMouseDown={(event) => event.preventDefault()}
+                  onClick={() => applyFormat('code')}
+                  disabled={!ready || busy}
+                >
+                  <Code2 size={17} />
+                </button>
+                <button
+                  className="icon-button"
+                  aria-label={t('Inserir divisória')}
+                  title={t('Inserir linha divisória')}
+                  onMouseDown={(event) => event.preventDefault()}
+                  onClick={() => applyFormat('rule')}
+                  disabled={!ready || busy}
+                >
+                  <SeparatorHorizontal size={17} />
+                </button>
+                {[
+                  ['underline', t('Sublinhado'), Underline],
+                  ['bullet', t('Lista com marcadores'), List],
+                  ['ordered', t('Lista numerada'), ListOrdered],
+                ].map(([action, label, Icon]) => {
+                  const Glyph = Icon as typeof Underline;
+                  return (
+                    <button
+                      key={action as string}
+                      className="icon-button"
+                      aria-label={label as string}
+                      aria-pressed={
+                        isVisual
+                          ? visualViews.current
+                              .get(activeId)
+                              ?.isActive(
+                                action === 'bullet'
+                                  ? 'bulletList'
+                                  : action === 'ordered'
+                                    ? 'orderedList'
+                                    : 'underline',
+                              )
+                          : undefined
+                      }
+                      title={label as string}
+                      onMouseDown={(event) => event.preventDefault()}
+                      onClick={() => applyFormat(action as FormatAction)}
+                      disabled={!ready || busy}
+                    >
+                      <Glyph size={16} />
+                    </button>
+                  );
+                })}
+                <span className="format-help">{isVisual ? t('Edição visual') : t('Código')}</span>
+                {active?.mode === 'markdown' && (
+                  <div className="editing-mode" role="group" aria-label={t('Modo de edição')}>
+                    <button
+                      className={isVisual ? 'toggled' : ''}
+                      aria-label={t('Editar visualmente')}
+                      aria-pressed={isVisual}
+                      disabled={!!sourceRequired}
+                      title={
+                        sourceRequired
+                          ? t('Este documento contém sintaxe que deve ser preservada no código')
+                          : t('Editar com a formatação visível')
+                      }
+                      onClick={() => updatePresentation('visual')}
+                    >
+                      <Eye size={14} />
+                      <span>{t('Visual')}</span>
+                    </button>
+                    <button
+                      className={!isVisual ? 'toggled' : ''}
+                      aria-label={t('Editar código Markdown')}
+                      aria-pressed={!isVisual}
+                      onClick={() => updatePresentation('source')}
+                    >
+                      <CodeXml size={14} />
+                      <span>{t('Código Markdown')}</span>
+                    </button>
+                  </div>
                 )}
-              </span>
+                {active?.mode === 'markdown' && !isVisual && (
+                  <button
+                    className={`preview-toggle ${showPreview ? 'toggled' : ''}`}
+                    aria-label={t('Alternar split')}
+                    aria-pressed={showPreview}
+                    onClick={() =>
+                      setTabs((current) =>
+                        current.map((tab) =>
+                          tab.id === activeId ? { ...tab, split: !tab.split } : tab,
+                        ),
+                      )
+                    }
+                  >
+                    {showPreview ? <PanelRightClose size={15} /> : <PanelRightOpen size={15} />}
+                    <span>{t('Split')}</span>
+                  </button>
+                )}
+              </div>
+              <section className="document-heading">
+                <div>
+                  <div className="eyebrow">
+                    {active?.path ? t('ARQUIVO LOCAL') : t('SEU RASCUNHO')}
+                  </div>
+                  <div className="document-title-row">
+                    {active && (
+                      <button
+                        className="document-icon-button"
+                        aria-label={t('Escolher ícone do documento: {name}', {
+                          name: t(DOCUMENT_ICONS[active.icon]),
+                        })}
+                        title={t('Escolher ícone da nota')}
+                        onClick={() => setIconTabId(active.id)}
+                        disabled={busy}
+                      >
+                        <DocumentSymbol icon={active.icon} size={24} />
+                      </button>
+                    )}
+                    {active ? (
+                      <NoteTitle
+                        key={active.id}
+                        tab={active}
+                        disabled={busy}
+                        onRename={(name) => renameTab(active.id, name)}
+                      />
+                    ) : (
+                      <h1>{ready ? t('Nenhuma nota aberta') : t('Preparando seu espaço…')}</h1>
+                    )}
+                  </div>
+                  <p className="document-path" title={active?.path || ''}>
+                    {active?.path || t('Um lugar tranquilo para colocar as ideias no papel.')}
+                  </p>
+                </div>
+                <div className="document-heading-actions">
+                  <span className={`document-badge ${active && isDirty(active) ? 'modified' : ''}`}>
+                    {active && isDirty(active) ? (
+                      <>
+                        <span className="dirty-dot" />
+                        {t('Alterado')}
+                      </>
+                    ) : (
+                      <>
+                        <Check size={12} />
+                        {active?.path ? t('Salvo em arquivo') : t('Pronto para escrever')}
+                      </>
+                    )}
+                  </span>
+                  <button
+                    className="icon-button document-close"
+                    aria-label={t('Fechar documento atual')}
+                    title={t('Fechar documento (Ctrl+W)')}
+                    disabled={!ready || busy}
+                    onClick={() => void closeTab(activeId)}
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              </section>
+              {!native && (
+                <div className="browser-notice">
+                  {t(
+                    'Prévia no navegador · Abrir lê arquivos locais; Salvar baixa uma cópia. O aplicativo desktop salva diretamente no disco.',
+                  )}
+                </div>
+              )}
+              {sourceRequired && (
+                <div className="source-notice">
+                  {t(
+                    'Este documento contém sintaxe adicional. O modo de código preserva todos os detalhes.',
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+          {visualSearch && isVisual && (
+            <div
+              className="visual-search"
+              role="search"
+              aria-label={t('Buscar e substituir no texto visual')}
+            >
+              <input
+                aria-label={t('Buscar no documento')}
+                autoFocus
+                placeholder={t('Buscar…')}
+                value={searchText}
+                onChange={(event) => setSearchText(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') {
+                    const editor = visualViews.current.get(activeId);
+                    if (editor && !findVisual(editor, searchText, event.shiftKey))
+                      notify(t('Nenhum resultado.'));
+                  }
+                }}
+              />
               <button
-                className="icon-button document-close"
-                aria-label={t('Fechar documento atual')}
-                title={t('Fechar documento (Ctrl+W)')}
-                disabled={!ready || busy}
-                onClick={() => void closeTab(activeId)}
+                onClick={() => {
+                  const editor = visualViews.current.get(activeId);
+                  if (editor && !findVisual(editor, searchText)) notify(t('Nenhum resultado.'));
+                }}
               >
-                <X size={14} />
+                {t('Próximo')}
+              </button>
+              <input
+                aria-label={t('Substituir por')}
+                placeholder={t('Substituir por…')}
+                value={replacementText}
+                onChange={(event) => setReplacementText(event.target.value)}
+              />
+              <button
+                onClick={() => {
+                  const editor = visualViews.current.get(activeId);
+                  if (!editor || !searchText) return;
+                  const { from, to } = editor.state.selection;
+                  if (
+                    editor.state.doc.textBetween(from, to).toLocaleLowerCase() ===
+                    searchText.toLocaleLowerCase()
+                  ) {
+                    if (replacementText)
+                      editor.commands.insertContent({ type: 'text', text: replacementText });
+                    else editor.commands.deleteSelection();
+                  }
+                  findVisual(editor, searchText);
+                }}
+              >
+                {t('Substituir')}
+              </button>
+              <button
+                className="icon-button"
+                aria-label={t('Fechar busca')}
+                onClick={() => setVisualSearch(false)}
+              >
+                <X size={15} />
               </button>
             </div>
-          </section>
-          {!native && (
-            <div className="browser-notice">
-              {t(
-                'Prévia no navegador · Abrir lê arquivos locais; Salvar baixa uma cópia. O aplicativo desktop salva diretamente no disco.',
+          )}
+          <div ref={workspace} className={`editor-workspace ${showPreview ? 'with-preview' : ''}`}>
+            <div className="editor-area">
+              {ready && !active && (
+                <div className="empty-workspace">
+                  <FileText size={38} strokeWidth={1} />
+                  <h1>{t('Nenhuma nota aberta')}</h1>
+                  <p>{t('Um espaço livre para a próxima ideia.')}</p>
+                  <button className="primary" onClick={() => newTab()}>
+                    <Plus size={16} />
+                    {t('Nova nota')}
+                  </button>
+                  <button onClick={() => void openFiles()}>
+                    <FolderOpen size={16} />
+                    {t('Abrir arquivo')}
+                  </button>
+                </div>
+              )}
+              {ready &&
+                tabs
+                  .filter((tab) => tab.mode === 'markdown' && !needsSourceEditing(tab.content))
+                  .map((tab) => (
+                    <VisualEditor
+                      key={tab.id}
+                      tab={tab}
+                      active={tab.id === activeId && !!isVisual}
+                      fontSize={fontSize}
+                      wrap={wrap}
+                      searchQuery={visualSearch && tab.id === activeId ? searchText : ''}
+                      onChange={(value) => editTab(tab.id, value)}
+                      onEditor={(editor) => {
+                        if (editor) visualViews.current.set(tab.id, editor);
+                        else visualViews.current.delete(tab.id);
+                      }}
+                      onSelection={setStats}
+                    />
+                  ))}
+              {ready &&
+                tabs.map((t) => (
+                  <TextEditor
+                    key={t.id}
+                    tab={t}
+                    theme={theme}
+                    locale={locale}
+                    fontSize={fontSize}
+                    wrap={wrap}
+                    active={t.id === activeId && !isVisual}
+                    onChange={(value) => editTab(t.id, value)}
+                    onView={(view) => {
+                      views.current.set(t.id, view);
+                      if (t.id === state.current.activeId && !isVisual) view.focus();
+                    }}
+                    onPosition={setStats}
+                  />
+                ))}
+            </div>
+            {showPreview && (
+              <>
+                <ResizeDivider
+                  label={t('Largura do editor e da prévia Markdown')}
+                  value={visibleSplitRatio}
+                  min={splitMin}
+                  max={splitMax}
+                  reset={54}
+                  step={2}
+                  scale={100 / Math.max(1, workspaceWidth)}
+                  onChange={setSplitRatio}
+                  onResizing={setResizing}
+                />
+                <MarkdownPreview content={active?.content || ''} wrap={wrap} />
+              </>
+            )}
+          </div>
+          <footer className="statusbar">
+            <div>
+              <span>
+                {words.toLocaleString(locale)} {t('palavras')}
+              </span>
+              <span className="status-separator" />
+              <span>
+                {count.toLocaleString(locale)} {t('caracteres')}
+              </span>
+              {stats.selected > 0 && (
+                <span>
+                  · {stats.selected} {t('selecionados')}
+                </span>
               )}
             </div>
-          )}
-          {sourceRequired && (
-            <div className="source-notice">
-              {t(
-                'Este documento contém sintaxe adicional. O modo de código preserva todos os detalhes.',
-              )}
+            <div>
+              <span>
+                Ln {stats.line}, Col {stats.column}
+              </span>
+              <span className="status-separator" />
+              <span>
+                {active?.encoding.toUpperCase().replace('UTF8', 'UTF-8').replace('UTF16', 'UTF-16')}
+              </span>
+              <span className="status-separator" />
+              <span>{active?.newline}</span>
+              <span className="status-separator" />
+              <span className="language-label">{t(languageName)}</span>
+              <MoreHorizontal size={15} />
             </div>
-          )}
-        </div>
-        {visualSearch && isVisual && (
+          </footer>
+        </main>
+        <button
+          className="focus-exit"
+          aria-hidden={!focusMode}
+          inert={!focusMode}
+          tabIndex={focusMode ? 0 : -1}
+          aria-label={t('Sair do modo foco')}
+          title={t('Sair do modo foco (Esc / F8)')}
+          onClick={() => setFocusMode(false)}
+        >
+          <Minimize2 size={16} />
+          <span>{t('Sair do foco')}</span>
+          <kbd>Esc</kbd>
+        </button>
+        <SettingsDialog
+          open={settingsOpen}
+          locale={locale}
+          onLanguage={setLocale}
+          automaticTheme={automaticTheme}
+          onAutomaticTheme={setAutomaticTheme}
+          onClose={() => setSettingsOpen(false)}
+        />
+        <SelectionToolbar
+          key={activeId}
+          visual={isVisual ? visualViews.current.get(activeId) : undefined}
+          source={!isVisual ? views.current.get(activeId) : undefined}
+          enabled={
+            !!active &&
+            !busy &&
+            !settingsOpen &&
+            !prompt &&
+            !groupDialog &&
+            !iconTabId &&
+            !visualSearch
+          }
+          revision={stats}
+          onFormat={applyFormat}
+        />
+        {toast && (
           <div
-            className="visual-search"
-            role="search"
-            aria-label={t('Buscar e substituir no texto visual')}
+            className={`toast ${toast.error ? 'error' : ''}`}
+            role={toast.error ? 'alert' : 'status'}
           >
-            <input
-              aria-label={t('Buscar no documento')}
-              autoFocus
-              placeholder={t('Buscar…')}
-              value={searchText}
-              onChange={(event) => setSearchText(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter') {
-                  const editor = visualViews.current.get(activeId);
-                  if (editor && !findVisual(editor, searchText, event.shiftKey))
-                    notify(t('Nenhum resultado.'));
-                }
-              }}
-            />
-            <button
-              onClick={() => {
-                const editor = visualViews.current.get(activeId);
-                if (editor && !findVisual(editor, searchText)) notify(t('Nenhum resultado.'));
-              }}
-            >
-              {t('Próximo')}
-            </button>
-            <input
-              aria-label={t('Substituir por')}
-              placeholder={t('Substituir por…')}
-              value={replacementText}
-              onChange={(event) => setReplacementText(event.target.value)}
-            />
-            <button
-              onClick={() => {
-                const editor = visualViews.current.get(activeId);
-                if (!editor || !searchText) return;
-                const { from, to } = editor.state.selection;
-                if (
-                  editor.state.doc.textBetween(from, to).toLocaleLowerCase() ===
-                  searchText.toLocaleLowerCase()
-                ) {
-                  if (replacementText)
-                    editor.commands.insertContent({ type: 'text', text: replacementText });
-                  else editor.commands.deleteSelection();
-                }
-                findVisual(editor, searchText);
-              }}
-            >
-              {t('Substituir')}
-            </button>
-            <button
-              className="icon-button"
-              aria-label={t('Fechar busca')}
-              onClick={() => setVisualSearch(false)}
-            >
+            {toast.error ? <AlertCircle size={17} /> : <Check size={17} />}
+            <span>{toast.text}</span>
+            <button onClick={() => setToast(null)} aria-label={t('Fechar mensagem')}>
               <X size={15} />
             </button>
           </div>
         )}
-        <div ref={workspace} className={`editor-workspace ${showPreview ? 'with-preview' : ''}`}>
-          <div className="editor-area">
-            {ready && !active && (
-              <div className="empty-workspace">
-                <FileText size={38} strokeWidth={1} />
-                <h1>{t('Nenhuma nota aberta')}</h1>
-                <p>{t('Um espaço livre para a próxima ideia.')}</p>
-                <button className="primary" onClick={newTab}>
-                  <Plus size={16} />
-                  {t('Nova nota')}
-                </button>
-                <button onClick={() => void openFiles()}>
-                  <FolderOpen size={16} />
-                  {t('Abrir arquivo')}
-                </button>
-              </div>
-            )}
-            {ready &&
-              tabs
-                .filter((tab) => tab.mode === 'markdown' && !needsSourceEditing(tab.content))
-                .map((tab) => (
-                  <VisualEditor
-                    key={tab.id}
-                    tab={tab}
-                    active={tab.id === activeId && !!isVisual}
-                    fontSize={fontSize}
-                    wrap={wrap}
-                    searchQuery={visualSearch && tab.id === activeId ? searchText : ''}
-                    onChange={(value) => editTab(tab.id, value)}
-                    onEditor={(editor) => {
-                      if (editor) visualViews.current.set(tab.id, editor);
-                      else visualViews.current.delete(tab.id);
-                    }}
-                    onSelection={setStats}
-                  />
-                ))}
-            {ready &&
-              tabs.map((t) => (
-                <TextEditor
-                  key={t.id}
-                  tab={t}
-                  theme={theme}
-                  locale={locale}
-                  fontSize={fontSize}
-                  wrap={wrap}
-                  active={t.id === activeId && !isVisual}
-                  onChange={(value) => editTab(t.id, value)}
-                  onView={(view) => {
-                    views.current.set(t.id, view);
-                    if (t.id === state.current.activeId && !isVisual) view.focus();
-                  }}
-                  onPosition={setStats}
-                />
-              ))}
-          </div>
-          {showPreview && (
-            <>
-              <ResizeDivider
-                label={t('Largura do editor e da prévia Markdown')}
-                value={visibleSplitRatio}
-                min={splitMin}
-                max={splitMax}
-                reset={54}
-                step={2}
-                scale={100 / Math.max(1, workspaceWidth)}
-                onChange={setSplitRatio}
-                onResizing={setResizing}
-              />
-              <MarkdownPreview content={active?.content || ''} wrap={wrap} />
-            </>
-          )}
-        </div>
-        <footer className="statusbar">
-          <div>
-            <span>
-              {words.toLocaleString(locale)} {t('palavras')}
-            </span>
-            <span className="status-separator" />
-            <span>
-              {count.toLocaleString(locale)} {t('caracteres')}
-            </span>
-            {stats.selected > 0 && (
-              <span>
-                · {stats.selected} {t('selecionados')}
-              </span>
-            )}
-          </div>
-          <div>
-            <span>
-              Ln {stats.line}, Col {stats.column}
-            </span>
-            <span className="status-separator" />
-            <span>
-              {active?.encoding.toUpperCase().replace('UTF8', 'UTF-8').replace('UTF16', 'UTF-16')}
-            </span>
-            <span className="status-separator" />
-            <span>{active?.newline}</span>
-            <span className="status-separator" />
-            <span className="language-label">{t(languageName)}</span>
-            <MoreHorizontal size={15} />
-          </div>
-        </footer>
-      </main>
-      <button
-        className="focus-exit"
-        aria-hidden={!focusMode}
-        inert={!focusMode}
-        tabIndex={focusMode ? 0 : -1}
-        aria-label={t('Sair do modo foco')}
-        title={t('Sair do modo foco (Esc / F8)')}
-        onClick={() => setFocusMode(false)}
-      >
-        <Minimize2 size={16} />
-        <span>{t('Sair do foco')}</span>
-        <kbd>Esc</kbd>
-      </button>
-      <SettingsDialog
-        open={settingsOpen}
-        locale={locale}
-        onLanguage={setLocale}
-        onClose={() => setSettingsOpen(false)}
-      />
-      {toast && (
-        <div
-          className={`toast ${toast.error ? 'error' : ''}`}
-          role={toast.error ? 'alert' : 'status'}
-        >
-          {toast.error ? <AlertCircle size={17} /> : <Check size={17} />}
-          <span>{toast.text}</span>
-          <button onClick={() => setToast(null)} aria-label={t('Fechar mensagem')}>
-            <X size={15} />
-          </button>
-        </div>
-      )}
-      {groupDialog && (
-        <GroupDialog
-          group={groupDialog.group}
-          onSave={saveGroup}
-          onCancel={() => setGroupDialog(null)}
-        />
-      )}
-      {iconTabId && (
-        <IconDialog
-          icon={tabs.find((tab) => tab.id === iconTabId)?.icon || 'file'}
-          onSelect={chooseIcon}
-          onClose={() => setIconTabId(null)}
-        />
-      )}
-      {prompt && (
-        <div
-          className="modal-backdrop"
-          onKeyDown={(e) => {
-            if (e.key === 'Tab') {
-              const nodes = Array.from(
-                e.currentTarget.querySelectorAll<HTMLButtonElement>('button'),
-              );
-              const first = nodes[0],
-                last = nodes.at(-1);
-              if (e.shiftKey && document.activeElement === first) {
-                e.preventDefault();
-                last?.focus();
-              } else if (!e.shiftKey && document.activeElement === last) {
-                e.preventDefault();
-                first?.focus();
+        {groupDialog && (
+          <GroupDialog
+            group={groupDialog.group}
+            onSave={saveGroup}
+            onCancel={() => setGroupDialog(null)}
+          />
+        )}
+        {iconTabId && (
+          <IconDialog
+            icon={tabs.find((tab) => tab.id === iconTabId)?.icon || 'file'}
+            onSelect={chooseIcon}
+            onClose={() => setIconTabId(null)}
+          />
+        )}
+        {prompt && (
+          <div
+            className="modal-backdrop"
+            onKeyDown={(e) => {
+              if (e.key === 'Tab') {
+                const nodes = Array.from(
+                  e.currentTarget.querySelectorAll<HTMLButtonElement>('button'),
+                );
+                const first = nodes[0],
+                  last = nodes.at(-1);
+                if (e.shiftKey && document.activeElement === first) {
+                  e.preventDefault();
+                  last?.focus();
+                } else if (!e.shiftKey && document.activeElement === last) {
+                  e.preventDefault();
+                  first?.focus();
+                }
               }
-            }
-          }}
-        >
-          <div className="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-            <div className="modal-icon">
-              <FileText size={25} />
-            </div>
-            <h2 id="modal-title">{prompt.title}</h2>
-            <p>{prompt.body}</p>
-            <div className="modal-actions">
-              {prompt.choices.map((choice, i) => (
-                <button
-                  key={choice.value}
-                  autoFocus={i === 0}
-                  className={`${i === prompt.choices.length - 1 ? 'primary' : ''} ${choice.danger ? 'danger' : ''}`}
-                  onClick={() => {
-                    prompt.resolve(choice.value);
-                    setPrompt(null);
-                  }}
-                >
-                  {choice.label}
-                </button>
-              ))}
+            }}
+          >
+            <div className="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+              <div className="modal-icon">
+                <FileText size={25} />
+              </div>
+              <h2 id="modal-title">{prompt.title}</h2>
+              <p>{prompt.body}</p>
+              <div className="modal-actions">
+                {prompt.choices.map((choice, i) => (
+                  <button
+                    key={choice.value}
+                    autoFocus={i === 0}
+                    className={`${i === prompt.choices.length - 1 ? 'primary' : ''} ${choice.danger ? 'danger' : ''}`}
+                    onClick={() => {
+                      prompt.resolve(choice.value);
+                      setPrompt(null);
+                    }}
+                  >
+                    {choice.label}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </>
   );
 }

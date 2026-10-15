@@ -41,7 +41,7 @@ export function needsSourceEditing(text: string) {
     .replace(/`[^`\n]*`/g, '');
   return (
     /^---\n[\s\S]*?\n---(?:\n|$)/.test(prose) ||
-    /!\[|^\s*\[[^\]]+\]:|\[\^[^\]]+\]|\$\$|<!--|<(?!\/?u\s*>)[A-Za-z/][^>]*>/m.test(prose)
+    /!\[|^\s*\[[^\]]+\]:|\[\^[^\]]+\]|<!--|<(?!\/?u\s*>)[A-Za-z/][^>]*>/m.test(prose)
   );
 }
 

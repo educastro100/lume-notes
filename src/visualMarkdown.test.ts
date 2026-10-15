@@ -79,3 +79,18 @@ describe('visual Markdown editing', () => {
     expect(needsSourceEditing('Uma <u>ideia</u>\n\n```html\n<div>código</div>\n```')).toBe(false);
   });
 });
+
+it('keeps repeated dollar signs in visual editing and round-trips them unchanged', () => {
+  for (const content of ['Preço: R$ 40 e $$$$', '$$\ntexto\n$$', 'Cifrões $$$ no meio']) {
+    expect(needsSourceEditing(content)).toBe(false);
+    const editor = create(content);
+    expect(create(editor.getMarkdown()).getJSON()).toEqual(editor.getJSON());
+    expect(editor.getText()).toContain('$$');
+  }
+  const editor = create('Valor ');
+  editor.commands.insertContentAt(editor.state.doc.content.size - 1, '$$$$');
+  expect(needsSourceEditing(editor.getMarkdown())).toBe(false);
+  expect(editor.getText()).toContain('$$$$');
+  editor.commands.undo();
+  expect(editor.getText()).not.toContain('$');
+});

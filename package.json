@@ -1,6 +1,6 @@
 {
   "name": "lume-notes",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -21,6 +21,7 @@
     "@codemirror/state": "^6.0.0",
     "@codemirror/view": "^6.0.0",
     "@tauri-apps/api": "^2.0.0",
+    "@tauri-apps/plugin-clipboard-manager": "^2.5.0",
     "@tauri-apps/plugin-dialog": "^2.0.0",
     "@tiptap/extension-list": "^3.32.0",
     "@tiptap/extension-table": "^3.32.0",

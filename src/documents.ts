@@ -10,6 +10,9 @@ export const DOCUMENT_ICONS = {
   tasks: 'Tarefas',
   personal: 'Pessoal',
   music: 'Música',
+  script: 'Roteiro',
+  film: 'Filme',
+  video: 'Vídeo',
 } as const;
 export type DocumentIcon = keyof typeof DOCUMENT_ICONS;
 export const GROUP_COLORS = {

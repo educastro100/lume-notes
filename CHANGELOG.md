@@ -1,3 +1,16 @@
+# Lume Notes 0.8.0
+
+- O + das abas cria notas sem grupo, mesmo com um grupo ativo.
+- Cifrões repetidos deixam de provocar a troca involuntária de edição visual para código Markdown.
+- Tema automático opcional nas configurações, pelo horário local: Dia 6h–16h, Tarde 16h–19h, Noite 19h–0h e Madrugada 0h–6h. Escolher um tema manual desativa o automático; ambas as preferências são lembradas.
+- Barra flutuante ao selecionar texto nos editores visual e de código, com negrito, itálico, sublinhado, código e listas. Esc fecha a barra sem sair imediatamente do modo foco.
+- Integração optativa ao Abrir com do Windows, pelas configurações, para .txt, .md, .json, .log e .csv. Não muda o aplicativo padrão. Arquivos abertos pelo sistema chegam à instância existente.
+- Barra da janela acompanha a paleta, com arraste, minimizar, maximizar/restaurar e fechamento normal preservando os rascunhos.
+- Novos ícones Roteiro, Filme e Vídeo. A escolha é lembrada pelo caminho do arquivo, inclusive depois de fechar a aba; renomear pelo Lume atualiza essa memória.
+- Notas novas vazias fecham sem confirmação. Arquivos existentes esvaziados continuam protegidos.
+- Copiar todo o conteúdo ao lado de Foco, incluindo os marcadores Markdown.
+- Modo foco expande continuamente o painel principal enquanto as barras recuam, com desfoque discreto e respeito a movimento reduzido.
+
 # Lume Notes 0.7.0
 
 - Botão de foco ao lado de Salvar, com transição breve de desfoque e suporte a movimento reduzido.

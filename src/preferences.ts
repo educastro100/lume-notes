@@ -14,12 +14,14 @@ export interface Preferences {
   sidebarWidth: number;
   splitRatio: number;
   wrap: boolean;
+  automaticTheme: boolean;
 }
 export const DEFAULT_PREFERENCES: Preferences = {
   fontSize: 15,
   sidebarWidth: 246,
   splitRatio: 54,
   wrap: true,
+  automaticTheme: false,
 };
 export function parsePreferences(raw: string | null): Preferences {
   try {
@@ -33,6 +35,7 @@ export function parsePreferences(raw: string | null): Preferences {
       sidebarWidth: number('sidebarWidth', 200, 440),
       splitRatio: number('splitRatio', 20, 80),
       wrap: typeof value?.wrap === 'boolean' ? value.wrap : true,
+      automaticTheme: value?.automaticTheme === true,
     };
   } catch {
     return { ...DEFAULT_PREFERENCES };
@@ -40,4 +43,9 @@ export function parsePreferences(raw: string | null): Preferences {
 }
 export function parseTheme(raw: string | null): Theme {
   return raw === 'dark' || raw === 'sunset' || raw === 'midnight' ? raw : 'light';
+}
+
+export function themeForTime(date = new Date()): Theme {
+  const hour = date.getHours();
+  return hour < 6 ? 'midnight' : hour < 16 ? 'light' : hour < 19 ? 'sunset' : 'dark';
 }

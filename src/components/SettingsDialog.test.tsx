@@ -12,7 +12,13 @@ it('keeps the closing dialog mounted for animation, returns focus, then removes 
   const host = document.createElement('div');
   document.body.append(host);
   const root = createRoot(host);
-  const props = { locale: 'pt-BR' as const, onLanguage: vi.fn(), onClose: vi.fn() };
+  const props = {
+    locale: 'pt-BR' as const,
+    automaticTheme: false,
+    onAutomaticTheme: vi.fn(),
+    onLanguage: vi.fn(),
+    onClose: vi.fn(),
+  };
   act(() => root.render(<SettingsDialog {...props} open />));
   expect(document.activeElement).toBe(host.querySelector('select'));
   act(() => root.render(<SettingsDialog {...props} open={false} />));
@@ -30,7 +36,13 @@ it('cancels the closing timer when reopened quickly', () => {
   vi.useFakeTimers();
   const host = document.createElement('div'),
     root = createRoot(host);
-  const props = { locale: 'pt-BR' as const, onLanguage: vi.fn(), onClose: vi.fn() };
+  const props = {
+    locale: 'pt-BR' as const,
+    automaticTheme: false,
+    onAutomaticTheme: vi.fn(),
+    onLanguage: vi.fn(),
+    onClose: vi.fn(),
+  };
   act(() => root.render(<SettingsDialog {...props} open />));
   act(() => root.render(<SettingsDialog {...props} open={false} />));
   act(() => vi.advanceTimersByTime(100));

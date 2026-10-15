@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Languages, X } from 'lucide-react';
+import { native, openWithStatus, setOpenWith } from '../platform';
 import { LANGUAGES, t, type Locale } from '../i18n';
 
 export function SettingsDialog({
@@ -7,12 +8,36 @@ export function SettingsDialog({
   locale,
   onLanguage,
   onClose,
+  automaticTheme,
+  onAutomaticTheme,
 }: {
   open: boolean;
+  automaticTheme: boolean;
+  onAutomaticTheme: (value: boolean) => void;
   locale: Locale;
   onLanguage: (value: Locale) => void;
   onClose: () => void;
 }) {
+  const [registered, setRegistered] = useState<boolean | null>(null);
+  const [integrating, setIntegrating] = useState(false);
+  const [integrationError, setIntegrationError] = useState('');
+  useEffect(() => {
+    if (!open || !native) return;
+    let live = true;
+    void openWithStatus()
+      .then((value) => {
+        if (live) setRegistered(value);
+      })
+      .catch(() => {
+        if (live) {
+          setRegistered(false);
+          setIntegrationError(t('Não foi possível verificar a integração com o Windows.'));
+        }
+      });
+    return () => {
+      live = false;
+    };
+  }, [open]);
   const select = useRef<HTMLSelectElement>(null);
   const previous = useRef<HTMLElement | null>(null);
   const [present, setPresent] = useState(open);
@@ -47,7 +72,7 @@ export function SettingsDialog({
         }
         if (event.key !== 'Tab') return;
         const controls = Array.from(
-          event.currentTarget.querySelectorAll<HTMLElement>('button,select'),
+          event.currentTarget.querySelectorAll<HTMLElement>('button,select,input'),
         );
         if (event.shiftKey && document.activeElement === controls[0]) {
           event.preventDefault();
@@ -90,6 +115,50 @@ export function SettingsDialog({
         <p className="icon-storage-hint">
           {t('A escolha fica salva neste computador. Suas notas mantêm o texto original.')}
         </p>
+        <div className="settings-section">
+          <label className="setting-toggle">
+            <span>{t('Tema automático')}</span>
+            <input
+              type="checkbox"
+              role="switch"
+              checked={automaticTheme}
+              onChange={(event) => onAutomaticTheme(event.target.checked)}
+            />
+          </label>
+          <p>{t('Dia 6h–16h · Tarde 16h–19h · Noite 19h–0h · Madrugada 0h–6h. Horário local.')}</p>
+          <p>{t('Escolher um tema manualmente desativa o modo automático.')}</p>
+        </div>
+        {native && (
+          <div className="settings-section">
+            <h3>{t('Integração com o Windows')}</h3>
+            <p>
+              {t(
+                'Adicione o Lume ao menu Abrir com para arquivos de texto e Markdown. O aplicativo padrão não será alterado.',
+              )}
+            </p>
+            <button
+              className="integration-button"
+              disabled={integrating || registered === null}
+              onClick={() => {
+                setIntegrating(true);
+                setIntegrationError('');
+                void setOpenWith(!registered)
+                  .then(setRegistered)
+                  .catch((error) => setIntegrationError(String(error).replace(/^Error: /, '')))
+                  .finally(() => setIntegrating(false));
+              }}
+            >
+              {t(
+                integrating
+                  ? 'Atualizando…'
+                  : registered
+                    ? 'Remover do Abrir com'
+                    : 'Adicionar ao Abrir com',
+              )}
+            </button>
+            {integrationError && <p role="alert">{integrationError}</p>}
+          </div>
+        )}
         <div className="modal-actions">
           <button className="primary" onClick={onClose}>
             {t('Concluído')}

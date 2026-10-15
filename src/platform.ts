@@ -1,5 +1,7 @@
 import { t } from './i18n';
 import { invoke, isTauri } from '@tauri-apps/api/core';
+import { writeText } from '@tauri-apps/plugin-clipboard-manager';
+import { listen } from '@tauri-apps/api/event';
 import { open, save } from '@tauri-apps/plugin-dialog';
 import { basename, decodeBytes, encodeText, newDocument, type DocumentTab } from './documents';
 export const native = isTauri();
@@ -131,3 +133,28 @@ export async function renameDocument(
     throw error;
   }
 }
+
+export async function copyContent(content: string): Promise<void> {
+  if (native) await writeText(content);
+  else await navigator.clipboard.writeText(content);
+}
+export async function readDocumentsFromPaths(paths: string[]): Promise<DocumentTab[]> {
+  const tabs: DocumentTab[] = [];
+  for (const path of paths) {
+    const file = await invoke<{ bytes: number[]; digest: string; path: string }>('read_file', {
+      path,
+    });
+    const decoded = decodeBytes(new Uint8Array(file.bytes));
+    tabs.push({
+      ...newDocument(basename(file.path), decoded.content),
+      ...decoded,
+      path: file.path,
+      digest: file.digest,
+    });
+  }
+  return tabs;
+}
+export const takePendingFiles = () => invoke<string[]>('take_pending_files');
+export const subscribeOpenRequests = (callback: () => void) => listen('lume-open-files', callback);
+export const openWithStatus = () => invoke<boolean>('open_with_status');
+export const setOpenWith = (enabled: boolean) => invoke<boolean>('set_open_with', { enabled });

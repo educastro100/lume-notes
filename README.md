@@ -1,16 +1,16 @@
 # Lume Notes
 
-Versão **0.7.0** — um editor local de texto e Markdown, com grupos de abas e um espaço tranquilo para escrever.
+Versão **0.8.0** — um editor local de texto e Markdown, com grupos de abas e um espaço tranquilo para escrever.
 
 Editor de texto desktop em **Tauri 2 + Rust + React + TypeScript + Tiptap + CodeMirror 6**, criado para Windows x64. A interface usa fontes locais, sem depender de serviços externos.
 
 ## Organização do projeto
 
-O código-fonte fica na raiz. A versão portátil atual está em `releases/0.7.0/Windows/Lume Notes.exe` e o pacote ZIP fica na mesma pasta da versão. `releases/` é ignorada pelo Git; os binários podem ser publicados em Releases quando o repositório remoto existir.
+O código-fonte fica na raiz. A versão portátil atual está em `releases/0.8.0/Windows/Lume Notes.exe` e o pacote ZIP fica na mesma pasta da versão. `releases/` é ignorada pelo Git; os binários podem ser publicados em Releases quando o repositório remoto existir.
 
-A validação da versão está em [docs/validacao-0.7.0.md](docs/validacao-0.7.0.md).
+A validação da versão está em [docs/validacao-0.8.0.md](docs/validacao-0.8.0.md).
 
-![Lume Notes 0.7.0](docs/images/lume-notes-0.7.0.png)
+![Lume Notes 0.8.0](docs/images/lume-notes-0.8.0.png)
 
 ## Usar o aplicativo
 
@@ -24,11 +24,11 @@ A entrega atual é portátil: não exige instalador e precisa da pasta extraída
 
 - Abas, painel de arquivos abertos e histórico de desfazer/refazer por aba durante a sessão.
 - Salvar e fechar diretamente pelo painel lateral, com proteção para alterações ainda não salvas.
-- Grupos de abas com nome e cor: criar, renomear, recolher e desagrupar sem fechar os arquivos. Use o menu ⋯ de um arquivo para movê-lo ou arraste sua aba para um grupo. Uma nota nova entra no grupo da nota ativa.
+- Grupos de abas com nome e cor: criar, renomear, recolher e desagrupar sem fechar os arquivos. Use o menu ⋯ de um arquivo para movê-lo ou arraste sua aba para um grupo. O + das abas cria uma nota sem grupo; Nova nota/Ctrl+N usa o grupo da nota ativa.
 - Nomes, cores, associações e estado de recolhimento dos grupos ficam salvos na sessão. Rascunhos da versão 0.1 são migrados automaticamente.
 - Edição visual de Markdown: negrito, itálico, sublinhado, código, divisórias, listas com marcadores e listas numeradas. Suporte a títulos, tabelas, tarefas e citações.
 - Novas notas abrem em Markdown com edição visual. O modo Código Markdown oferece split opcional e mantém sua escolha por documento.
-- Oito ícones para identificar os assuntos dos documentos. Clique no ícone ao lado do título ou use o menu ⋯ da nota; a escolha fica salva na sessão local e não altera o texto do arquivo.
+- Onze ícones para identificar os assuntos dos documentos, incluindo Roteiro, Filme e Vídeo. Clique no ícone ao lado do título ou use o menu ⋯ da nota; a escolha é lembrada pelo caminho do arquivo mesmo após fechar a aba, sem alterar seu texto.
 - Arraste uma aba para a área sem grupo na faixa de abas ou no painel para retirá-la do grupo atual. O destino só fica destacado enquanto o arraste está sobre ele.
 - Shift seleciona um intervalo de arquivos; Ctrl adiciona/remove um arquivo da seleção. Use o menu ⋯ de um dos selecionados para criar um grupo ou mover todos para um grupo existente. Grupos abrem e recolhem com transição suave.
 - Abrir múltiplos arquivos, salvar e salvar como, com diálogos do Windows.
@@ -65,11 +65,11 @@ A entrega atual é portátil: não exige instalador e precisa da pasta extraída
 
 ## Formatação e grupos
 
-Selecione um trecho e use os botões da barra de formatação. No modo visual, os botões alteram diretamente a seleção; sem seleção, ativam o estilo para o que será digitado. Use Enter para continuar listas e Enter em um item vazio para encerrá-las. Desfazer e refazer ficam ao lado da lupa. Cada tecla e Enter têm uma etapa própria no histórico; colagens e formatações continuam sendo ações únicas. O histórico guarda até cerca de 2.000 etapas durante a sessão.
+Selecione um trecho e use a barra flutuante de formatação ou os botões fixos. No modo visual, os botões alteram diretamente a seleção; sem seleção, ativam o estilo para o que será digitado. Use Enter para continuar listas e Enter em um item vazio para encerrá-las. Desfazer e refazer ficam ao lado da lupa. Cada tecla e Enter têm uma etapa própria no histórico; colagens e formatações continuam sendo ações únicas. O histórico guarda até cerca de 2.000 etapas durante a sessão.
 
 O modo **Código Markdown** exibe os marcadores; nele, **Split** liga/desliga a prévia ao lado. Os modos compartilham o conteúdo, que continua sendo salvo como Markdown: `**negrito**`, `*itálico*`, `<u>sublinhado</u>`, listas e divisórias. Apenas abrir uma nota ou trocar de modo não reescreve o texto. Após editar visualmente, o serializador pode normalizar marcadores e espaços. Documentos com imagens, HTML personalizado, frontmatter ou notas de rodapé permanecem no editor de código para preservar esses detalhes.
 
-Novas notas recebem a extensão `.md`. Um `.txt` existente mantém seu caminho; use **Salvar como** para criar uma versão `.md`. O aplicativo não grava RTF ou DOCX. Tab e Shift+Tab recuam e desfazem recuos: em listas, alteram o nível; em código, usam tabulações; em parágrafos, usam espaços inseparáveis para manter o recuo no Markdown sem transformar o texto em bloco de código. O X à direita do cabeçalho fecha a nota atual e pede confirmação para documentos ainda não salvos.
+Novas notas recebem a extensão `.md`. Um `.txt` existente mantém seu caminho; use **Salvar como** para criar uma versão `.md`. O aplicativo não grava RTF ou DOCX. Tab e Shift+Tab recuam e desfazem recuos: em listas, alteram o nível; em código, usam tabulações; em parágrafos, usam espaços inseparáveis para manter o recuo no Markdown sem transformar o texto em bloco de código. O X à direita do cabeçalho fecha a nota atual e pede confirmação para documentos ainda não salvos que contenham texto e arquivos com alterações. Notas novas vazias fecham diretamente.
 
 No painel, o botão **+** cria um grupo. Selecione vários arquivos com Shift ou Ctrl e use **⋯ → Criar grupo com N arquivos…** para reuni-los. O menu também move toda a seleção para um grupo existente ou para Sem grupo. O arraste transporta os arquivos selecionados. **Desagrupar arquivos** remove o grupo e mantém as notas abertas.
 
@@ -147,3 +147,13 @@ O botão Foco fica à direita de Salvar. A entrada e a saída têm uma breve ani
 Clique no título para editar e confirme com Enter ou o botão de check; Esc cancela. A extensão é preservada. Nas notas novas, o título fica salvo na sessão e é sugerido ao escolher onde salvar. Em arquivos existentes, a confirmação renomeia o arquivo na pasta atual, sem substituir outro arquivo. O texto não é regravado ao renomear: alterações ainda não salvas continuam pendentes. Arquivos alterados externamente precisam ser reabertos ou salvos em cópia antes da renomeação.
 
 O botão Salvar de cada linha da lateral aparece apenas em notas sem arquivo ou com alterações pendentes. Abrir um alias de arquivo já aberto revela a aba original. Fechar com Salvar não descarta texto digitado durante o salvamento.
+
+## Novidades da versão 0.8
+
+Em Configurações, **Tema automático** acompanha o horário local: Dia das 6h às 16h, Tarde das 16h às 19h, Noite das 19h à meia-noite e Madrugada da meia-noite às 6h. Fica desligado inicialmente. Escolher uma paleta pelo menu de temas desativa o automático; a escolha fica salva. A barra da janela também segue a paleta.
+
+Ao selecionar texto, uma barra próxima ao trecho oferece formatação e listas nos dois editores. Esc a fecha. O botão **Copiar todo o conteúdo**, ao lado de Foco, copia o texto completo, incluindo os marcadores Markdown. Foco expande suavemente o painel de escrita com um breve desfoque.
+
+Para usar o **Abrir com Lume**, mantenha o portátil em uma pasta definitiva e clique em **Configurações → Adicionar ao Abrir com**. O registro é por usuário, para .txt, .md, .json, .log e .csv, e não substitui seu aplicativo padrão. A mesma seção permite removê-lo. Ao mover/atualizar o executável, adicione novamente pela versão no novo caminho. A associação aponta para essa pasta, portanto mantenha o executável e a DLL juntos. O Lume abre os arquivos enviados pelo sistema na instância já em uso; as versões antigas devem ser fechadas antes da atualização.
+
+Os ícones Roteiro, Filme e Vídeo se somam aos oito existentes. A memória de ícones usa o caminho do arquivo no armazenamento local; renomeações feitas no Lume atualizam o caminho, enquanto movimentos feitos fora dele passam a ser um novo arquivo para essa memória. Rascunhos mantêm o ícone na sessão.

@@ -2,7 +2,12 @@
 use serde::Serialize;
 use sha2::{Digest, Sha256};
 use std::{fs, io::Write, path::{Path, PathBuf}};
-use tauri::Manager;
+use tauri::{Manager, Emitter};
+use std::sync::Mutex;
+mod open_with;
+struct PendingFiles(Mutex<Vec<String>>);
+#[tauri::command]
+fn take_pending_files(pending: tauri::State<PendingFiles>) -> Vec<String> { std::mem::take(&mut *pending.0.lock().unwrap_or_else(|error|error.into_inner())) }
 const MAX_FILE_BYTES: u64 = 16 * 1024 * 1024;
 const MAX_SESSION_BYTES: usize = 64 * 1024 * 1024;
 
@@ -119,8 +124,19 @@ fn store_session(app: tauri::AppHandle, value: String) -> Result<(), String> {
     atomic_write(&path,value.as_bytes())
 }
 fn main() {
-    tauri::Builder::default().plugin(tauri_plugin_dialog::init())
-        .invoke_handler(tauri::generate_handler![read_file,save_file,rename_file,load_session,store_session])
+    let cwd=std::env::current_dir().unwrap_or_else(|_|PathBuf::from("."));
+    let initial=open_with::argument_files(std::env::args(),&cwd);
+    tauri::Builder::default()
+        .plugin(tauri_plugin_single_instance::init(|app,args,cwd| {
+            let incoming=open_with::argument_files(args,Path::new(&cwd));
+            app.state::<PendingFiles>().0.lock().unwrap_or_else(|error|error.into_inner()).extend(incoming);
+            let _=app.emit("lume-open-files",());
+            if let Some(window)=app.get_webview_window("main") {let _=window.show(); let _=window.unminimize(); let _=window.set_focus();}
+        }))
+        .manage(PendingFiles(Mutex::new(initial)))
+        .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_clipboard_manager::init())
+        .invoke_handler(tauri::generate_handler![read_file,save_file,rename_file,load_session,store_session,take_pending_files,open_with::open_with_status,open_with::set_open_with])
         .run(tauri::generate_context!()).expect("Não foi possível iniciar o Lume Notes");
 }
 #[cfg(test)]

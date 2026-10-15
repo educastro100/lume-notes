@@ -1177,5 +1177,157 @@
     "Nach dem Speichern gibt es neue Änderungen. Die Notiz bleibt geöffnet.",
     "Υπάρχουν νέες αλλαγές μετά την αποθήκευση. Η σημείωση παρέμεινε ανοιχτή.",
     "保存后出现了新的更改，笔记仍保持打开。"
+  ],
+  "Roteiro": ["Screenplay", "Scénario", "Drehbuch", "Σενάριο", "剧本"],
+  "Filme": ["Film", "Film", "Film", "Ταινία", "电影"],
+  "Vídeo": ["Video", "Vidéo", "Video", "Βίντεο", "视频"],
+  "Minimizar janela": [
+    "Minimize window",
+    "Réduire la fenêtre",
+    "Fenster minimieren",
+    "Ελαχιστοποίηση παραθύρου",
+    "最小化窗口"
+  ],
+  "Restaurar janela": [
+    "Restore window",
+    "Restaurer la fenêtre",
+    "Fenster wiederherstellen",
+    "Επαναφορά παραθύρου",
+    "还原窗口"
+  ],
+  "Maximizar janela": [
+    "Maximize window",
+    "Agrandir la fenêtre",
+    "Fenster maximieren",
+    "Μεγιστοποίηση παραθύρου",
+    "最大化窗口"
+  ],
+  "Fechar Lume": ["Close Lume", "Fermer Lume", "Lume schließen", "Κλείσιμο Lume", "关闭 Lume"],
+  "Formatação da seleção": [
+    "Selection formatting",
+    "Mise en forme de la sélection",
+    "Auswahl formatieren",
+    "Μορφοποίηση επιλογής",
+    "选区格式"
+  ],
+  "Negrito na seleção": [
+    "Bold selection",
+    "Sélection en gras",
+    "Auswahl fett",
+    "Έντονη επιλογή",
+    "选区加粗"
+  ],
+  "Itálico na seleção": [
+    "Italic selection",
+    "Sélection en italique",
+    "Auswahl kursiv",
+    "Πλάγια επιλογή",
+    "选区斜体"
+  ],
+  "Sublinhar seleção": [
+    "Underline selection",
+    "Souligner la sélection",
+    "Auswahl unterstreichen",
+    "Υπογράμμιση επιλογής",
+    "选区下划线"
+  ],
+  "Código na seleção": [
+    "Code selection",
+    "Sélection en code",
+    "Auswahl als Code",
+    "Επιλογή ως κώδικας",
+    "选区代码"
+  ],
+  "Marcadores na seleção": [
+    "Bullet selected text",
+    "Liste à puces",
+    "Auswahl als Aufzählung",
+    "Κουκκίδες στην επιλογή",
+    "选区项目符号"
+  ],
+  "Numerar seleção": [
+    "Number selected text",
+    "Liste numérotée",
+    "Auswahl nummerieren",
+    "Αρίθμηση επιλογής",
+    "选区编号"
+  ],
+  "Tema automático": [
+    "Automatic theme",
+    "Thème automatique",
+    "Automatisches Design",
+    "Αυτόματο θέμα",
+    "自动主题"
+  ],
+  "Dia 6h–16h · Tarde 16h–19h · Noite 19h–0h · Madrugada 0h–6h. Horário local.": [
+    "Day 6am–4pm · Sunset 4pm–7pm · Night 7pm–midnight · Late night midnight–6am. Local time.",
+    "Jour 6h–16h · Soir 16h–19h · Nuit 19h–0h · Nuit profonde 0h–6h. Heure locale.",
+    "Tag 6–16 Uhr · Abend 16–19 Uhr · Nacht 19–0 Uhr · Tiefe Nacht 0–6 Uhr. Ortszeit.",
+    "Ημέρα 6–16 · Δειλινό 16–19 · Νύχτα 19–0 · Μεσάνυχτα 0–6. Τοπική ώρα.",
+    "白天 6–16点 · 黄昏 16–19点 · 夜晚 19–0点 · 深夜 0–6点。当地时间。"
+  ],
+  "Escolher um tema manualmente desativa o modo automático.": [
+    "Choosing a theme manually turns off automatic mode.",
+    "Choisir un thème manuellement désactive le mode automatique.",
+    "Die manuelle Designwahl deaktiviert den Automatikmodus.",
+    "Η χειροκίνητη επιλογή θέματος απενεργοποιεί την αυτόματη λειτουργία.",
+    "手动选择主题会关闭自动模式。"
+  ],
+  "Integração com o Windows": [
+    "Windows integration",
+    "Intégration Windows",
+    "Windows-Integration",
+    "Ενσωμάτωση στα Windows",
+    "Windows 集成"
+  ],
+  "Adicione o Lume ao menu Abrir com para arquivos de texto e Markdown. O aplicativo padrão não será alterado.": [
+    "Add Lume to Open with for text and Markdown files. Your default app stays unchanged.",
+    "Ajoutez Lume à Ouvrir avec pour les fichiers texte et Markdown. L’application par défaut reste inchangée.",
+    "Lume zu Öffnen mit für Text- und Markdown-Dateien hinzufügen. Die Standard-App bleibt unverändert.",
+    "Προσθήκη του Lume στο Άνοιγμα με για κείμενα και Markdown. Η προεπιλεγμένη εφαρμογή δεν αλλάζει.",
+    "将 Lume 添加到文本和 Markdown 文件的打开方式中。默认应用保持不变。"
+  ],
+  "Atualizando…": ["Updating…", "Mise à jour…", "Wird aktualisiert…", "Ενημέρωση…", "正在更新…"],
+  "Remover do Abrir com": [
+    "Remove from Open with",
+    "Retirer de Ouvrir avec",
+    "Aus Öffnen mit entfernen",
+    "Αφαίρεση από Άνοιγμα με",
+    "从打开方式中移除"
+  ],
+  "Adicionar ao Abrir com": [
+    "Add to Open with",
+    "Ajouter à Ouvrir avec",
+    "Zu Öffnen mit hinzufügen",
+    "Προσθήκη στο Άνοιγμα με",
+    "添加到打开方式"
+  ],
+  "Não foi possível verificar a integração com o Windows.": [
+    "Could not check Windows integration.",
+    "Impossible de vérifier l’intégration Windows.",
+    "Die Windows-Integration konnte nicht geprüft werden.",
+    "Δεν ήταν δυνατός ο έλεγχος ενσωμάτωσης στα Windows.",
+    "无法检查 Windows 集成。"
+  ],
+  "Copiar todo o conteúdo": [
+    "Copy all content",
+    "Copier tout le contenu",
+    "Gesamten Inhalt kopieren",
+    "Αντιγραφή όλου του περιεχομένου",
+    "复制全部内容"
+  ],
+  "Conteúdo copiado.": [
+    "Content copied.",
+    "Contenu copié.",
+    "Inhalt kopiert.",
+    "Το περιεχόμενο αντιγράφηκε.",
+    "内容已复制。"
+  ],
+  "Não foi possível copiar o conteúdo.": [
+    "Could not copy content.",
+    "Impossible de copier le contenu.",
+    "Der Inhalt konnte nicht kopiert werden.",
+    "Δεν ήταν δυνατή η αντιγραφή του περιεχομένου.",
+    "无法复制内容。"
   ]
 }
