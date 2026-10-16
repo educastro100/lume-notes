@@ -8,8 +8,8 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview --host 127.0.0.1",
     "tauri": "tauri",
-    "test": "vitest run && node --test scripts/prepare-release.checks.mjs",
-    "test:ci": "vitest run --maxWorkers=2 && node --test scripts/prepare-release.checks.mjs",
+    "test": "vitest run && node --test scripts/prepare-release.checks.mjs scripts/verify-nsis-payload.checks.mjs",
+    "test:ci": "vitest run --maxWorkers=2 && node --test scripts/prepare-release.checks.mjs scripts/verify-nsis-payload.checks.mjs",
     "format": "prettier --write src package.json tsconfig.json vite.config.ts src-tauri/tauri.conf.json src-tauri/capabilities/default.json *.md .prettierrc.json",
     "format:check": "prettier --check src package.json tsconfig.json vite.config.ts src-tauri/tauri.conf.json src-tauri/capabilities/default.json *.md .prettierrc.json"
   },

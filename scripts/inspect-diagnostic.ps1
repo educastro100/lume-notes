@@ -14,6 +14,7 @@ $lumeReport = [ordered]@{
   defenderVerdict = 'unavailable'
   defenderStatus = $null
   contentsVerified = $false
+  binaryComparison = $null
   files = @()
   scans = @()
   errors = @()
@@ -25,8 +26,7 @@ try {
   if ($lumeInstallers.Count -ne 1) { throw 'Esperado um instalador NSIS em um target novo.' }
   $lumeInstaller = $lumeInstallers[0]
   $lumeApp = Join-Path $lumeRelease 'lume-notes.exe'
-  # Capture the NSIS-patched executable immediately after packaging, before another cargo command.
-  $lumeAppHash = (Get-FileHash -LiteralPath $lumeApp -Algorithm SHA256).Hash.ToLowerInvariant()
+  # Tauri restores the UNK build file after embedding the NSS copy in the installer.
   $lumeInstallerHash = (Get-FileHash -LiteralPath $lumeInstaller.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
   $lumeSevenZip = Join-Path $env:ProgramFiles '7-Zip/7z.exe'
   if (-not (Test-Path -LiteralPath $lumeSevenZip -PathType Leaf)) { throw '7-Zip da imagem oficial indisponivel.' }
@@ -35,9 +35,14 @@ try {
   $lumePayloads = @(Get-ChildItem -LiteralPath $lumeExtracted -Filter 'lume-notes.exe' -File -Recurse)
   if ($lumePayloads.Count -ne 1) { throw 'Executavel final ausente ou ambiguo; pode ter ocorrido bloqueio/quarentena.' }
   $lumePayload = $lumePayloads[0]
-  if ((Get-FileHash -LiteralPath $lumePayload.FullName -Algorithm SHA256).Hash.ToLowerInvariant() -cne $lumeAppHash) {
-    throw 'O executavel do pacote difere do executavel final produzido pelo bundler.'
+  $lumeComparisonPath = Join-Path $lumeReports 'payload-comparison.json'
+  & node (Join-Path $PSScriptRoot 'verify-nsis-payload.mjs') $lumeApp $lumePayload.FullName $lumeComparisonPath
+  $lumeComparisonExit = $LASTEXITCODE
+  $lumeReport.binaryComparison = Get-Content -LiteralPath $lumeComparisonPath -Raw | ConvertFrom-Json
+  if ($lumeComparisonExit -ne 0 -or -not $lumeReport.binaryComparison.matches) {
+    throw 'O executavel do pacote difere da transformacao NSIS esperada. Consulte payload-comparison.json.'
   }
+  $lumePayloadHash = $lumeReport.binaryComparison.payload.sha256
   $lumeReport.contentsVerified = $true
   $lumeFiles = @($lumeInstaller) + @(Get-ChildItem -LiteralPath $lumeExtracted -File -Recurse | Where-Object {$_.Extension -in '.exe','.dll'})
   foreach ($lumeFile in $lumeFiles) {
@@ -87,7 +92,7 @@ try {
   Copy-Item -LiteralPath $lumeInstaller.FullName -Destination (Join-Path $lumePrivate 'Lume-DIAGNOSTIC-DO-NOT-INSTALL-setup.exe')
   Copy-Item -LiteralPath $lumePayload.FullName -Destination (Join-Path $lumePrivate 'lume-notes.exe')
   "DIAGNOSTICO PRIVADO. NAO INSTALAR NEM EXECUTAR. Defender: $($lumeReport.defenderVerdict). Consulte o relatorio e mantenha a versao 0.9.0 bloqueada. A ausencia de deteccoes nao comprova ausencia de malware." | Set-Content (Join-Path $lumePrivate 'WARNING.txt')
-  if ((Get-FileHash -LiteralPath (Join-Path $lumePrivate 'lume-notes.exe')).Hash.ToLowerInvariant() -cne $lumeAppHash -or (Get-FileHash -LiteralPath (Join-Path $lumePrivate 'Lume-DIAGNOSTIC-DO-NOT-INSTALL-setup.exe')).Hash.ToLowerInvariant() -cne $lumeInstallerHash) { throw 'As amostras anexadas nao correspondem aos hashes examinados.' }
+  if ((Get-FileHash -LiteralPath (Join-Path $lumePrivate 'lume-notes.exe')).Hash.ToLowerInvariant() -cne $lumePayloadHash -or (Get-FileHash -LiteralPath (Join-Path $lumePrivate 'Lume-DIAGNOSTIC-DO-NOT-INSTALL-setup.exe')).Hash.ToLowerInvariant() -cne $lumeInstallerHash) { throw 'As amostras anexadas nao correspondem aos hashes examinados.' }
   $lumeReady = $true
 } catch {
   if ($lumeReport.defenderVerdict -ne 'detected') { $lumeReport.defenderVerdict = 'error' }
