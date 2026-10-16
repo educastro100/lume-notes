@@ -30,6 +30,8 @@ As alterações foram preparadas localmente. Após o commit ser enviado à branc
 
 O acesso aos artifacts exige autenticação e permissão de leitura no repositório privado. A execução usa a franquia de Actions dessa conta. Nenhuma publicação automática está configurada.
 
+Os testes JavaScript usam `npm run test:ci`, com no máximo dois workers para reduzir a disputa de recursos no runner. Os testes de recuperação de notas controlam o relógio do salvamento automático, sem esperar tempo real nem aumentar o timeout de cinco segundos. Se uma execução anterior falhou nessa etapa, envie a correção e inicie um novo **Run workflow** em **main**; **Re-run jobs** reutiliza o commit antigo.
+
 Se for necessário baixar uma amostra para análise, não dê duplo clique nem instale. Compare o hash com `diagnostic.json` e faça a varredura local do executável final, das DLLs extraídas e do instalador antes de qualquer teste de execução. A ausência de detecção no ambiente do GitHub, isoladamente, não encerra o incidente.
 
 ## Análise da Microsoft

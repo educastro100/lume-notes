@@ -48,7 +48,7 @@ jobs:
       - name: Dependencias travadas
         run: npm ci
       - name: Testes JavaScript
-        run: npm test
+        run: npm run test:ci
       - name: Frontend para os testes nativos
         run: npm run build
       - name: Testes Rust

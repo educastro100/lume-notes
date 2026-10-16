@@ -34,6 +34,7 @@ let host: HTMLDivElement;
 let root: ReturnType<typeof createRoot>;
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 beforeEach(() => {
+  vi.useFakeTimers();
   vi.stubGlobal(
     'ResizeObserver',
     class {
@@ -51,8 +52,13 @@ beforeEach(() => {
 afterEach(() => {
   act(() => root.unmount());
   host.remove();
+  vi.clearAllTimers();
+  vi.useRealTimers();
   vi.unstubAllGlobals();
 });
+const persistDrafts = async () => {
+  await act(async () => vi.advanceTimersByTimeAsync(500));
+};
 const click = async (label: string) => {
   const button = Array.from(host.querySelectorAll('button')).find(
     (node) => node.getAttribute('aria-label') === label || node.textContent === label,
@@ -74,9 +80,10 @@ it('allows closing the last note, confirms an unsaved note, persists zero tabs a
   await click('Descartar');
   expect(host.querySelector('.empty-workspace')).not.toBeNull();
   expect(host.querySelector('[data-editor]')).toBeNull();
-  await act(async () => {
-    await new Promise((resolve) => setTimeout(resolve, 550));
-  });
+  await act(async () => vi.advanceTimersByTimeAsync(499));
+  expect(storeDrafts).not.toHaveBeenCalled();
+  await act(async () => vi.advanceTimersByTimeAsync(1));
+  expect(storeDrafts).toHaveBeenCalledTimes(1);
   const saved = JSON.parse(vi.mocked(storeDrafts).mock.calls.at(-1)![0]);
   expect(saved.tabs).toEqual([]);
   expect(saved.activeId).toBe('');
@@ -146,9 +153,7 @@ it('keeps edits made during a pending save when closing an unsaved note', async 
   await act(async () => finish({ name: 'draft.md', path: null, digest: null }));
   expect(host.querySelector('.empty-workspace')).toBeNull();
   expect(host.querySelector('.toast')?.textContent).toContain('Há novas alterações');
-  await act(async () => {
-    await new Promise((resolve) => setTimeout(resolve, 550));
-  });
+  await persistDrafts();
   const saved = JSON.parse(vi.mocked(storeDrafts).mock.calls.at(-1)![0]);
   expect(saved.tabs[0].content).toBe('first + typed while saving');
   expect(saved.tabs[0].savedContent).toBe('first');
@@ -174,9 +179,7 @@ it('persists a custom title without changing text, identity or extension', async
     'Meu projeto.md',
   );
   expect(host.querySelector('.document-title-row h1')?.textContent).toBe('Meu projeto');
-  await act(async () => {
-    await new Promise((resolve) => setTimeout(resolve, 550));
-  });
+  await persistDrafts();
   const saved = JSON.parse(vi.mocked(storeDrafts).mock.calls.at(-1)![0]);
   expect(saved.tabs[0]).toEqual({ ...tab, name: 'Meu projeto.md' });
 });
@@ -233,9 +236,7 @@ it('keeps the old title and content when renaming fails', async () => {
   expect(host.querySelector('.toast')?.textContent).toContain('Já existe');
   await click('Cancelar edição do título');
   expect(host.querySelector('.document-title-row h1')?.textContent).toBe('original');
-  await act(async () => {
-    await new Promise((resolve) => setTimeout(resolve, 550));
-  });
+  await persistDrafts();
   expect(JSON.parse(vi.mocked(storeDrafts).mock.calls.at(-1)![0]).tabs[0]).toEqual(tab);
 });
 
@@ -251,9 +252,7 @@ it('creates tab-strip notes outside the active group and closes empty drafts wit
   );
   await act(async () => root.render(<App />));
   await act(async () => host.querySelector<HTMLButtonElement>('.tabbar .add-tab')!.click());
-  await act(async () => {
-    await new Promise((resolve) => setTimeout(resolve, 550));
-  });
+  await persistDrafts();
   const saved = JSON.parse(vi.mocked(storeDrafts).mock.calls.at(-1)![0]);
   expect(saved.tabs.find((item: any) => item.id === saved.activeId).groupId).toBeNull();
   await click('Fechar documento atual');
@@ -286,9 +285,7 @@ it('reuses the remembered file icon after the tab has been closed', async () => 
   ]);
   await act(async () => root.render(<App />));
   await click('Abrir arquivo');
-  await act(async () => {
-    await new Promise((resolve) => setTimeout(resolve, 550));
-  });
+  await persistDrafts();
   const saved = JSON.parse(vi.mocked(storeDrafts).mock.calls.at(-1)![0]);
   expect(saved.tabs[0].icon).toBe('film');
 });
