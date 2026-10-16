@@ -1,3 +1,10 @@
+# Lume Notes 0.9.1 — em preparação, não publicada
+
+- Candidato de release Windows/MSVC pelo Actions, sem chaves privadas ou publicação automática.
+- Conferência dos arquivos finais e Defender obrigatório para gerar o candidato.
+- Assinatura local vinculada à versão, sem alterar o instalador compilado no GitHub, e verificação pelo plugin atualizador.
+- Fluxo documentado em `docs/release-actions.md`; preservado o bloqueio da versão 0.9.0 anterior.
+
 # Lume Notes 0.9.0 — em investigação, não distribuída
 
 - Publicação bloqueada por detecção reproduzida do Defender; workflow manual de diagnóstico em Windows/MSVC oficial, no repositório privado.

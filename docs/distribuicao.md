@@ -28,6 +28,8 @@ Assinatura do atualizador é diferente de um certificado comercial Authenticode 
 
 ## Gerar uma release
 
+Para a versão 0.9.1 e seguintes, siga [Preparar release pelo Actions](release-actions.md). O candidato é compilado e examinado no GitHub sem chave privada, e assinado localmente após nova conferência. Esse é o fluxo adotado após a investigação da versão 0.9.0. O build local descrito a seguir permanece como ferramenta de desenvolvimento e não substitui as verificações do fluxo oficial.
+
 Mantenha package.json, package-lock.json, Cargo.toml e tauri.conf.json com a mesma versão X.Y.Z. Atualize CHANGELOG.md e crie docs/release-notes-X.Y.Z.md. Os arquivos de lock devem acompanhar a versão e as dependências.
 
 Em um Windows com os pré-requisitos de desenvolvimento do README:

@@ -2,7 +2,7 @@
 
 > **0.9.0: distribuição suspensa.** O Defender detectou `Trojan:Win32/Bearfoos.A!ml` no executável do instalador. Não instalar nem publicar esse pacote. Consulte a [auditoria](docs/auditoria-seguranca-0.9.0.md) e o [diagnóstico em ambiente limpo](docs/diagnostico-windows.md).
 
-Versão **0.9.0** — um editor local de texto e Markdown, com grupos de abas e um espaço tranquilo para escrever.
+Versão **0.9.1 em preparação** — um editor local de texto e Markdown, com grupos de abas e um espaço tranquilo para escrever.
 
 Editor de texto desktop em **Tauri 2 + Rust + React + TypeScript + Tiptap + CodeMirror 6**, criado para Windows x64. A interface usa fontes locais, sem depender de serviços externos.
 
@@ -11,6 +11,8 @@ Editor de texto desktop em **Tauri 2 + Rust + React + TypeScript + Tiptap + Code
 O código-fonte fica na raiz. Repositório no GitHub: [educastro100/lume-notes](https://github.com/educastro100/lume-notes). O pacote local 0.9.0 está bloqueado para investigação. O canal público reservado para futuras versões é [Lume Releases](https://github.com/educastro100/lume-notes-releases/releases/latest). `releases/` é ignorada pelo Git; o canal público contém somente instaladores, assinaturas e metadados de atualização.
 
 A distribuição e o processo de atualização estão documentados em [docs/distribuicao.md](docs/distribuicao.md). A validação anterior está em [docs/validacao-0.8.0.md](docs/validacao-0.8.0.md).
+
+A próxima versão usa o fluxo [Preparar release Windows](docs/release-actions.md): compilação e varredura pelo Actions, seguida de assinatura local com a chave existente. O workflow não publica automaticamente.
 
 ![Lume Notes 0.8.0](docs/images/lume-notes-0.8.0.png)
 

@@ -39,7 +39,9 @@ export async function prepareRelease(root, bundleDirectory) {
       'Canal de atualização ou validação da assinatura não corresponde à distribuição oficial.',
     );
   const files = (await readdir(bundleDirectory)).filter(
-    (name) => name.endsWith('-setup.exe') && name.includes('_' + pkg.version + '_'),
+    (name) =>
+      name === `Lume-Notes-${pkg.version}-Windows-x64-setup.exe` ||
+      (name.endsWith('-setup.exe') && name.includes('_' + pkg.version + '_')),
   );
   if (files.length !== 1) throw new Error('Esperado exatamente um instalador NSIS desta versão.');
   const original = path.join(bundleDirectory, files[0]);

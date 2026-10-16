@@ -44,6 +44,10 @@ if (-not (Test-Path -LiteralPath $lumeVerifier -PathType Leaf)) {throw 'Verifica
 if ($LASTEXITCODE -ne 0) {throw 'Não foi possível validar o pacote com o verificador local. Nenhum dado foi enviado.'}
 if ($PrepareOnly) {Write-Host 'Verificação local concluída. Nenhum dado enviado.';return}
 
+# Publishing requires the record produced after CI checks, local scans and signature verification.
+& node (Join-Path $PSScriptRoot 'release-candidate.mjs') publication $lumeFolder $Version
+if ($LASTEXITCODE -ne 0) {throw 'Evidencia de release ausente ou divergente. Use scripts/finish-release.ps1 antes de publicar. Nenhuma credencial foi acessada.'}
+
 # Retrieve the existing GitHub credential directly, without printing or persisting it.
 $lumeGit = (Get-Command git.exe).Source
 $lumeManager = Join-Path (Split-Path (Split-Path $lumeGit -Parent) -Parent) 'mingw64\bin\git-credential-manager.exe'
