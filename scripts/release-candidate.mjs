@@ -7,6 +7,14 @@ import { spawnSync } from 'node:child_process';
 const repository = 'educastro100/lume-notes';
 const hash = (bytes) => createHash('sha256').update(bytes).digest('hex');
 const json = async (file) => JSON.parse(await readFile(file, 'utf8'));
+export function assertPreparationChanges(paths) {
+  // These files are not build inputs for this project's npm/Tauri build commands.
+  // Any other change (source, assets, manifests, locks or compiler config) requires a new CI build.
+  if (paths.some((file) => !/^(scripts\/|docs\/|\.github\/|README\.md$|CHANGELOG\.md$)/.test(file)))
+    throw new Error(
+      'Arquivos de compilacao mudaram desde o candidato. Execute um novo build no CI.',
+    );
+}
 export const candidateNames = (version) => [
   `Lume-Notes-${version}-Windows-x64-setup.exe`,
   'lume-notes.exe',
@@ -161,7 +169,19 @@ export async function validateReleaseEvidence(root, directory, version) {
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
   const [mode, directory, third, fourth] = process.argv.slice(2);
-  if (mode === 'publication') {
+  if (mode === 'compatible') {
+    if (!/^[a-f0-9]{40}$/.test(directory) || !/^[a-f0-9]{40}$/.test(third))
+      throw new Error('Commit de compilacao ou preparacao invalido.');
+    const difference = spawnSync('git', ['diff', '--name-only', directory, third, '--'], {
+      cwd: root,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+    if (difference.error || difference.status !== 0)
+      throw new Error('Nao foi possivel comparar os commits.');
+    assertPreparationChanges(difference.stdout.trim().split(/\r?\n/).filter(Boolean));
+    console.log('Arquivos de compilacao identicos aos do candidato.');
+  } else if (mode === 'publication') {
     await validateReleaseEvidence(root, directory, third);
     console.log('Evidencia da release conferida.');
   } else if (mode === 'create') {
@@ -201,5 +221,5 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
       console.log('Assinatura local criada para a versao ' + candidate.version);
     } else
       console.log('Candidato conferido: ' + candidate.version + ', commit ' + candidate.commit);
-  } else throw new Error('Use create, validate, sign ou publication.');
+  } else throw new Error('Use create, validate, sign, compatible ou publication.');
 }

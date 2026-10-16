@@ -8,6 +8,7 @@ import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import {
   candidateNames,
+  assertPreparationChanges,
   createCandidate,
   releaseVersion,
   validateCandidate,
@@ -20,6 +21,28 @@ const currentVersion = JSON.parse(await readFile(path.join(projectRoot, 'package
 const commit = 'a'.repeat(40);
 const provenance = { repository: 'educastro100/lume-notes', commit, runId: '123' };
 const hash = (bytes) => createHash('sha256').update(bytes).digest('hex');
+
+test('allows preparation-only fixes but rejects every changed application build input', () => {
+  assertPreparationChanges([]);
+  assertPreparationChanges([
+    'scripts/finish-release.ps1',
+    'docs/release-actions.md',
+    '.github/workflows/windows-release.yml',
+  ]);
+  for (const file of [
+    'src/App.tsx',
+    'src-tauri/src/main.rs',
+    'src-tauri/tauri.conf.json',
+    'package.json',
+    'package-lock.json',
+    'public/icon.png',
+    'index.html',
+    'vite.config.ts',
+    'tsconfig.json',
+    '.npmrc',
+  ])
+    assert.throws(() => assertPreparationChanges([file]), /compilacao/);
+});
 
 async function fixture(t) {
   const root = await mkdtemp(path.join(tmpdir(), 'lume-release-check-'));

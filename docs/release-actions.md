@@ -12,14 +12,16 @@ Ao concluir, baixe `lume-release-reports-<run-id>` e `lume-release-candidate-<ru
 
 ## 2. Conferir e assinar localmente
 
-No mesmo checkout, sem alterações pendentes e no mesmo commit do workflow:
+No mesmo checkout, sem alterações pendentes e com os mesmos arquivos de compilação do workflow:
 
 ```powershell
 Set-Location -LiteralPath 'C:\Users\Eduardo\Documents\Projetos Pessoais\[DOING] Lume'
 .\scripts\finish-release.ps1 -ArtifactZip 'C:\Users\Eduardo\Downloads\lume-release-candidate-<run-id>.zip'
 ```
 
-O script extrai somente os quatro nomes permitidos em uma pasta nova, rejeita caminhos extras/duplicados e confere versão, commit, política de segurança e hashes. Atualiza a inteligência do Defender local e analisa os três executáveis. Só então a CLI oficial abre a chave existente e cria a assinatura com `--app-version`. A chave permanece em `Documents\Codex\Lume Signing\lume-notes.key`, fora do repositório; seu conteúdo não é impresso ou enviado ao GitHub. Para uma chave protegida, a senha deve estar apenas na variável `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` do processo local. Não informe chave ou senha no chat, em argumentos ou em commits.
+O script extrai somente os quatro nomes permitidos em uma pasta nova, rejeita caminhos extras/duplicados e confere versão, commit, política de segurança e hashes. Correções posteriores limitadas a scripts operacionais, documentação e workflows podem preparar o mesmo candidato; qualquer mudança em código do app, assets, manifestos, dependências ou configuração de compilação exige um novo build. O commit compilado e o commit de preparação são registrados separadamente.
+
+Atualiza a inteligência do Defender local e analisa os três executáveis. Só então a CLI oficial abre a chave existente e cria a assinatura com `--app-version`. A chave permanece em `Documents\Codex\Lume Signing\lume-notes.key`, fora do repositório; seu conteúdo não é impresso ou enviado ao GitHub. Para uma chave protegida, a senha deve estar apenas na variável `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` do processo local. Não informe chave ou senha no chat, em argumentos ou em commits.
 
 Depois da assinatura, prepara `latest.json` e os hashes, copia o verificador privado e executa o preflight de publicação. O verificador usa o plugin atualizador do aplicativo para conferir a assinatura, a versão assinada e a rejeição de bytes ou versões adulterados. Ele não executa o instalador, não abre o editor e não altera o registro. A assinatura do atualizador é um arquivo separado; o instalador não é reempacotado e deve manter o hash do CI. A assinatura Windows Authenticode continua ausente.
 
