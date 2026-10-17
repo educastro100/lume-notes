@@ -1,6 +1,6 @@
 # Comparar as instalações 0.9.1 e 0.10.0 no GitHub Actions
 
-O workflow manual **Comparar instalacao Windows** investiga o bloqueio observado depois da atualização para 0.10.0. Ele usa os instaladores exatos já publicados, com hashes fixados a partir dos candidatos verificados. Não recompila o aplicativo, não gera outra versão e não envia amostras para um portal de análise.
+O workflow manual **Comparar instalacao Windows** investiga o bloqueio observado depois da atualização para 0.10.0. Ele usa os instaladores exatos já publicados, com hashes fixados a partir dos candidatos verificados. Não recompila o aplicativo, não gera outra versão e não realiza submissão manual a um portal de análise. O Defender do runner utiliza proteção em nuvem e envio automático de amostras seguras; esses serviços podem analisar os binários públicos durante o teste.
 
 Cada versão recebe um runner Windows 2022 hospedado pelo GitHub, separado e temporário. O script recusa execução local, runners próprios e outros repositórios. Não precisa de chave de assinatura, credenciais pessoais ou configuração de uma máquina virtual pelo desenvolvedor.
 
@@ -10,11 +10,11 @@ Envie os scripts para `main` no repositório privado. Em Actions, execute **Comp
 
 O teste:
 
-1. Solicita a ativação das proteções existentes em tempo real, comportamental e de arquivos, atualiza as definições e exige confirmação de que as proteções estão ativas. Não cria exclusões, muda ações de remediação, configura envio de amostras ou altera proteção contra adulteração.
-2. Baixa o instalador da versão fixada do repositório público e verifica o hash exato antes de executá-lo. Se o Defender já bloquear o download ou a leitura, registra a etapa da falha e os eventos disponíveis.
+1. Solicita a ativação das proteções em tempo real, comportamental e de arquivos e atualiza as definições. No runner, ativa MAPS Advanced, envio automático de amostras seguras e bloqueio à primeira vista conforme a configuração oficial da Microsoft. Exige confirmar essas opções e testar a conexão com a nuvem por `MpCmdRun -ValidateMapsConnection`. Não cria exclusões, muda ações de remediação ou altera proteção contra adulteração. O checkout inclui somente os dois scripts de teste; código do editor, chave e notas do usuário não são copiados para o runner.
+2. Baixa o instalador da versão fixada do repositório público, marca sua origem como Internet no fluxo NTFS `Zone.Identifier` e verifica o hash exato dos bytes do instalador antes de executá-lo. Essa marcação torna a condição de origem explícita para a proteção; não altera o conteúdo do pacote. Se o Defender já bloquear o download ou a leitura, registra a etapa da falha e os eventos disponíveis.
 3. Instala silenciosamente em uma pasta nova dentro de `RUNNER_TEMP`, verifica o executável instalado contra o hash original do payload, a versão e o registro criado pelo instalador.
 4. Abre o app com uma pasta temporária para a sessão, exige observar uma janela e acompanha o processo durante 60 segundos. Verifica novamente as proteções, a presença e o hash do executável.
-5. Salva o estado das proteções, as configurações de nuvem existentes, o resultado de cada etapa e os eventos de detecção/remediação do Lume. Encerra somente os processos criados pelo teste.
+5. Salva o estado das proteções, as configurações de nuvem anteriores e efetivas, os testes de conexão, o resultado de cada etapa e os eventos de detecção/remediação do Lume. Encerra somente os processos criados pelo teste.
 
 Somente relatórios são anexados, em artefatos privados `lume-installed-check-0.9.1-<run-id>` e `lume-installed-check-0.10.0-<run-id>`. Não há upload de instaladores, dados pessoais, chave ou sessão do computador do usuário. Não existe etapa de publicação.
 
@@ -27,6 +27,8 @@ Somente relatórios são anexados, em artefatos privados `lume-installed-check-0
 `protection-check.json` registra a preparação; `installed-check.json` registra o download, instalação e abertura, se essa etapa for atingida. Um runner pode continuar diferente do Windows do usuário, inclusive na política de nuvem e nas definições. Um resultado sem eventos exige investigação adicional se a ocorrência local persistir. O bloqueio de distribuição da 0.10.0 não é removido automaticamente.
 
 A preparação aguarda até 45 segundos pela ativação das proteções e atualiza as definições por `MpCmdRun -SignatureUpdate`, com limite de 120 segundos e saída em `defender-update.txt`. Esse é o mesmo método dos workflows anteriores; o cmdlet `Update-MpSignature` falhou com erro RPC nessa imagem. Erros e limites de espera continuam interrompendo o teste. O resumo agora informa a etapa e a mensagem de erro, mesmo quando a consulta ao histórico também falha.
+
+No run `38995686741`, ambos os instaladores originais abriram durante 60 segundos com motor `1.1.26090.9` e definições `1.461.64.0`, sem eventos de detecção. Porém, os relatórios registraram `MAPSReporting=0`, `SubmitSamplesConsent=2` e `DisableBlockAtFirstSeen=true`: a proteção em nuvem estava desligada. Isso limita aquele resultado e não estabelece a causa do bloqueio local. A configuração anterior agora é rejeitada pelos guardas do teste. Se a política do runner impedir ativar ou conectar a proteção em nuvem, o diagnóstico falha como inconclusivo, sem executar o app.
 
 Os testes locais dos guardas usam somente dados simulados, sem iniciar o Defender ou qualquer instalador:
 

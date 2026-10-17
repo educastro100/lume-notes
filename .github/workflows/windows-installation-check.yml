@@ -30,9 +30,12 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          sparse-checkout: scripts
+          sparse-checkout: |
+            /scripts/check-installed-windows.ps1
+            /scripts/installation-check-helpers.ps1
+          sparse-checkout-cone-mode: false
       - name: Exigir protecao ativa no runner
-        timeout-minutes: 5
+        timeout-minutes: 6
         run: |
           ./scripts/check-installed-windows.ps1 -Phase Prepare -Version '${{ matrix.version }}'
       - name: Instalar e observar a abertura por 60 segundos

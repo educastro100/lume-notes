@@ -15,6 +15,14 @@ function Assert-LumeProtection {
   }
 }
 
+function Assert-LumeCloudProtection {
+  param($Settings)
+  if ($Settings.MAPSReporting -ne 2 -or $Settings.SubmitSamplesConsent -ne 1 -or
+      $Settings.DisableBlockAtFirstSeen -isnot [bool] -or $Settings.DisableBlockAtFirstSeen) {
+    throw 'Protecao em nuvem, envio de amostras seguras e bloqueio a primeira vista devem estar ativos no runner. Teste inconclusivo.'
+  }
+}
+
 function Assert-LumeTemporaryPath {
   param([string]$Path, [string]$TemporaryRoot)
   if (-not [IO.Path]::IsPathRooted($Path) -or -not [IO.Path]::IsPathRooted($TemporaryRoot)) {
@@ -32,7 +40,8 @@ function Invoke-LumeDiagnosticProcess {
     [Parameter(Mandatory=$true)][string]$FilePath,
     [Parameter(Mandatory=$true)][string]$Arguments,
     [Parameter(Mandatory=$true)][string]$LogPath,
-    [ValidateRange(1,180)][int]$TimeoutSeconds=120
+    [ValidateRange(1,180)][int]$TimeoutSeconds=120,
+    [string]$Activity='atualizacao das definicoes'
   )
   $process=[Diagnostics.Process]::new()
   $process.StartInfo=[Diagnostics.ProcessStartInfo]::new()
@@ -52,14 +61,14 @@ function Invoke-LumeDiagnosticProcess {
     $stdout=$process.StandardOutput.ReadToEndAsync()
     $stderr=$process.StandardError.ReadToEndAsync()
     while (-not $process.WaitForExit(200)) {
-      if ($timer.Elapsed.TotalSeconds -ge $TimeoutSeconds) { throw "Processo de diagnostico excedeu $TimeoutSeconds segundos. Consulte o log de atualizacao." }
+      if ($timer.Elapsed.TotalSeconds -ge $TimeoutSeconds) { throw "Processo de diagnostico ($Activity) excedeu $TimeoutSeconds segundos. Consulte o log." }
       if ($timer.Elapsed.TotalSeconds -ge $nextProgress) {
-        Write-Host "Aguardando atualizacao das definicoes... ($([int]$timer.Elapsed.TotalSeconds)s; limite: ${TimeoutSeconds}s)"
+        Write-Host "Aguardando $Activity... ($([int]$timer.Elapsed.TotalSeconds)s; limite: ${TimeoutSeconds}s)"
         $nextProgress+=10
       }
     }
     $exitCode=$process.ExitCode
-    if ($exitCode -ne 0) { throw "Atualizacao das definicoes falhou com codigo $exitCode. Consulte o log de atualizacao." }
+    if ($exitCode -ne 0) { throw "Processo de diagnostico ($Activity) falhou com codigo $exitCode. Consulte o log." }
     return [pscustomobject]@{ exitCode=$exitCode; elapsedSeconds=[int]$timer.Elapsed.TotalSeconds }
   } finally {
     if ($started -and -not $process.HasExited) {

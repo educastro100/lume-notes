@@ -22,7 +22,8 @@ $report = [ordered]@{
   sourceCommit=$package.commit; version=$Version
   controllerCommit=$env:GITHUB_SHA; runId=$env:GITHUB_RUN_ID
   startedUtc=[DateTime]::UtcNow.ToString('o'); protectionBefore=$null; protectionAfter=$null
-  cloudSettings=$null; stage='protection'; definitionsUpdate=$null; installer=$null; installed=$null
+  cloudSettingsBefore=$null; cloudSettings=$null; mapsConnection=$null; downloadZoneId=$null
+  stage='protection'; definitionsUpdate=$null; installer=$null; installed=$null
   windowObserved=$false; observedSeconds=0; events=@(); eventError=$null; error=$null
 }
 $appProcess = $null
@@ -31,11 +32,25 @@ $eventStart = Get-Date
 function Get-LumeProtectionSnapshot {
   Get-MpComputerStatus -ErrorAction Stop | Select-Object AMProductVersion, AMEngineVersion, AMServiceEnabled, AntivirusEnabled, RealTimeProtectionEnabled, BehaviorMonitorEnabled, OnAccessProtectionEnabled, AntivirusSignatureVersion, AntivirusSignatureLastUpdated
 }
+function Get-LumeCloudSettings {
+  Get-MpPreference -ErrorAction Stop | Select-Object MAPSReporting, SubmitSamplesConsent, DisableBlockAtFirstSeen
+}
+function Get-LumeDefenderTool {
+  $platform=Join-Path $env:ProgramData 'Microsoft/Windows Defender/Platform'
+  $tools=@(Get-ChildItem -Path "$platform/*/MpCmdRun.exe" -File -ErrorAction SilentlyContinue |
+    Where-Object { $_.Directory.Name -match '^\d' } |
+    Sort-Object { [version]($_.VersionInfo.FileVersion -replace '[^0-9.].*$','') } -Descending)
+  $tool=if ($tools.Count) {$tools[0].FullName} else {Join-Path $env:ProgramFiles 'Windows Defender/MpCmdRun.exe'}
+  if (-not (Test-Path -LiteralPath $tool -PathType Leaf)) { throw 'MpCmdRun oficial indisponivel; teste inconclusivo.' }
+  $tool
+}
 try {
-  $report.cloudSettings=Get-MpPreference -ErrorAction Stop | Select-Object MAPSReporting, SubmitSamplesConsent, DisableBlockAtFirstSeen
+  $report.cloudSettings=Get-LumeCloudSettings
+  $report.cloudSettingsBefore=$report.cloudSettings
   if ($Phase -eq 'Prepare') {
-    # Only strengthen the hosted runner's existing protection. No exclusions,
-    # remediation changes, cloud sample settings or tamper-protection changes.
+    # Strengthen only the disposable runner; never add exclusions or change
+    # remediation/tamper protection. Cloud safe-sample submission is required
+    # by Microsoft's block-at-first-sight configuration for the public binaries.
     Set-MpPreference -DisableRealtimeMonitoring $false -DisableBehaviorMonitoring $false -DisableIOAVProtection $false -ErrorAction Stop
     $deadline = [DateTime]::UtcNow.AddSeconds(45)
     do {
@@ -52,21 +67,35 @@ try {
     # Use the same official CLI used by the earlier successful release workflows;
     # Update-MpSignature failed with RPC errors on this hosted image.
     $report.stage='definitions-update'
-    $platform=Join-Path $env:ProgramData 'Microsoft/Windows Defender/Platform'
-    $tools=@(Get-ChildItem -Path "$platform/*/MpCmdRun.exe" -File -ErrorAction SilentlyContinue |
-      Where-Object { $_.Directory.Name -match '^\d' } |
-      Sort-Object { [version]($_.VersionInfo.FileVersion -replace '[^0-9.].*$','') } -Descending)
-    $updater=if ($tools.Count) {$tools[0].FullName} else {Join-Path $env:ProgramFiles 'Windows Defender/MpCmdRun.exe'}
-    if (-not (Test-Path -LiteralPath $updater -PathType Leaf)) { throw 'MpCmdRun oficial indisponivel; teste inconclusivo.' }
+    $updater=Get-LumeDefenderTool
     $report.definitionsUpdate=Invoke-LumeDiagnosticProcess -FilePath $updater -Arguments '-SignatureUpdate' -LogPath (Join-Path $reports 'defender-update.txt') -TimeoutSeconds 120
-    $report.protectionAfter=Get-LumeProtectionSnapshot
-    Assert-LumeProtection $report.protectionAfter
+    $report.stage='cloud-protection'
+    Set-MpPreference -MAPSReporting Advanced -SubmitSamplesConsent SendSafeSamples -DisableBlockAtFirstSeen $false -ErrorAction Stop
+    $deadline=[DateTime]::UtcNow.AddSeconds(45)
+    do {
+      try {
+        $report.protectionAfter=Get-LumeProtectionSnapshot
+        Assert-LumeProtection $report.protectionAfter
+        $report.cloudSettings=Get-LumeCloudSettings
+        Assert-LumeCloudProtection $report.cloudSettings
+        break
+      } catch {
+        if ([DateTime]::UtcNow -ge $deadline) { throw }
+        Start-Sleep -Seconds 2
+      }
+    } while ($true)
+    $report.stage='maps-connection'
+    # Signature updates can install a new platform. Resolve the tool again.
+    $report.mapsConnection=Invoke-LumeDiagnosticProcess -FilePath (Get-LumeDefenderTool) -Arguments '-ValidateMapsConnection' -LogPath (Join-Path $reports 'maps-connection.txt') -TimeoutSeconds 60 -Activity 'conexao com a protecao em nuvem'
     $report.stage='ready'
     $report.verdict='protection-ready'
-    Write-Host 'Protecao em tempo real, comportamental e de acesso confirmada no runner.'
+    Write-Host 'Protecao local e em nuvem, bloqueio a primeira vista e conexao MAPS confirmados no runner.'
   } else {
     $report.protectionBefore = Get-LumeProtectionSnapshot
     Assert-LumeProtection $report.protectionBefore
+    Assert-LumeCloudProtection $report.cloudSettings
+    $report.stage='maps-connection'
+    $report.mapsConnection=Invoke-LumeDiagnosticProcess -FilePath (Get-LumeDefenderTool) -Arguments '-ValidateMapsConnection' -LogPath (Join-Path $reports 'maps-connection-install.txt') -TimeoutSeconds 60 -Activity 'conexao com a protecao em nuvem'
     $installRoot = Join-Path $env:RUNNER_TEMP ('lume-installed-check-' + [Guid]::NewGuid().ToString('N'))
     Assert-LumeTemporaryPath $installRoot $env:RUNNER_TEMP
     if (Test-Path -LiteralPath $installRoot) { throw 'Pasta de teste ja existe.' }
@@ -76,7 +105,13 @@ try {
     $installerName="Lume-Notes-$Version-Windows-x64-setup.exe"
     $installerPath=Join-Path $downloadRoot $installerName
     $report.stage='download'
-    Invoke-WebRequest -Uri "https://github.com/educastro100/lume-notes-releases/releases/download/v$Version/$installerName" -OutFile $installerPath -TimeoutSec 120 -MaximumRedirection 5
+    $installerUrl="https://github.com/educastro100/lume-notes-releases/releases/download/v$Version/$installerName"
+    Invoke-WebRequest -Uri $installerUrl -OutFile $installerPath -TimeoutSec 120 -MaximumRedirection 5
+    # PowerShell downloads do not reliably preserve browser origin metadata.
+    # Mark the installer as Internet-zone content without changing its bytes.
+    Set-Content -LiteralPath $installerPath -Stream Zone.Identifier -Value "[ZoneTransfer]`r`nZoneId=3`r`nHostUrl=$installerUrl" -Encoding ascii
+    if ((Get-Content -LiteralPath $installerPath -Stream Zone.Identifier -Raw) -notmatch '(?m)^ZoneId=3\r?$') { throw 'Origem Internet do instalador nao foi preservada; teste inconclusivo.' }
+    $report.downloadZoneId=3
     $installer=Get-Item -LiteralPath $installerPath
     $installerHash = (Get-FileHash -LiteralPath $installer.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
     if ($installerHash -cne $package.installer) { throw 'Hash do instalador publicado difere da evidencia local fixada.' }
@@ -113,6 +148,8 @@ try {
     if (-not $report.windowObserved) { throw 'Nao foi possivel observar a janela; o runner pode nao oferecer uma sessao grafica utilizavel. Teste inconclusivo.' }
     $report.protectionAfter = Get-LumeProtectionSnapshot
     Assert-LumeProtection $report.protectionAfter
+    $report.cloudSettings=Get-LumeCloudSettings
+    Assert-LumeCloudProtection $report.cloudSettings
     if ((Get-FileHash -LiteralPath $executable -Algorithm SHA256).Hash.ToLowerInvariant() -cne $installedHash) { throw 'Aplicativo instalado mudou durante o teste.' }
     $report.verdict='startup-observed'
     Write-Host 'Instalacao e janela observadas por 60 segundos com protecao ativa. Diagnostico; nao libera uma release.'

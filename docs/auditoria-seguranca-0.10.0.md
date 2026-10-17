@@ -46,3 +46,11 @@ Não foi encontrada uma correção de código que possa ser atribuída ao alerta
 O próximo diagnóstico implementado é **Comparar instalacao Windows**, documentado em `docs/diagnostico-instalacao.md`. Ele utiliza os dois instaladores públicos originais, com hashes fixados, em runners separados com proteção ativa. Testa download, instalação e abertura, preservando os eventos e a etapa de falha. Não recompila o app, não publica uma versão e não executa o teste no computador do usuário. A criação desse teste ainda não representa a execução nem a correção da causa do alerta.
 
 Canal oficial: https://www.microsoft.com/en-us/wdsi/filesubmission
+
+## Resultado da comparação instalada — execução 38995686741
+
+Os relatórios das versões 0.9.1 e 0.10.0 confirmam os hashes originais dos instaladores e executáveis instalados. Ambos apresentaram janela e permaneceram ativos durante 60 segundos. Antes e depois, as proteções local, comportamental e de acesso estavam ativas; motor `1.1.26090.9`, plataforma `4.18.26090.9`, definições `1.461.64.0`. Não há eventos registrados nem erro de consulta ao histórico nos relatórios.
+
+Nos dois runners, porém, as preferências eram `MAPSReporting=0`, `SubmitSamplesConsent=2`, `DisableBlockAtFirstSeen=true`. Portanto, a proteção em nuvem e o bloqueio à primeira vista não foram testados. Não foram consultadas novamente as preferências ou o antivírus do computador do usuário; não é possível afirmar que essa diferença seja a causa da ocorrência local.
+
+O diagnóstico foi ajustado para exigir e verificar proteção em nuvem, envio de amostras seguras e conexão MAPS no runner. A origem Internet do instalador também é registrada em um fluxo NTFS separado, mantendo o hash dos bytes publicados. O teste continua limitado a artefatos já públicos; não utiliza fontes do editor, chaves ou notas do usuário. Nenhuma execução local do Defender ou do aplicativo foi feita para essa alteração. A causa do alerta permanece aberta até obter evidência de reprodução ou outra análise conclusiva.

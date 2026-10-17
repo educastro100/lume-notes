@@ -22,6 +22,16 @@ foreach ($name in $status.PSObject.Properties.Name) {
 Assert-Rejected { Assert-LumeProtection $null }
 Assert-Rejected { Assert-LumeProtection ([pscustomobject]@{AMServiceEnabled='true'}) }
 Write-Host 'PASS: disabled or unavailable protection cannot become a clean result.'
+$cloud=[pscustomobject]@{MAPSReporting=2;SubmitSamplesConsent=1;DisableBlockAtFirstSeen=$false}
+Assert-LumeCloudProtection $cloud
+# Regression: the exact settings from run 38995686741 must no longer pass.
+Assert-Rejected { Assert-LumeCloudProtection ([pscustomobject]@{MAPSReporting=0;SubmitSamplesConsent=2;DisableBlockAtFirstSeen=$true}) }
+Assert-Rejected { Assert-LumeCloudProtection $null }
+foreach ($entry in @(@('MAPSReporting',0),@('SubmitSamplesConsent',2),@('SubmitSamplesConsent',3),@('DisableBlockAtFirstSeen',$true),@('DisableBlockAtFirstSeen','false'))) {
+  $invalid=$cloud.PSObject.Copy(); $invalid.($entry[0])=$entry[1]
+  Assert-Rejected { Assert-LumeCloudProtection $invalid }
+}
+Write-Host 'PASS: the previous cloud-disabled configuration and unavailable cloud protection are rejected.'
 Assert-LumeTemporaryPath 'C:\runner\temp\Lume Notes' 'C:\runner\temp'
 Assert-Rejected { Assert-LumeTemporaryPath 'C:\runner\temp-other\app' 'C:\runner\temp' }
 Assert-Rejected { Assert-LumeTemporaryPath 'C:\runner\temp\..\user-app' 'C:\runner\temp' }
