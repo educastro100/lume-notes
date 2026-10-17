@@ -1,0 +1,49 @@
+name: Comparar instalacao Windows
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lume-installation-comparison
+  cancel-in-progress: false
+
+jobs:
+  compare:
+    if: github.event.repository.private == true && github.ref == 'refs/heads/main'
+    runs-on: windows-2022
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - version: '0.9.1'
+          - version: '0.10.0'
+    name: Instalar e abrir ${{ matrix.version }}
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - name: Checkout dos scripts de teste
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: scripts
+      - name: Exigir protecao ativa no runner
+        timeout-minutes: 5
+        run: |
+          ./scripts/check-installed-windows.ps1 -Phase Prepare -Version '${{ matrix.version }}'
+      - name: Instalar e observar a abertura por 60 segundos
+        timeout-minutes: 8
+        run: |
+          ./scripts/check-installed-windows.ps1 -Phase Install -Version '${{ matrix.version }}'
+      - name: Guardar somente relatorios privados
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: lume-installed-check-${{ matrix.version }}-${{ github.run_id }}
+          path: diagnostics/reports/
+          if-no-files-found: warn
+          retention-days: 14
