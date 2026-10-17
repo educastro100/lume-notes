@@ -176,7 +176,9 @@ Código-fonte e ferramentas de publicação permanecem no repositório privado. 
 
 A formatação visual combina negrito, itálico e sublinhado com código em linha, preservando os estilos e os caracteres literais ao reabrir o Markdown. Listas com marcadores, números e tarefas têm margens uniformes, inclusive ao continuar com Enter ou aninhar itens.
 
-**Configurações → Ajuda e atalhos** reúne os atalhos mais comuns e botões para abrir a apresentação do projeto e as issues públicas no navegador padrão. O seletor de idiomas usa bandeiras locais em SVG e pode ser operado pelo teclado. Esc fecha primeiro a lista de idiomas e depois as configurações.
+O popup reúne três abas: **Configurações**, **Ajuda** e **Atalhos**. Ajuda abre a apresentação do projeto e as issues públicas no navegador padrão; Atalhos reúne a referência de teclado. As abas podem ser percorridas com as setas. O seletor de idiomas usa bandeiras locais em SVG e pode ser operado pelo teclado. Esc fecha primeiro a lista de idiomas e depois as configurações.
+
+A mensagem “Uma ideia de cada vez. O resto pode esperar.”, o aviso de armazenamento local e a divisória do rodapé lateral continuam visíveis em janelas menores; nesse caso o rodapé usa espaçamentos mais compactos e a lista de arquivos mantém sua própria rolagem.
 
 O tema Manhã completa o ciclo. Os períodos automáticos têm quatro ou cinco horas: Madrugada 0h–5h, Manhã 5h–10h, Dia 10h–15h, Tarde 15h–19h e Noite 19h–0h, no horário local. As preferências anteriores continuam válidas.
 

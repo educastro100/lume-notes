@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CircleHelp, ExternalLink } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 import { t } from '../i18n';
 import { openProjectPage } from '../platform';
 
@@ -22,18 +22,9 @@ const shortcuts = [
   ['Modo foco', 'F8'],
   ['Fechar painéis / sair do foco', 'Esc'],
 ] as const;
-export function HelpSection({ disabled }: { disabled?: boolean }) {
-  const [error, setError] = useState(false);
-  const open = (page: 'issues' | 'project') => {
-    setError(false);
-    void openProjectPage(page).catch(() => setError(true));
-  };
+export function ShortcutsSection() {
   return (
-    <details className="settings-section help-section">
-      <summary>
-        <CircleHelp size={17} />
-        <span>{t('Ajuda e atalhos')}</span>
-      </summary>
+    <section className="shortcuts-content">
       <p>
         {t(
           'Os atalhos funcionam no documento ativo. No editor visual, selecione o texto para aplicar a formatação.',
@@ -52,6 +43,23 @@ export function HelpSection({ disabled }: { disabled?: boolean }) {
           ))}
         </tbody>
       </table>
+    </section>
+  );
+}
+export function HelpSection({ disabled }: { disabled?: boolean }) {
+  const [error, setError] = useState(false);
+  const open = (page: 'issues' | 'project') => {
+    setError(false);
+    void openProjectPage(page).catch(() => setError(true));
+  };
+  return (
+    <section className="help-content">
+      <h3>{t('Como podemos ajudar?')}</h3>
+      <p>
+        {t(
+          'Conheça o Lume, acompanhe as novidades ou compartilhe uma ideia para melhorar o aplicativo.',
+        )}
+      </p>
       <div className="help-links">
         <button disabled={disabled} onClick={() => open('issues')}>
           <ExternalLink size={14} />
@@ -68,6 +76,6 @@ export function HelpSection({ disabled }: { disabled?: boolean }) {
         )}
       </p>
       {error && <p role="alert">{t('Não foi possível abrir o GitHub. Tente novamente.')}</p>}
-    </details>
+    </section>
   );
 }

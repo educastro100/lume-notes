@@ -2,7 +2,8 @@
 
 - Código em linha aceita negrito, itálico e sublinhado em conjunto, preservando as marcas, espaços e caracteres literais ao salvar e reabrir.
 - Espaçamento uniforme entre itens, parágrafos e listas aninhadas no editor visual e na prévia.
-- Ajuda nas configurações com atalhos de teclado e acesso ao projeto e às issues públicas no navegador padrão.
+- Popup com abas Configurações, Ajuda e Atalhos, navegação por teclado, conteúdo com rolagem própria e acesso ao projeto e às issues públicas no navegador padrão.
+- Rodapé lateral mantém a mensagem, o aviso de armazenamento local e a divisória mesmo abaixo de 650 px de altura.
 - Bandeiras locais em SVG no seletor de idiomas, com navegação por teclado.
 - Tema Manhã e períodos automáticos equilibrados: Madrugada 0h–5h, Manhã 5h–10h, Dia 10h–15h, Tarde 15h–19h e Noite 19h–0h.
 - Abrir do computador ao lado de Nova nota no topo do painel lateral.

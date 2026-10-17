@@ -1,4 +1,27 @@
 {
+  "Ajuda": ["Help", "Aide", "Hilfe", "Βοήθεια", "帮助"],
+  "Atalhos": ["Shortcuts", "Raccourcis", "Tastenkürzel", "Συντομεύσεις", "快捷键"],
+  "Seções do Lume": [
+    "Lume sections",
+    "Rubriques de Lume",
+    "Lume-Bereiche",
+    "Ενότητες του Lume",
+    "Lume 分区"
+  ],
+  "Como podemos ajudar?": [
+    "How can we help?",
+    "Comment pouvons-nous vous aider ?",
+    "Wie können wir helfen?",
+    "Πώς μπορούμε να βοηθήσουμε;",
+    "我们能帮您什么？"
+  ],
+  "Conheça o Lume, acompanhe as novidades ou compartilhe uma ideia para melhorar o aplicativo.": [
+    "Explore Lume, follow what’s new or share an idea to improve the app.",
+    "Découvrez Lume, suivez les nouveautés ou proposez une idée pour améliorer l’application.",
+    "Lerne Lume kennen, entdecke Neuigkeiten oder teile eine Idee zur Verbesserung der App.",
+    "Γνωρίστε το Lume, δείτε τα νέα ή μοιραστείτε μια ιδέα για τη βελτίωση της εφαρμογής.",
+    "了解 Lume、查看新功能，或分享您的改进建议。"
+  ],
   "Modo foco": [
     "Focus mode",
     "Mode concentration",

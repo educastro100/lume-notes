@@ -22,4 +22,6 @@ Prévia da compilação de produção em navegador, separada do aplicativo insta
 
 ## Distribuição
 
+Na revisão do popup, 22 testes relacionados de configurações, ajuda, interface e atualização passaram. Configurações, Ajuda e Atalhos são painéis separados, com navegação por setas, foco preservado, retorno à primeira aba ao reabrir e bloqueio durante instalação. A regra que ocultava `.quiet-card` abaixo de 650 px foi substituída por um rodapé compacto, e a divisória passou para o contêiner do rodapé.
+
 A 0.10.0 ainda precisa ser compilada e examinada pelo workflow **Preparar release Windows**, assinada localmente e publicada após a conferência dos relatórios. O instalador público 0.9.1 não foi substituído por este trabalho de desenvolvimento. O bloqueio do pacote antigo 0.9.0 permanece.
