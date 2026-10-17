@@ -1,5 +1,7 @@
-export type Theme = 'light' | 'sunset' | 'dark' | 'midnight';
+export const THEME_ORDER = ['morning', 'light', 'sunset', 'dark', 'midnight'] as const;
+export type Theme = (typeof THEME_ORDER)[number];
 export const THEME_NAMES: Record<Theme, string> = {
+  morning: 'Manhã',
   light: 'Dia',
   sunset: 'Tarde',
   dark: 'Noite',
@@ -45,10 +47,18 @@ export function parsePreferences(raw: string | null): Preferences {
   }
 }
 export function parseTheme(raw: string | null): Theme {
-  return raw === 'dark' || raw === 'sunset' || raw === 'midnight' ? raw : 'light';
+  return THEME_ORDER.includes(raw as Theme) ? (raw as Theme) : 'light';
 }
 
 export function themeForTime(date = new Date()): Theme {
   const hour = date.getHours();
-  return hour < 6 ? 'midnight' : hour < 16 ? 'light' : hour < 19 ? 'sunset' : 'dark';
+  return hour < 5
+    ? 'midnight'
+    : hour < 10
+      ? 'morning'
+      : hour < 15
+        ? 'light'
+        : hour < 19
+          ? 'sunset'
+          : 'dark';
 }

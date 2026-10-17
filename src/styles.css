@@ -174,6 +174,30 @@ kbd {
 .new-note:hover {
   filter: brightness(1.08);
 }
+.sidebar-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 17px;
+  flex-shrink: 0;
+}
+.sidebar-actions .new-note {
+  flex: 1;
+  min-width: 0;
+  margin-top: 0;
+}
+.sidebar-open {
+  width: 41px;
+  height: 41px;
+  display: grid;
+  place-items: center;
+  border-radius: 7px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border: 1px solid var(--border);
+}
+.sidebar-open:hover {
+  filter: brightness(0.97);
+}
 .new-note kbd {
   margin-left: auto;
   color: var(--paper);
@@ -1661,11 +1685,19 @@ h1 {
   padding-left: 1.7em;
 }
 .visual-editor li {
-  margin: 0.2em 0;
+  margin: 0;
 }
 .visual-editor li p {
-  margin: 0.15em 0;
+  margin: 0;
   min-height: 0;
+}
+.visual-editor li :is(ul, ol),
+.markdown-preview li :is(ul, ol) {
+  margin-block: 0;
+}
+.markdown-preview li,
+.markdown-preview li p {
+  margin-block: 0;
 }
 .visual-editor ul ul {
   list-style: circle;
@@ -1772,6 +1804,21 @@ h1 {
 
 :root[data-theme='light'] {
   color-scheme: light;
+}
+:root[data-theme='morning'] {
+  color-scheme: light;
+  --paper: #fffaf0;
+  --surface: #f8f0dc;
+  --sidebar: #f0e8d0;
+  --text: #49432f;
+  --muted: #82785e;
+  --faint: #b9ab87;
+  --border: #e5dbbd;
+  --accent: #896622;
+  --accent-soft: #eee1bb;
+  --active-line: #faf1d8;
+  --selection: #ecdba7;
+  --shadow: 0 12px 45px #6a53221a;
 }
 :root[data-theme='sunset'] {
   color-scheme: light;
@@ -2036,6 +2083,126 @@ h1 {
 .settings-dialog label {
   font-size: 12px;
   color: var(--muted);
+}
+.language-picker {
+  position: relative;
+  margin: 8px 0;
+}
+.country-flag {
+  width: 25px;
+  height: 17px;
+  flex-shrink: 0;
+  border-radius: 3px;
+  box-shadow: 0 0 0 1px #00000012;
+}
+.language-picker button {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  padding: 11px 12px;
+  font-size: 12px;
+  text-align: left;
+}
+.language-picker [role='combobox'] {
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--paper);
+}
+.language-picker button > svg:last-child:not(.country-flag) {
+  margin-left: auto;
+}
+.language-picker [role='listbox'] {
+  max-height: min(250px, calc(100dvh - 330px));
+  overflow: auto;
+  overscroll-behavior: contain;
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  right: 0;
+  z-index: 10;
+  padding: 5px;
+  border: 1px solid var(--border);
+  background: var(--paper);
+  box-shadow: var(--shadow);
+  border-radius: 9px;
+}
+.language-picker [role='option'] {
+  border-radius: 5px;
+}
+.language-picker [aria-selected='true'],
+.language-picker .highlighted {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.help-section summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  border-radius: 4px;
+}
+.help-section summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+.help-section summary::after {
+  content: '+';
+  margin-left: auto;
+  color: var(--muted);
+}
+.help-section[open] summary::after {
+  content: '−';
+}
+.shortcut-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  margin: 12px 0;
+}
+.shortcut-table caption {
+  text-align: left;
+  color: var(--muted);
+  margin: 12px 0 8px;
+}
+.shortcut-table th,
+.shortcut-table td {
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+}
+.shortcut-table th {
+  text-align: left;
+  font-weight: 400;
+}
+.shortcut-table td {
+  text-align: right;
+  padding-left: 10px;
+}
+.shortcut-table kbd {
+  font-size: 10px;
+  white-space: nowrap;
+}
+.help-links {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 15px;
+}
+.help-links button {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  text-align: left;
+  font-size: 12px;
+  color: var(--accent);
+  padding: 8px 0;
+}
+.help-links button:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 .settings-dialog {
   max-width: min(460px, calc(100vw - 32px));
@@ -2599,7 +2766,8 @@ h1 {
     transform: translateY(3px);
   }
 }
-.settings-dialog {
+.settings-dialog,
+.icon-dialog {
   max-height: calc(100dvh - 48px);
   overflow: auto;
 }

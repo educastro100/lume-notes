@@ -2,13 +2,13 @@
 
 > **0.9.0: distribuição suspensa.** O Defender detectou `Trojan:Win32/Bearfoos.A!ml` no executável do instalador. Não instalar nem publicar esse pacote. Consulte a [auditoria](docs/auditoria-seguranca-0.9.0.md) e o [diagnóstico em ambiente limpo](docs/diagnostico-windows.md).
 
-Versão **0.9.1 em preparação** — um editor local de texto e Markdown, com grupos de abas e um espaço tranquilo para escrever.
+Versão **0.10.0 em desenvolvimento** — um editor local de texto e Markdown, com grupos de abas e um espaço tranquilo para escrever. A versão publicada é a [0.9.1](https://github.com/educastro100/lume-notes-releases/releases/latest), com instalação e atualização pelo aplicativo já validadas.
 
 Editor de texto desktop em **Tauri 2 + Rust + React + TypeScript + Tiptap + CodeMirror 6**, criado para Windows x64. A interface usa fontes locais, sem depender de serviços externos.
 
 ## Organização do projeto
 
-O código-fonte fica na raiz. Repositório no GitHub: [educastro100/lume-notes](https://github.com/educastro100/lume-notes). O pacote local 0.9.0 está bloqueado para investigação. O canal público reservado para futuras versões é [Lume Releases](https://github.com/educastro100/lume-notes-releases/releases/latest). `releases/` é ignorada pelo Git; o canal público contém somente instaladores, assinaturas e metadados de atualização.
+O código-fonte fica na raiz. Repositório no GitHub: [educastro100/lume-notes](https://github.com/educastro100/lume-notes). O pacote local 0.9.0 está bloqueado para investigação. O canal público de instaladores é [Lume Releases](https://github.com/educastro100/lume-notes-releases/releases/latest). `releases/` é ignorada pelo Git; o canal público contém somente instaladores, assinaturas e metadados de atualização.
 
 A distribuição e o processo de atualização estão documentados em [docs/distribuicao.md](docs/distribuicao.md). A validação anterior está em [docs/validacao-0.8.0.md](docs/validacao-0.8.0.md).
 
@@ -18,7 +18,7 @@ A próxima versão usa o fluxo [Preparar release Windows](docs/release-actions.m
 
 ## Usar o aplicativo
 
-A instalação da versão 0.9.0 está suspensa. Não execute esse pacote nem as amostras do workflow de diagnóstico. O instalador em desenvolvimento usa instalação por usuário, atalhos e Microsoft Edge WebView2 Runtime; a liberação depende da investigação de segurança.
+Baixe o arquivo que termina em `-setup.exe` nos Assets da [release publicada](https://github.com/educastro100/lume-notes-releases/releases/latest). O instalador usa instalação por usuário, atalhos e Microsoft Edge WebView2 Runtime. O pacote antigo 0.9.0 continua bloqueado; as amostras de diagnóstico não são distribuídas como versão final.
 
 Esta versão é local e não exige conta. Não há sincronização ou recursos de IA. A verificação de atualizações consulta apenas o canal público do GitHub; notas e nomes de arquivos não são enviados. O executável desta compilação não tem assinatura comercial.
 
@@ -32,12 +32,12 @@ A distribuição principal agora usa instalador NSIS. As versões portáteis ant
 - Nomes, cores, associações e estado de recolhimento dos grupos ficam salvos na sessão. Rascunhos da versão 0.1 são migrados automaticamente.
 - Edição visual de Markdown: negrito, itálico, sublinhado, código, divisórias, listas com marcadores e listas numeradas. Suporte a títulos, tabelas, tarefas e citações.
 - Novas notas abrem em Markdown com edição visual. O modo Código Markdown oferece split opcional e mantém sua escolha por documento.
-- Onze ícones para identificar os assuntos dos documentos, incluindo Roteiro, Filme e Vídeo. Clique no ícone ao lado do título ou use o menu ⋯ da nota; a escolha é lembrada pelo caminho do arquivo mesmo após fechar a aba, sem alterar seu texto.
+- Dezesseis ícones para identificar os assuntos dos documentos, incluindo Roteiro, Filme, Vídeo, Incidente, Requisição, Projeto, Reunião e Calendário. Clique no ícone ao lado do título ou use o menu ⋯ da nota; a escolha é lembrada pelo caminho do arquivo mesmo após fechar a aba, sem alterar seu texto.
 - Arraste uma aba para a área sem grupo na faixa de abas ou no painel para retirá-la do grupo atual. O destino só fica destacado enquanto o arraste está sobre ele.
 - Shift seleciona um intervalo de arquivos; Ctrl adiciona/remove um arquivo da seleção. Use o menu ⋯ de um dos selecionados para criar um grupo ou mover todos para um grupo existente. Grupos abrem e recolhem com transição suave.
 - Abrir múltiplos arquivos, salvar e salvar como, com diálogos do Windows.
 - Busca e substituição literal no texto visual; busca avançada com expressões regulares no modo de código.
-- Temas **Dia, Tarde, Noite e Madrugada**, com seleção de texto nas cores da paleta. Tarde usa tons de pôr do sol.
+- Temas **Manhã, Dia, Tarde, Noite e Madrugada**, com seleção de texto nas cores da paleta. Manhã usa tons claros e dourados; Tarde usa tons de pôr do sol.
 - Fonte entre 11 e 28 px, ajustável pelos botões, atalhos ou scroll sobre o controle de tamanho.
 - Quebra de linha opcional nos dois editores e na prévia; sem quebra, o texto pode ser percorrido horizontalmente.
 - Painel lateral e split redimensionáveis por arraste, com limites adaptados à janela. Duplo clique na divisória restaura a medida padrão; as setas também ajustam a divisão.
@@ -126,7 +126,7 @@ Os testes de texto cobrem acentos, emoji, as quatro codificações e os três pa
 - `src-tauri/src/main.rs`: leitura, gravação e persistência local.
 - `src-tauri/capabilities/default.json`: permissões da janela.
 
-Os arquivos `package-lock.json` e `src-tauri/Cargo.lock` fixam as dependências desta entrega. A compilação portátil desta entrega usa o destino Windows GNU; as ferramentas temporárias de compilação não fazem parte do código-fonte distribuído.
+Os arquivos `package-lock.json` e `src-tauri/Cargo.lock` fixam as dependências desta entrega. Os instaladores distribuídos são compilados no Actions com Windows/MSVC e NSIS oficiais. As ferramentas temporárias usadas nos testes locais não fazem parte do código-fonte distribuído.
 
 ## Design e tecnologias
 
@@ -171,3 +171,13 @@ O instalador registra o Lume no **Abrir com** e em **Aplicativos padrão** para 
 **Verificar atualizações** consulta o canal público de pacotes. A verificação automática pode ser desativada e ocorre após abrir o app, no máximo uma vez a cada 24 horas após uma consulta bem-sucedida. O download só começa após **Atualizar e reiniciar**. O pacote é validado com assinatura criptográfica vinculada à versão; então o editor é bloqueado, a sessão atual é gravada e o instalador é iniciado. Falhas de download, assinatura ou gravação não fecham o editor para instalar. A versão portátil não tenta se atualizar como uma instalação.
 
 Código-fonte e ferramentas de publicação permanecem no repositório privado. O canal [lume-notes-releases](https://github.com/educastro100/lume-notes-releases) recebe somente os pacotes distribuíveis.
+
+## Novidades da versão 0.10
+
+A formatação visual combina negrito, itálico e sublinhado com código em linha, preservando os estilos e os caracteres literais ao reabrir o Markdown. Listas com marcadores, números e tarefas têm margens uniformes, inclusive ao continuar com Enter ou aninhar itens.
+
+**Configurações → Ajuda e atalhos** reúne os atalhos mais comuns e botões para abrir a apresentação do projeto e as issues públicas no navegador padrão. O seletor de idiomas usa bandeiras locais em SVG e pode ser operado pelo teclado. Esc fecha primeiro a lista de idiomas e depois as configurações.
+
+O tema Manhã completa o ciclo. Os períodos automáticos têm quatro ou cinco horas: Madrugada 0h–5h, Manhã 5h–10h, Dia 10h–15h, Tarde 15h–19h e Noite 19h–0h, no horário local. As preferências anteriores continuam válidas.
+
+O botão **Abrir do computador** fica ao lado de **Nova nota** no topo esquerdo. Incidente, Requisição, Projeto, Reunião e Calendário completam a grade de ícones. A ativação de Markdown pela formatação de um texto mostra um aviso para salvar; o caminho original é mantido, e **Salvar como** permite criar uma cópia `.md`.

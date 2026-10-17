@@ -1,9 +1,21 @@
-# Lume Notes 0.9.1 — em preparação, não publicada
+# Lume Notes 0.10.0 — em desenvolvimento
+
+- Código em linha aceita negrito, itálico e sublinhado em conjunto, preservando as marcas, espaços e caracteres literais ao salvar e reabrir.
+- Espaçamento uniforme entre itens, parágrafos e listas aninhadas no editor visual e na prévia.
+- Ajuda nas configurações com atalhos de teclado e acesso ao projeto e às issues públicas no navegador padrão.
+- Bandeiras locais em SVG no seletor de idiomas, com navegação por teclado.
+- Tema Manhã e períodos automáticos equilibrados: Madrugada 0h–5h, Manhã 5h–10h, Dia 10h–15h, Tarde 15h–19h e Noite 19h–0h.
+- Abrir do computador ao lado de Nova nota no topo do painel lateral.
+- Ícones Incidente, Requisição, Projeto, Reunião e Calendário, com a mesma persistência dos anteriores.
+- Aviso ao converter texto para Markdown por formatação, lembrando de salvar e usar Salvar como para criar uma extensão .md.
+
+# Lume Notes 0.9.1 — publicada
 
 - Candidato de release Windows/MSVC pelo Actions, sem chaves privadas ou publicação automática.
 - Conferência dos arquivos finais e Defender obrigatório para gerar o candidato.
 - Assinatura local vinculada à versão, sem alterar o instalador compilado no GitHub, e verificação pelo plugin atualizador.
 - Fluxo documentado em `docs/release-actions.md`; preservado o bloqueio da versão 0.9.0 anterior.
+- Publicação e atualização real de 0.9.0 de teste para 0.9.1 confirmadas. Publicador com progresso, limite de espera e leitura das notas compatível com PowerShell 5.1.
 
 # Lume Notes 0.9.0 — em investigação, não distribuída
 

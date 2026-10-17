@@ -1,14 +1,16 @@
-import { Sun, Sunset, Moon, MoonStar } from 'lucide-react';
-import type { Theme } from '../preferences';
+import { Sunrise, Sun, Sunset, Moon, MoonStar } from 'lucide-react';
+import { THEME_ORDER, type Theme } from '../preferences';
 
-const phases = [Sun, Sunset, Moon, MoonStar];
-const order: Theme[] = ['light', 'sunset', 'dark', 'midnight'];
+const phases = [Sunrise, Sun, Sunset, Moon, MoonStar];
 export function ThemeIcon({ theme }: { theme: Theme }) {
   return (
     <span className="theme-orbit" aria-hidden="true">
       <span
         className="theme-orbit-track"
-        style={{ transform: `translateY(-${order.indexOf(theme) * 25}%)` }}
+        style={{
+          height: `${THEME_ORDER.length * 20}px`,
+          transform: `translateY(-${THEME_ORDER.indexOf(theme) * (100 / THEME_ORDER.length)}%)`,
+        }}
       >
         {phases.map((Icon, index) => (
           <span key={index}>

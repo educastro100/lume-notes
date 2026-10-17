@@ -20,7 +20,7 @@ it('keeps the closing dialog mounted for animation, returns focus, then removes 
     onClose: vi.fn(),
   };
   act(() => root.render(<SettingsDialog {...props} open />));
-  expect(document.activeElement).toBe(host.querySelector('select'));
+  expect(document.activeElement).toBe(host.querySelector('[role="combobox"]'));
   act(() => root.render(<SettingsDialog {...props} open={false} />));
   expect(host.querySelector('[data-state="closed"]')).not.toBeNull();
   expect(host.querySelector('.settings-backdrop')?.getAttribute('aria-hidden')).toBe('true');

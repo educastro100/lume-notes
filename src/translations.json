@@ -1,4 +1,122 @@
 {
+  "Modo foco": [
+    "Focus mode",
+    "Mode concentration",
+    "Fokusmodus",
+    "Λειτουργία εστίασης",
+    "专注模式"
+  ],
+  "Manhã": ["Morning", "Matin", "Morgen", "Πρωί", "清晨"],
+  "Incidente": ["Incident", "Incident", "Vorfall", "Συμβάν", "事件"],
+  "Requisição": ["Request", "Demande", "Anfrage", "Αίτημα", "请求"],
+  "Projeto": ["Project", "Projet", "Projekt", "Έργο", "项目"],
+  "Reunião": ["Meeting", "Réunion", "Besprechung", "Συνάντηση", "会议"],
+  "Calendário": ["Calendar", "Calendrier", "Kalender", "Ημερολόγιο", "日历"],
+  "Ajuda e atalhos": [
+    "Help and shortcuts",
+    "Aide et raccourcis",
+    "Hilfe und Tastenkürzel",
+    "Βοήθεια και συντομεύσεις",
+    "帮助与快捷键"
+  ],
+  "Atalhos de teclado": [
+    "Keyboard shortcuts",
+    "Raccourcis clavier",
+    "Tastenkürzel",
+    "Συντομεύσεις πληκτρολογίου",
+    "键盘快捷键"
+  ],
+  "Os atalhos funcionam no documento ativo. No editor visual, selecione o texto para aplicar a formatação.": [
+    "Shortcuts work in the active document. In the visual editor, select text to apply formatting.",
+    "Les raccourcis agissent sur le document actif. Dans l’éditeur visuel, sélectionnez le texte à mettre en forme.",
+    "Tastenkürzel gelten für das aktive Dokument. Wähle im visuellen Editor Text zum Formatieren aus.",
+    "Οι συντομεύσεις λειτουργούν στο ενεργό έγγραφο. Στον οπτικό επεξεργαστή, επιλέξτε κείμενο για μορφοποίηση.",
+    "快捷键用于当前文档。在可视化编辑器中，选中文本即可设置格式。"
+  ],
+  "Desfazer / refazer": [
+    "Undo / redo",
+    "Annuler / rétablir",
+    "Rückgängig / wiederholen",
+    "Αναίρεση / επανάληψη",
+    "撤销 / 重做"
+  ],
+  "Alternar abas": [
+    "Switch tabs",
+    "Changer d’onglet",
+    "Tabs wechseln",
+    "Εναλλαγή καρτελών",
+    "切换标签页"
+  ],
+  "Código em linha ou bloco": [
+    "Inline or block code",
+    "Code en ligne ou en bloc",
+    "Inline-Code oder Codeblock",
+    "Κώδικας σε γραμμή ή μπλοκ",
+    "行内代码或代码块"
+  ],
+  "Recuar / remover recuo": [
+    "Indent / outdent",
+    "Indenter / désindenter",
+    "Einrücken / ausrücken",
+    "Αύξηση / μείωση εσοχής",
+    "增加 / 减少缩进"
+  ],
+  "Restaurar fonte": [
+    "Reset font size",
+    "Rétablir la taille du texte",
+    "Schriftgröße zurücksetzen",
+    "Επαναφορά μεγέθους γραμματοσειράς",
+    "重置字号"
+  ],
+  "Fechar painéis / sair do foco": [
+    "Close panels / leave focus",
+    "Fermer les panneaux / quitter le mode concentration",
+    "Bereiche schließen / Fokus verlassen",
+    "Κλείσιμο πάνελ / έξοδος από εστίαση",
+    "关闭面板 / 退出专注模式"
+  ],
+  "Relatar um problema ou sugerir uma melhoria": [
+    "Report a problem or suggest an improvement",
+    "Signaler un problème ou proposer une amélioration",
+    "Problem melden oder Verbesserung vorschlagen",
+    "Αναφορά προβλήματος ή πρόταση βελτίωσης",
+    "报告问题或提出改进建议"
+  ],
+  "Conhecer o projeto no GitHub": [
+    "Explore the project on GitHub",
+    "Découvrir le projet sur GitHub",
+    "Projekt auf GitHub ansehen",
+    "Δείτε το έργο στο GitHub",
+    "在 GitHub 上了解项目"
+  ],
+  "Para abrir uma issue, entre na sua conta do GitHub. Descreva os passos e a versão do Lume; compartilhe apenas o conteúdo que quiser tornar público.": [
+    "Sign in to GitHub to open an issue. Include the steps and Lume version; share only content you want to make public.",
+    "Connectez-vous à GitHub pour ouvrir une issue. Indiquez les étapes et la version de Lume ; ne partagez que ce que vous souhaitez rendre public.",
+    "Melde dich bei GitHub an, um ein Issue zu erstellen. Nenne die Schritte und die Lume-Version und teile nur Inhalte, die öffentlich sein dürfen.",
+    "Συνδεθείτε στο GitHub για να ανοίξετε ένα issue. Περιγράψτε τα βήματα και την έκδοση του Lume και μοιραστείτε μόνο όσα θέλετε να δημοσιοποιήσετε.",
+    "登录 GitHub 即可创建 issue。请说明操作步骤及 Lume 版本，仅分享您愿意公开的内容。"
+  ],
+  "Não foi possível abrir o GitHub. Tente novamente.": [
+    "Could not open GitHub. Try again.",
+    "Impossible d’ouvrir GitHub. Réessayez.",
+    "GitHub konnte nicht geöffnet werden. Versuche es erneut.",
+    "Δεν ήταν δυνατό το άνοιγμα του GitHub. Δοκιμάστε ξανά.",
+    "无法打开 GitHub，请重试。"
+  ],
+  "Manhã 5h–10h · Dia 10h–15h · Tarde 15h–19h · Noite 19h–0h · Madrugada 0h–5h. Horário local.": [
+    "Morning 05–10 · Day 10–15 · Sunset 15–19 · Night 19–00 · Midnight 00–05. Local time.",
+    "Matin 5h–10h · Jour 10h–15h · Après-midi 15h–19h · Nuit 19h–0h · Aube 0h–5h. Heure locale.",
+    "Morgen 5–10 Uhr · Tag 10–15 Uhr · Abend 15–19 Uhr · Nacht 19–0 Uhr · Mitternacht 0–5 Uhr. Ortszeit.",
+    "Πρωί 05–10 · Ημέρα 10–15 · Απόγευμα 15–19 · Νύχτα 19–00 · Μεσάνυχτα 00–05. Τοπική ώρα.",
+    "清晨 5–10 时 · 白天 10–15 时 · 傍晚 15–19 时 · 夜间 19–0 时 · 凌晨 0–5 时。使用本地时间。"
+  ],
+  "Documento convertido para Markdown. Salve para manter as alterações. Use Salvar como para criar um arquivo .md.": [
+    "Document switched to Markdown. Save to keep your changes. Use Save as to create an .md file.",
+    "Document converti en Markdown. Enregistrez vos modifications. Utilisez Enregistrer sous pour créer un fichier .md.",
+    "Dokument auf Markdown umgestellt. Speichere deine Änderungen. Nutze Speichern unter, um eine .md-Datei zu erstellen.",
+    "Το έγγραφο μετατράπηκε σε Markdown. Αποθηκεύστε τις αλλαγές. Χρησιμοποιήστε την Αποθήκευση ως για να δημιουργήσετε αρχείο .md.",
+    "文档已切换为 Markdown。请保存更改；使用“另存为”可创建 .md 文件。"
+  ],
   "Configurações": ["Settings", "Paramètres", "Einstellungen", "Ρυθμίσεις", "设置"],
   "Fechar configurações": [
     "Close settings",

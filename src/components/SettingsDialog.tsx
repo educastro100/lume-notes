@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { Languages, X } from 'lucide-react';
 import { native, openWithStatus, setOpenWith, openDefaultApps } from '../platform';
-import { LANGUAGES, t, type Locale } from '../i18n';
+import { t, type Locale } from '../i18n';
+import { LanguagePicker } from './LanguagePicker';
+import { HelpSection } from './HelpSection';
 import { UpdatePanel } from './UpdatePanel';
 import type { UpdateController } from '../useUpdates';
 
@@ -47,7 +49,7 @@ export function SettingsDialog({
     };
   }, [open]);
   const locked = updates?.phase === 'installing';
-  const select = useRef<HTMLSelectElement>(null);
+  const select = useRef<HTMLButtonElement>(null);
   const previous = useRef<HTMLElement | null>(null);
   const [present, setPresent] = useState(open);
   useEffect(() => {
@@ -82,7 +84,7 @@ export function SettingsDialog({
         if (event.key !== 'Tab') return;
         const controls = Array.from(
           event.currentTarget.querySelectorAll<HTMLElement>(
-            'button:not(:disabled),select:not(:disabled),input:not(:disabled)',
+            'button:not(:disabled):not([tabindex="-1"]),select:not(:disabled),input:not(:disabled),summary',
           ),
         );
         if (event.shiftKey && document.activeElement === controls[0]) {
@@ -115,20 +117,10 @@ export function SettingsDialog({
         </div>
         <h2 id="settings-title">{t('Configurações')}</h2>
         <p>{t('Seu espaço, do seu jeito.')}</p>
-        <label htmlFor="interface-language">{t('Idioma da interface')}</label>
-        <select
-          ref={select}
-          id="interface-language"
-          disabled={locked}
-          value={locale}
-          onChange={(event) => onLanguage(event.target.value as Locale)}
-        >
-          {Object.entries(LANGUAGES).map(([id, label]) => (
-            <option key={id} value={id} lang={id}>
-              {label}
-            </option>
-          ))}
-        </select>
+        <label id="interface-language-label" htmlFor="interface-language">
+          {t('Idioma da interface')}
+        </label>
+        <LanguagePicker buttonRef={select} value={locale} onChange={onLanguage} disabled={locked} />
         <p className="icon-storage-hint">
           {t('A escolha fica salva neste computador. Suas notas mantêm o texto original.')}
         </p>
@@ -143,7 +135,11 @@ export function SettingsDialog({
               onChange={(event) => onAutomaticTheme(event.target.checked)}
             />
           </label>
-          <p>{t('Dia 6h–16h · Tarde 16h–19h · Noite 19h–0h · Madrugada 0h–6h. Horário local.')}</p>
+          <p>
+            {t(
+              'Manhã 5h–10h · Dia 10h–15h · Tarde 15h–19h · Noite 19h–0h · Madrugada 0h–5h. Horário local.',
+            )}
+          </p>
           <p>{t('Escolher um tema manualmente desativa o modo automático.')}</p>
         </div>
         {native && (
@@ -209,6 +205,7 @@ export function SettingsDialog({
             onAutomatic={onAutomaticUpdates}
           />
         )}
+        <HelpSection disabled={locked} />
         <div className="modal-actions">
           <button className="primary" disabled={locked} onClick={onClose}>
             {t('Concluído')}

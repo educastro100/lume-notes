@@ -162,3 +162,12 @@ export const setOpenWith = (enabled: boolean) => invoke<boolean>('set_open_with'
 export const isInstalled = () => invoke<boolean>('is_installed');
 export const openDefaultApps = () => invoke<void>('open_default_apps');
 export const openReleaseDownloads = () => invoke<void>('open_release_downloads');
+export const PROJECT_PAGES = {
+  issues: 'https://github.com/educastro100/lume-notes-releases/issues',
+  project: 'https://github.com/educastro100/lume-notes-releases',
+} as const;
+export async function openProjectPage(page: keyof typeof PROJECT_PAGES): Promise<void> {
+  if (!Object.hasOwn(PROJECT_PAGES, page)) throw new Error('Invalid project page');
+  if (native) await invoke<void>('open_project_page', { page });
+  else window.open(PROJECT_PAGES[page], '_blank', 'noopener,noreferrer');
+}

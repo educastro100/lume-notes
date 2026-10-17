@@ -15,6 +15,44 @@ function create(content: string) {
 }
 afterEach(() => editors.splice(0).forEach((editor) => editor.destroy()));
 describe('visual Markdown editing', () => {
+  it('combines inline code with emphasis in either order and preserves the result on reload', () => {
+    for (const action of ['bold', 'italic', 'underline'] as const) {
+      for (const codeFirst of [true, false]) {
+        const editor = create('Palavra');
+        editor.commands.selectAll();
+        visualFormat(editor, codeFirst ? 'code' : action);
+        visualFormat(editor, codeFirst ? action : 'code');
+        expect(editor.isActive('code')).toBe(true);
+        expect(editor.isActive(action)).toBe(true);
+        const reopened = create(editor.getMarkdown());
+        expect(reopened.getJSON()).toEqual(editor.getJSON());
+        visualFormat(editor, action);
+        expect(editor.isActive('code')).toBe(true);
+        expect(editor.isActive(action)).toBe(false);
+      }
+    }
+  });
+  it('keeps bold, italic and underline together on code, including part of a code span', () => {
+    const editor = create('`Uma palavra aqui`');
+    editor.commands.setTextSelection({ from: 5, to: 12 });
+    for (const action of ['bold', 'italic', 'underline'] as const) visualFormat(editor, action);
+    expect(editor.isActive('code')).toBe(true);
+    expect(create(editor.getMarkdown()).getJSON()).toEqual(editor.getJSON());
+  });
+  it('preserves literal code characters, backticks and edge spaces when combining styles', () => {
+    for (const text of [' a ', ' a', 'a ', '   ', '`tick`', '**literal** <u>x</u>', 'x & y']) {
+      const editor = create('');
+      editor.commands.setContent({
+        type: 'doc',
+        content: [
+          { type: 'paragraph', content: [{ type: 'text', text, marks: [{ type: 'code' }] }] },
+        ],
+      });
+      editor.commands.selectAll();
+      visualFormat(editor, 'bold');
+      expect(create(editor.getMarkdown()).getJSON()).toEqual(editor.getJSON());
+    }
+  });
   it('renders source markers as editable semantic content', () => {
     const editor = create(
       '**Forte** e *suave* com `código`\n\n---\n\n- um\n- dois\n\n1. primeiro\n2. segundo',

@@ -12,6 +12,7 @@ import {
   copyContent,
 } from './platform';
 import { setLanguage } from './i18n';
+import { EditorState } from '@codemirror/state';
 import App from './App';
 vi.mock('./platform', () => ({
   native: false,
@@ -22,7 +23,17 @@ vi.mock('./platform', () => ({
   saveDocument: vi.fn(),
   renameDocument: vi.fn(async (tab, name) => ({ name, path: tab.path, digest: tab.digest })),
 }));
-vi.mock('@uiw/react-codemirror', () => ({ default: () => <div data-editor="source" /> }));
+const sourceHarness = vi.hoisted(() => ({
+  create: null as null | ((view: any) => void),
+  change: null as null | ((text: string) => void),
+}));
+vi.mock('@uiw/react-codemirror', () => ({
+  default: (props: any) => {
+    sourceHarness.create = props.onCreateEditor;
+    sourceHarness.change = props.onChange;
+    return <div data-editor="source" />;
+  },
+}));
 const editorHarness = vi.hoisted(() => ({ change: null as null | ((value: string) => void) }));
 vi.mock('./components/VisualEditor', () => ({
   VisualEditor: (props: { active: boolean; onChange: (value: string) => void }) => {
@@ -66,6 +77,48 @@ const click = async (label: string) => {
   expect(button, label).toBeDefined();
   await act(async () => button!.click());
 };
+it('notifies when formatting converts a txt to Markdown without renaming or silently saving the file', async () => {
+  const tab = {
+    ...newDocument('nota.txt', 'Palavra'),
+    path: 'C:/Notas/nota.txt',
+    digest: 'original',
+  };
+  vi.mocked(loadDrafts).mockResolvedValue(
+    JSON.stringify({ version: 2, tabs: [tab], activeId: tab.id, groups: [] }),
+  );
+  await act(async () => root.render(<App />));
+  let editorState = EditorState.create({
+    doc: tab.content,
+    selection: { anchor: 0, head: tab.content.length },
+  });
+  const view = {
+    get state() {
+      return editorState;
+    },
+    dispatch(spec: any) {
+      editorState = editorState.update(spec).state;
+      sourceHarness.change?.(editorState.doc.toString());
+    },
+    focus: vi.fn(),
+  };
+  await act(async () => sourceHarness.create?.(view));
+  const bold = host.querySelector<HTMLButtonElement>('button[title="Negrito (Ctrl+B)"]')!;
+  expect(bold).not.toBeNull();
+  await act(async () => bold.click());
+  expect(host.querySelector('[role="status"]')?.textContent).toContain(
+    'Documento convertido para Markdown',
+  );
+  expect(saveDocument).not.toHaveBeenCalled();
+  await persistDrafts();
+  const saved = JSON.parse(vi.mocked(storeDrafts).mock.calls.at(-1)![0]);
+  expect(saved.tabs[0]).toMatchObject({
+    mode: 'markdown',
+    path: 'C:/Notas/nota.txt',
+    name: 'nota.txt',
+    content: '**Palavra**',
+    savedContent: 'Palavra',
+  });
+});
 it('allows closing the last note, confirms an unsaved note, persists zero tabs and can create another', async () => {
   const tab = newDocument('draft.md', 'keep until confirmed');
   vi.mocked(loadDrafts).mockResolvedValue(
@@ -97,11 +150,18 @@ it('restores an empty workspace and switches languages live in settings without 
   await act(async () => root.render(<App />));
   expect(host.querySelector('.empty-workspace')).not.toBeNull();
   await click('Configurações');
-  await act(async () => {
-    const select = host.querySelector<HTMLSelectElement>('#interface-language')!;
-    select.value = 'de';
-    select.dispatchEvent(new Event('change', { bubbles: true }));
-  });
+  await act(async () => host.querySelector<HTMLButtonElement>('#interface-language')!.click());
+  await act(async () =>
+    host
+      .querySelector('#interface-language')!
+      .dispatchEvent(
+        new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }),
+      ),
+  );
+  expect(host.querySelector('[role="dialog"]')).not.toBeNull();
+  expect(host.querySelector('[role="listbox"]')).toBeNull();
+  await act(async () => host.querySelector<HTMLButtonElement>('#interface-language')!.click());
+  await act(async () => host.querySelector<HTMLButtonElement>('#language-de')!.click());
   expect(host.querySelector('#settings-title')?.textContent).toBe('Einstellungen');
   expect(host.querySelector('.empty-workspace h1')?.textContent).toBe('Keine Notiz geöffnet');
   expect(document.documentElement.lang).toBe('de');

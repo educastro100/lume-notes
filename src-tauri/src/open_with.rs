@@ -165,3 +165,32 @@ pub async fn open_release_downloads() -> Result<(),String> {
     }
     #[cfg(not(windows))] {Err("Disponível no Windows.".into())}
 }
+
+fn project_page_url(page: &str) -> Result<&'static str, String> {
+    match page {
+        "issues" => Ok("https://github.com/educastro100/lume-notes-releases/issues"),
+        "project" => Ok("https://github.com/educastro100/lume-notes-releases"),
+        _ => Err("Página do projeto inválida.".into()),
+    }
+}
+#[tauri::command]
+pub async fn open_project_page(page: String) -> Result<(), String> {
+    let url = project_page_url(&page)?;
+    #[cfg(windows)] {
+        tauri::async_runtime::spawn_blocking(move || open_system_page(url))
+            .await.map_err(|e| e.to_string())?
+    }
+    #[cfg(not(windows))] {let _ = url; Err("Disponível no Windows.".into())}
+}
+#[cfg(test)]
+mod project_page_tests {
+    use super::project_page_url;
+    #[test]
+    fn only_opens_the_two_public_project_pages() {
+        assert_eq!(project_page_url("issues").unwrap(), "https://github.com/educastro100/lume-notes-releases/issues");
+        assert_eq!(project_page_url("project").unwrap(), "https://github.com/educastro100/lume-notes-releases");
+        for value in ["https://evil.example", "file:///C:/", "cmd.exe", "", "__proto__"] {
+            assert!(project_page_url(value).is_err());
+        }
+    }
+}

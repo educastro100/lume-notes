@@ -10,6 +10,11 @@ import {
   ScrollText,
   Film,
   Video,
+  TriangleAlert,
+  Ticket,
+  FolderKanban,
+  Users,
+  CalendarDays,
 } from 'lucide-react';
 import { type DocumentIcon } from '../documents';
 
@@ -25,6 +30,11 @@ const symbols = {
   script: ScrollText,
   film: Film,
   video: Video,
+  incident: TriangleAlert,
+  request: Ticket,
+  project: FolderKanban,
+  meeting: Users,
+  calendar: CalendarDays,
 };
 export function DocumentSymbol({ icon, size = 16 }: { icon: DocumentIcon; size?: number }) {
   const Symbol = symbols[icon];

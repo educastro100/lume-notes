@@ -13,6 +13,11 @@ export const DOCUMENT_ICONS = {
   script: 'Roteiro',
   film: 'Filme',
   video: 'Vídeo',
+  incident: 'Incidente',
+  request: 'Requisição',
+  project: 'Projeto',
+  meeting: 'Reunião',
+  calendar: 'Calendário',
 } as const;
 export type DocumentIcon = keyof typeof DOCUMENT_ICONS;
 export const GROUP_COLORS = {

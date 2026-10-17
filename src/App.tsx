@@ -27,7 +27,6 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   ChevronDown,
-  ArrowUpRight,
   Check,
   AlertCircle,
   MoreHorizontal,
@@ -102,6 +101,7 @@ import {
   parseTheme,
   themeForTime,
   THEME_NAMES,
+  THEME_ORDER,
   FONT_MIN,
   FONT_MAX,
   clamp,
@@ -871,6 +871,7 @@ export default function App() {
       return;
     }
     if (!view) return;
+    const converted = state.current.tabs.find((tab) => tab.id === id)?.mode === 'text';
     const range = view.state.selection.main;
     const edit = formatEdit(view.state.doc.toString(), range.from, range.to, action);
     view.dispatch({
@@ -892,6 +893,12 @@ export default function App() {
       ),
     );
     view.focus();
+    if (converted)
+      notify(
+        t(
+          'Documento convertido para Markdown. Salve para manter as alterações. Use Salvar como para criar um arquivo .md.',
+        ),
+      );
   };
   const actions = useRef({ newTab, openFiles, saveActive, closeTab, find, applyFormat });
   actions.current = { newTab, openFiles, saveActive, closeTab, find, applyFormat };
@@ -900,6 +907,8 @@ export default function App() {
       if (installingUpdate) return;
       if ((e.target as Element)?.closest?.('[data-title-editor]')) return;
       if (e.key === 'Escape') {
+        // Let the settings dialog (and its language popup) handle Escape in order.
+        if (settingsOpen) return;
         if (
           !prompt &&
           !groupDialog &&
@@ -1098,11 +1107,26 @@ export default function App() {
             {t('SEU ESPAÇO')}
             <span>{t('LOCAL')}</span>
           </div>
-          <button className="new-note" onClick={() => newTab()} disabled={!ready || busy}>
-            <Plus size={17} />
-            <span>{t('Nova nota')}</span>
-            <kbd>Ctrl N</kbd>
-          </button>
+          <div className="sidebar-actions">
+            <button
+              className="new-note"
+              title={t('Novo arquivo') + ' (Ctrl+N)'}
+              onClick={() => newTab()}
+              disabled={!ready || busy}
+            >
+              <Plus size={17} />
+              <span>{t('Nova nota')}</span>
+            </button>
+            <button
+              className="sidebar-open"
+              aria-label={t('Abrir do computador')}
+              title={t('Abrir arquivo (Ctrl+O)')}
+              onClick={() => void openFiles()}
+              disabled={!ready || busy}
+            >
+              <FolderOpen size={18} />
+            </button>
+          </div>
           <SidebarFiles
             tabs={tabs}
             groups={groups}
@@ -1123,15 +1147,6 @@ export default function App() {
             onRemoveGroup={removeGroup}
             onChooseIcon={setIconTabId}
           />
-          <button
-            className="open-sidebar"
-            onClick={() => void openFiles()}
-            disabled={!ready || busy}
-          >
-            <FolderOpen size={16} />
-            {t('Abrir do computador')}
-            <ArrowUpRight size={14} />
-          </button>
           <div className="sidebar-bottom">
             <div className="quiet-card">
               <Sparkles size={18} />
@@ -1216,7 +1231,7 @@ export default function App() {
                     </button>
                     {menu === 'theme' && (
                       <div className="dropdown theme-menu" role="menu" aria-label={t('Temas')}>
-                        {(['light', 'sunset', 'dark', 'midnight'] as Theme[]).map((value) => (
+                        {THEME_ORDER.map((value) => (
                           <button
                             key={value}
                             role="menuitemradio"

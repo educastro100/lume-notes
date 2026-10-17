@@ -137,7 +137,7 @@ fn main() {
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_clipboard_manager::init())
-        .invoke_handler(tauri::generate_handler![read_file,save_file,rename_file,load_session,store_session,take_pending_files,open_with::open_with_status,open_with::set_open_with,open_with::is_installed,open_with::open_default_apps,open_with::open_release_downloads])
+        .invoke_handler(tauri::generate_handler![read_file,save_file,rename_file,load_session,store_session,take_pending_files,open_with::open_with_status,open_with::set_open_with,open_with::is_installed,open_with::open_default_apps,open_with::open_release_downloads,open_with::open_project_page])
         .run(tauri::generate_context!()).expect("Não foi possível iniciar o Lume Notes");
 }
 #[cfg(test)]

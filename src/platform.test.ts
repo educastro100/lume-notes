@@ -2,11 +2,19 @@
 import { expect, it, vi } from 'vitest';
 import { invoke } from '@tauri-apps/api/core';
 import { writeText } from '@tauri-apps/plugin-clipboard-manager';
-import { copyContent, readDocumentsFromPaths } from './platform';
+import { copyContent, readDocumentsFromPaths, openProjectPage } from './platform';
 vi.mock('@tauri-apps/api/core', () => ({ isTauri: () => true, invoke: vi.fn() }));
 vi.mock('@tauri-apps/plugin-clipboard-manager', () => ({
   writeText: vi.fn().mockResolvedValue(undefined),
 }));
+it('opens public help pages by identifier and rejects arbitrary URLs before invoking the native bridge', async () => {
+  vi.mocked(invoke).mockResolvedValue(undefined);
+  await openProjectPage('issues');
+  expect(invoke).toHaveBeenLastCalledWith('open_project_page', { page: 'issues' });
+  const count = vi.mocked(invoke).mock.calls.length;
+  await expect(openProjectPage('https://example.com' as any)).rejects.toThrow();
+  expect(vi.mocked(invoke).mock.calls.length).toBe(count);
+});
 it('copies the full Markdown source through the native clipboard bridge', async () => {
   const content = '# Roteiro\n\n**Cena** $$$$';
   await copyContent(content);

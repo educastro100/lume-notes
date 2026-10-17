@@ -1,26 +1,79 @@
 import { t } from './i18n';
 import StarterKit from '@tiptap/starter-kit';
+import { Code } from '@tiptap/extension-code';
 import { Markdown } from '@tiptap/markdown';
 import { Underline } from '@tiptap/extension-underline';
 import { TableKit } from '@tiptap/extension-table';
 import { TaskList, TaskItem } from '@tiptap/extension-list';
-import type { Editor } from '@tiptap/core';
+import { Mark, type Editor, type JSONContent } from '@tiptap/core';
 import type { FormatAction } from './formatting';
 import { VisualSearch, visualMatches } from './visualSearch';
 import { VisualInput } from './visualInput';
+
+// Serialize code as a complete literal span inside its emphasis. The upstream
+// mark-boundary serializer otherwise places emphasis markers inside a longer
+// code span and moves its leading/trailing spaces outside the backticks.
+const CodeLiteral = Mark.create({
+  name: 'lumeCodeLiteral',
+  code: true,
+  renderHTML: () => ['code', 0],
+  renderMarkdown: (node, helpers) => helpers.renderChildren(node.content || []),
+});
+function literalCode(node: JSONContent): JSONContent {
+  if (node.type === 'text' && node.marks?.some((mark) => mark.type === 'code')) {
+    const text = node.text || '';
+    const fence = '`'.repeat(
+      Math.max(0, ...Array.from(text.matchAll(/`+/g), (match) => match[0].length)) + 1,
+    );
+    const padding = text.trim() && /^[ `]|[ `]$/.test(text) ? ' ' : '';
+    return {
+      ...node,
+      text: `${fence}${padding}${text}${padding}${fence}`,
+      marks: node.marks.map((mark) => (mark.type === 'code' ? { type: 'lumeCodeLiteral' } : mark)),
+    };
+  }
+  return {
+    ...node,
+    ...(node.content && { content: node.content.map(literalCode) }),
+  };
+}
+const LumeMarkdown = Markdown.extend({
+  onBeforeCreate(event) {
+    this.parent?.(event);
+    this.editor.getMarkdown = () =>
+      this.storage.manager.serialize(literalCode(this.editor.getJSON()));
+  },
+});
 
 export function visualExtensions() {
   return [
     VisualInput,
     VisualSearch,
     StarterKit.configure({
+      code: false,
       underline: false,
       trailingNode: false,
       undoRedo: { depth: 2000, newGroupDelay: 0 },
       link: { openOnClick: false, autolink: false },
     }),
+    Code.extend({ excludes: '', priority: 50 }),
+    CodeLiteral,
     Underline.extend({
       renderMarkdown: (node, helpers) => `<u>${helpers.renderChildren(node)}</u>`,
+      markdownTokenizer: {
+        name: 'underline',
+        level: 'inline',
+        start: (source) => {
+          const starts = [source.indexOf('<u>'), source.indexOf('++')].filter((at) => at >= 0);
+          return starts.length ? Math.min(...starts) : -1;
+        },
+        tokenize(source, _tokens, lexer) {
+          const match = /^(?:<u>([\s\S]+?)<\/u>|\+\+([\s\S]+?)\+\+)/.exec(source);
+          if (!match) return undefined;
+          const text = match[1] ?? match[2];
+          return { type: 'underline', raw: match[0], text, tokens: lexer.inlineTokens(text) };
+        },
+      },
     }),
     TableKit.configure({ table: { resizable: false } }),
     TaskList,
@@ -30,7 +83,7 @@ export function visualExtensions() {
         checkboxLabel: (node) => t('Tarefa: {name}', { name: node.textContent || t('Sem título') }),
       },
     }),
-    Markdown.configure({ markedOptions: { gfm: true } }),
+    LumeMarkdown.configure({ markedOptions: { gfm: true } }),
   ];
 }
 
