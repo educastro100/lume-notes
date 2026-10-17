@@ -48,7 +48,11 @@ if ($PrepareOnly) {Write-Host 'Verificação local concluída. Nenhum dado envia
 & node (Join-Path $PSScriptRoot 'release-candidate.mjs') publication $lumeFolder $Version
 if ($LASTEXITCODE -ne 0) {throw 'Evidencia de release ausente ou divergente. Use scripts/finish-release.ps1 antes de publicar. Nenhuma credencial foi acessada.'}
 
+. (Join-Path $PSScriptRoot 'release-payload.ps1')
+$lumeDraftBody = New-LumeReleaseDraftBody -Version $Version -NotesPath (Join-Path $lumeFolder 'RELEASE-NOTES.md')
+
 # Retrieve the existing GitHub credential directly, without printing or persisting it.
+. (Join-Path $PSScriptRoot 'release-process.ps1')
 $lumeGit = (Get-Command git.exe).Source
 $lumeManager = Join-Path (Split-Path (Split-Path $lumeGit -Parent) -Parent) 'mingw64\bin\git-credential-manager.exe'
 if (-not (Test-Path -LiteralPath $lumeManager)) {
@@ -58,27 +62,42 @@ if (-not (Test-Path -LiteralPath $lumeManager)) {throw 'Instale o Git for Window
 $lumeOldInteractive=$env:GCM_INTERACTIVE
 $env:GCM_INTERACTIVE='never'
 try {
- $lumeCredentialLines = "protocol=https`nhost=github.com`nusername=educastro100`n`n" | & $lumeManager get
- if ($LASTEXITCODE -ne 0) {throw 'Não foi possível acessar sua autenticação do GitHub. Execute este script em um PowerShell normal do Windows após autenticar o Git.'}
+ Write-Host 'Lendo autenticacao GitHub (limite: 45 segundos)...'
+ $lumeCredentialText = Invoke-LumeReleaseProcess -FilePath $lumeManager -InputText "protocol=https`nhost=github.com`nusername=educastro100`n`n"
+ $lumeCredentialLines = $lumeCredentialText -split '\r?\n'
 } finally {$env:GCM_INTERACTIVE=$lumeOldInteractive}
 $lumeCredentials=@{}
 foreach ($lumeLine in $lumeCredentialLines) {if ($lumeLine -match '^([^=]+)=(.*)$') {$lumeCredentials[$Matches[1]]=$Matches[2]}}
 if (-not $lumeCredentials['password']) {throw 'Credencial GitHub indisponível. Autentique o Git no Windows e tente novamente.'}
 Add-Type -AssemblyName System.Net.Http
 $lumeClient=[Net.Http.HttpClient]::new()
-$lumeClient.Timeout=[TimeSpan]::FromMinutes(10)
+$lumeClient.Timeout=[TimeSpan]::FromSeconds(120)
 $lumeClient.DefaultRequestHeaders.UserAgent.ParseAdd('Lume-Release-Publisher/1.0')
 $lumeClient.DefaultRequestHeaders.Authorization=[Net.Http.Headers.AuthenticationHeaderValue]::new('Bearer',$lumeCredentials['password'])
 $lumeClient.DefaultRequestHeaders.Add('X-GitHub-Api-Version','2022-11-28')
 $lumeClient.DefaultRequestHeaders.Accept.ParseAdd('application/vnd.github+json')
-$lumeCredentials.Clear();$lumeCredentialLines=$null
+$lumeCredentials.Clear();$lumeCredentialLines=$null;$lumeCredentialText=$null;$lumeLine=$null
+Write-Host 'Autenticacao obtida. Conectando ao GitHub...'
 function Invoke-LumeGitHub {
  param([string]$Method,[string]$Url,$Body,[IO.FileInfo]$File,[int[]]$Allow=@())
  $lumeRequest=[Net.Http.HttpRequestMessage]::new([Net.Http.HttpMethod]::new($Method),$Url)
  try {
+  Write-Host "Preparando requisicao: $Method $Url"
   if ($File) {$lumeRequest.Content=[Net.Http.StreamContent]::new($File.OpenRead());$lumeRequest.Content.Headers.ContentType=[Net.Http.Headers.MediaTypeHeaderValue]::new('application/octet-stream')}
   elseif ($null -ne $Body) {$lumeRequest.Content=[Net.Http.StringContent]::new(($Body|ConvertTo-Json -Depth 12),[Text.Encoding]::UTF8,'application/json')}
-  $lumeResponse=$lumeClient.SendAsync($lumeRequest).GetAwaiter().GetResult()
+  Write-Host "GitHub: $Method $Url"
+  $lumePending=$lumeClient.SendAsync($lumeRequest)
+  $lumeRequestTimer=[Diagnostics.Stopwatch]::StartNew()
+  $lumeNextRequestProgress=10
+  while (-not $lumePending.IsCompleted) {
+   if ($lumeRequestTimer.Elapsed.TotalSeconds -ge $lumeNextRequestProgress) {
+    Write-Host "Aguardando resposta do GitHub... ($([int]$lumeRequestTimer.Elapsed.TotalSeconds)s; limite: 120s)"
+    $lumeNextRequestProgress+=10
+   }
+   Start-Sleep -Milliseconds 200
+  }
+  try {$lumeResponse=$lumePending.GetAwaiter().GetResult()}
+  catch {throw 'A conexao com o GitHub falhou ou excedeu 120 segundos. Confira sua conexao e tente novamente; um rascunho parcial pode ser retomado.'}
   try {
    $lumeResponseText=$lumeResponse.Content.ReadAsStringAsync().GetAwaiter().GetResult()
    if (-not $lumeResponse.IsSuccessStatusCode) {
@@ -95,24 +114,30 @@ try {
  if ($lumeRepository.private -ne $false) {throw 'O canal de instaladores precisa ser público. Nenhuma visibilidade será alterada pelo script.'}
  $lumeCommits=Invoke-LumeGitHub GET "$lumeApi/commits?per_page=1" -Allow @(409)
  if ($null -eq $lumeCommits) {
+  Write-Host 'Inicializando o canal publico de instaladores...'
   $lumeReadme="# Lume Notes`n`nCanal público de instaladores e atualizações do Lume Notes para Windows x64.`n`n[Baixar a versão mais recente](https://github.com/$lumeRepo/releases/latest)`n`nEste repositório contém somente os pacotes distribuíveis e seus metadados. O código-fonte é mantido em repositório privado.`n"
   $null=Invoke-LumeGitHub PUT "$lumeApi/contents/README.md" -Body @{message='Initialize public Lume release channel';content=[Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($lumeReadme))}
  }
  $lumeRelease=Invoke-LumeGitHub GET "$lumeApi/releases/tags/v$Version" -Allow @(404)
  if ($lumeRelease -and -not $lumeRelease.draft) {throw 'Esta versão já foi publicada. Use um número de versão novo; pacotes publicados não são substituídos.'}
  if (-not $lumeRelease) {
-  $lumeRelease=Invoke-LumeGitHub POST "$lumeApi/releases" -Body @{tag_name="v$Version";name="Lume Notes $Version";draft=$true;prerelease=$false;body=(Get-Content -LiteralPath (Join-Path $lumeFolder 'RELEASE-NOTES.md') -Raw -Encoding UTF8)}
+  Write-Host "Criando rascunho v$Version..."
+  $lumeRelease=Invoke-LumeGitHub POST "$lumeApi/releases" -Body $lumeDraftBody
  }
  foreach ($lumeName in $lumeAssets) {
   $lumeExisting=@($lumeRelease.assets|Where-Object {$_.name -ceq $lumeName})
   if ($lumeExisting.Count) {
    $lumeHash='sha256:'+(Get-FileHash -LiteralPath $lumeFiles[$lumeName].FullName -Algorithm SHA256).Hash.ToLowerInvariant()
    if ($lumeExisting[0].digest -cne $lumeHash) {throw "O rascunho já contém outro arquivo chamado $lumeName. Nenhum arquivo remoto foi substituído."}
+   Write-Host "Arquivo ja conferido no rascunho: $lumeName"
    continue
   }
   $lumeUpload=$lumeRelease.upload_url.Split('{')[0]+'?name='+[Uri]::EscapeDataString($lumeName)
+  Write-Host "Enviando $lumeName ($($lumeFiles[$lumeName].Length) bytes)..."
   $null=Invoke-LumeGitHub POST $lumeUpload -File $lumeFiles[$lumeName]
+  Write-Host "Enviado: $lumeName"
  }
+ Write-Host 'Liberando a release publica...'
  $lumePublished=Invoke-LumeGitHub PATCH "$lumeApi/releases/$($lumeRelease.id)" -Body @{draft=$false;make_latest='true'}
  Write-Host "Publicado: $($lumePublished.html_url)"
 } finally {$lumeClient.Dispose()}

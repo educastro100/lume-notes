@@ -16,7 +16,7 @@ No mesmo checkout, sem alterações pendentes e com os mesmos arquivos de compil
 
 ```powershell
 Set-Location -LiteralPath 'C:\Users\Eduardo\Documents\Projetos Pessoais\[DOING] Lume'
-.\scripts\finish-release.ps1 -ArtifactZip 'C:\Users\Eduardo\Downloads\lume-release-candidate-<run-id>.zip'
+powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -File ".\scripts\finish-release.ps1" -ArtifactZip 'C:\Users\Eduardo\Downloads\lume-release-candidate-<run-id>.zip'
 ```
 
 O script extrai somente os quatro nomes permitidos em uma pasta nova, rejeita caminhos extras/duplicados e confere versão, commit, política de segurança e hashes. Correções posteriores limitadas a scripts operacionais, documentação e workflows podem preparar o mesmo candidato; qualquer mudança em código do app, assets, manifestos, dependências ou configuração de compilação exige um novo build. O commit compilado e o commit de preparação são registrados separadamente.
@@ -34,9 +34,15 @@ Conclua a conferência dos relatórios e o teste do pacote final antes de public
 Quando a publicação estiver autorizada e os arquivos finais revisados, no PowerShell normal do Windows com sua autenticação GitHub existente:
 
 ```powershell
-.\scripts\publish-release.ps1 -Version 0.9.1
+powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -File ".\scripts\publish-release.ps1" -Version 0.10.0
 ```
 
 Somente instalador, `.sig`, `latest.json` e `SHA256SUMS.txt` são enviados ao repositório público de releases. A publicação cria um rascunho e só o libera após anexar os arquivos. Código-fonte, notas, chave, candidato, logs e verificador não fazem parte da lista pública. Este ambiente de automação não acessa o Gerenciador de Credenciais; por isso o envio Git e a publicação autenticada são feitos pelo usuário no terminal normal.
+
+O comando acima usa `RemoteSigned` somente nesse processo, sem mudar a política persistente do Windows. O publicador identifica cada etapa e mostra uma mensagem a cada dez segundos de espera. A consulta da autenticação tem limite de 45 segundos; cada requisição ao GitHub tem limite de 120 segundos. Falhas não exibem tokens nem a saída de erro do gerenciador de credenciais. Um rascunho parcial pode ser retomado pelo mesmo comando: os arquivos existentes só são aceitos quando seus hashes coincidem. Uma release já publicada nunca é substituída. A conclusão é indicada por `Publicado: <link>`.
+
+O teste isolado do limite de espera, sem consultar credenciais reais, pode ser executado com `powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -File ".\scripts\release-process.checks.ps1"`.
+
+As notas da release são lidas como texto simples pela API de arquivos do .NET. No Windows PowerShell 5.1, `Get-Content` acrescenta propriedades como `PSDrive` e `PSProvider` à string; serializar esse objeto com profundidade alta pode bloquear a criação do JSON antes de qualquer pedido HTTP. O teste `powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -File ".\scripts\release-payload.checks.ps1"` verifica o JSON sem acessar credenciais ou a rede.
 
 Referências: [assinatura do updater Tauri](https://v2.tauri.app/plugin/updater/#signing-updates), [GitHub Actions no Tauri](https://v2.tauri.app/distribute/pipelines/github/) e [CLI Tauri](https://v2.tauri.app/reference/cli/).
