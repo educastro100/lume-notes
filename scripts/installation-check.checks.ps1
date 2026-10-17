@@ -32,6 +32,16 @@ foreach ($entry in @(@('MAPSReporting',0),@('SubmitSamplesConsent',2),@('SubmitS
   Assert-Rejected { Assert-LumeCloudProtection $invalid }
 }
 Write-Host 'PASS: the previous cloud-disabled configuration and unavailable cloud protection are rejected.'
+$noExclusions=[pscustomobject]@{ExclusionPath=@();ExclusionExtension=@();ExclusionProcess=@()}
+Assert-LumeNoExclusions $noExclusions
+Assert-Rejected { Assert-LumeNoExclusions $null }
+Assert-Rejected { Assert-LumeNoExclusions ([pscustomobject]@{ExclusionPath=@()}) }
+foreach ($name in @('ExclusionPath','ExclusionExtension','ExclusionProcess')) {
+  $invalid=$noExclusions.PSObject.Copy(); $invalid.$name=@('C:\')
+  Assert-Rejected { Assert-LumeNoExclusions $invalid }
+}
+Assert-Rejected { Assert-LumeNoExclusions ([pscustomobject]@{ExclusionPath=@('C:\','D:\');ExclusionExtension=@();ExclusionProcess=@()}) }
+Write-Host 'PASS: image drive exclusions, process/extension exclusions and missing inventory cannot pass.'
 Assert-LumeTemporaryPath 'C:\runner\temp\Lume Notes' 'C:\runner\temp'
 Assert-Rejected { Assert-LumeTemporaryPath 'C:\runner\temp-other\app' 'C:\runner\temp' }
 Assert-Rejected { Assert-LumeTemporaryPath 'C:\runner\temp\..\user-app' 'C:\runner\temp' }

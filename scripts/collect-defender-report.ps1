@@ -6,18 +6,22 @@ if (-not $OutputPath) {
 }
 $lumeReport = [ordered]@{
  generatedUtc = [DateTime]::UtcNow.ToString('o')
- scope = 'Somente leitura de eventos e detecções relacionados a Lume/NSIS nos últimos sete dias. Sem envio de dados ou alteração de proteção.'
+ scope = 'Somente leitura de status, preferencias de nuvem, deteccoes de Lume/NSIS e eventos relacionados dos ultimos sete dias. Sem varredura, envio de dados ou alteracao de protecao.'
  status = $null
+ cloudSettings = $null
  detections = @()
  threats = @()
  events = @()
  errors = @()
 }
 try {
- $lumeReport.status = Get-MpComputerStatus | Select-Object AMProductVersion,AMEngineVersion,AntivirusSignatureVersion,AntivirusSignatureLastUpdated
+ $lumeReport.status = Get-MpComputerStatus | Select-Object AMProductVersion,AMEngineVersion,AMServiceEnabled,AntivirusEnabled,RealTimeProtectionEnabled,BehaviorMonitorEnabled,OnAccessProtectionEnabled,AntivirusSignatureVersion,AntivirusSignatureLastUpdated
 } catch {$lumeReport.errors += ('Status: ' + $_.Exception.Message)}
 try {
- $lumeReport.detections = @(Get-MpThreatDetection | Where-Object {($_.Resources -join ' ') -match 'lume|nsis|makensis'} | Select-Object ThreatID,DetectionID,InitialDetectionTime,LastThreatStatusChangeTime,ActionSuccess,ThreatStatusID,ProcessName,Resources)
+ $lumeReport.cloudSettings = Get-MpPreference | Select-Object MAPSReporting,SubmitSamplesConsent,DisableBlockAtFirstSeen
+} catch {$lumeReport.errors += ('Preferencias de nuvem: ' + $_.Exception.Message)}
+try {
+ $lumeReport.detections = @(Get-MpThreatDetection | Where-Object {($_.Resources -join ' ') -match 'lume|nsis|makensis'} | Select-Object ThreatID,DetectionID,InitialDetectionTime,LastThreatStatusChangeTime,RemediationTime,DetectionSourceTypeID,ActionSuccess,ThreatStatusID,ThreatStatusErrorCode,CleaningActionID,CurrentThreatExecutionStatusID,ProcessName,Resources)
  $lumeIds = @($lumeReport.detections | ForEach-Object {$_.ThreatID})
  if ($lumeIds.Count) {$lumeReport.threats = @(Get-MpThreat | Where-Object {$_.ThreatID -in $lumeIds} | Select-Object ThreatID,ThreatName,SeverityID,CategoryID,IsActive,DidThreatExecute)}
 } catch {$lumeReport.errors += ('Detecções: ' + $_.Exception.Message)}

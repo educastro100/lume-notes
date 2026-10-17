@@ -23,6 +23,18 @@ function Assert-LumeCloudProtection {
   }
 }
 
+function Assert-LumeNoExclusions {
+  param($Settings)
+  foreach ($name in @('ExclusionPath','ExclusionExtension','ExclusionProcess')) {
+    if (-not $Settings -or -not $Settings.PSObject.Properties[$name]) {
+      throw 'Inventario de exclusoes indisponivel; teste inconclusivo.'
+    }
+    if (@($Settings.$name | Where-Object { $_ }).Count) {
+      throw "Exclusoes do runner ainda ativas ($name); teste inconclusivo."
+    }
+  }
+}
+
 function Assert-LumeTemporaryPath {
   param([string]$Path, [string]$TemporaryRoot)
   if (-not [IO.Path]::IsPathRooted($Path) -or -not [IO.Path]::IsPathRooted($TemporaryRoot)) {

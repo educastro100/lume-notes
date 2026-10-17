@@ -24,7 +24,7 @@ $report = [ordered]@{
   startedUtc=[DateTime]::UtcNow.ToString('o'); protectionBefore=$null; protectionAfter=$null
   cloudSettingsBefore=$null; cloudSettings=$null; mapsConnection=$null; downloadZoneId=$null
   stage='protection'; definitionsUpdate=$null; installer=$null; installed=$null
-  windowObserved=$false; observedSeconds=0; events=@(); eventError=$null; error=$null
+  windowObserved=$false; observedSeconds=0; events=@(); eventError=$null; toolLogCaptured=$false; toolLogError=$null; error=$null
 }
 $appProcess = $null
 $installerProcess = $null
@@ -33,7 +33,7 @@ function Get-LumeProtectionSnapshot {
   Get-MpComputerStatus -ErrorAction Stop | Select-Object AMProductVersion, AMEngineVersion, AMServiceEnabled, AntivirusEnabled, RealTimeProtectionEnabled, BehaviorMonitorEnabled, OnAccessProtectionEnabled, AntivirusSignatureVersion, AntivirusSignatureLastUpdated
 }
 function Get-LumeCloudSettings {
-  Get-MpPreference -ErrorAction Stop | Select-Object MAPSReporting, SubmitSamplesConsent, DisableBlockAtFirstSeen
+  Get-MpPreference -ErrorAction Stop | Select-Object MAPSReporting, SubmitSamplesConsent, DisableBlockAtFirstSeen, ExclusionPath, ExclusionExtension, ExclusionProcess
 }
 function Get-LumeDefenderTool {
   $platform=Join-Path $env:ProgramData 'Microsoft/Windows Defender/Platform'
@@ -51,6 +51,18 @@ try {
     # Strengthen only the disposable runner; never add exclusions or change
     # remediation/tamper protection. Cloud safe-sample submission is required
     # by Microsoft's block-at-first-sight configuration for the public binaries.
+    $report.stage='runner-exclusions'
+    # The official image excludes entire C: and D: drives. Removing only these
+    # known image exclusions strengthens this disposable runner. Other exclusions
+    # are reported and rejected rather than silently accepting a false clean result.
+    foreach ($excludedPath in @($report.cloudSettings.ExclusionPath)) {
+      if ($excludedPath -in @('C:\','D:\')) {
+        Remove-MpPreference -ExclusionPath $excludedPath -ErrorAction Stop
+      }
+    }
+    $report.cloudSettings=Get-LumeCloudSettings
+    Assert-LumeNoExclusions $report.cloudSettings
+    $report.stage='protection'
     Set-MpPreference -DisableRealtimeMonitoring $false -DisableBehaviorMonitoring $false -DisableIOAVProtection $false -ErrorAction Stop
     $deadline = [DateTime]::UtcNow.AddSeconds(45)
     do {
@@ -78,6 +90,7 @@ try {
         Assert-LumeProtection $report.protectionAfter
         $report.cloudSettings=Get-LumeCloudSettings
         Assert-LumeCloudProtection $report.cloudSettings
+        Assert-LumeNoExclusions $report.cloudSettings
         break
       } catch {
         if ([DateTime]::UtcNow -ge $deadline) { throw }
@@ -94,6 +107,7 @@ try {
     $report.protectionBefore = Get-LumeProtectionSnapshot
     Assert-LumeProtection $report.protectionBefore
     Assert-LumeCloudProtection $report.cloudSettings
+    Assert-LumeNoExclusions $report.cloudSettings
     $report.stage='maps-connection'
     $report.mapsConnection=Invoke-LumeDiagnosticProcess -FilePath (Get-LumeDefenderTool) -Arguments '-ValidateMapsConnection' -LogPath (Join-Path $reports 'maps-connection-install.txt') -TimeoutSeconds 60 -Activity 'conexao com a protecao em nuvem'
     $installRoot = Join-Path $env:RUNNER_TEMP ('lume-installed-check-' + [Guid]::NewGuid().ToString('N'))
@@ -150,6 +164,7 @@ try {
     Assert-LumeProtection $report.protectionAfter
     $report.cloudSettings=Get-LumeCloudSettings
     Assert-LumeCloudProtection $report.cloudSettings
+    Assert-LumeNoExclusions $report.cloudSettings
     if ((Get-FileHash -LiteralPath $executable -Algorithm SHA256).Hash.ToLowerInvariant() -cne $installedHash) { throw 'Aplicativo instalado mudou durante o teste.' }
     $report.verdict='startup-observed'
     Write-Host 'Instalacao e janela observadas por 60 segundos com protecao ativa. Diagnostico; nao libera uma release.'
@@ -165,6 +180,15 @@ try {
       $ownedProcess.Dispose()
     }
   }
+  # Keep the native details referenced by MpCmdRun, even when MAPS fails before
+  # download. Reading this log must never replace the original failure message.
+  try {
+    $toolLog=Join-Path ([IO.Path]::GetTempPath()) 'MpCmdRun.log'
+    if (Test-Path -LiteralPath $toolLog -PathType Leaf) {
+      Get-Content -LiteralPath $toolLog -Tail 400 -ErrorAction Stop | Set-Content -LiteralPath (Join-Path $reports 'MpCmdRun-tail.txt') -Encoding utf8
+      $report.toolLogCaptured=$true
+    }
+  } catch { $report.toolLogError=$_.Exception.Message }
   # Query readability separately: an empty event list is valid; access failure is not.
   try {
     $null = Get-WinEvent -ListLog 'Microsoft-Windows-Windows Defender/Operational' -ErrorAction Stop
