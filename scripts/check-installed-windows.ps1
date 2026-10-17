@@ -22,8 +22,8 @@ $report = [ordered]@{
   sourceCommit=$package.commit; version=$Version
   controllerCommit=$env:GITHUB_SHA; runId=$env:GITHUB_RUN_ID
   startedUtc=[DateTime]::UtcNow.ToString('o'); protectionBefore=$null; protectionAfter=$null
-  cloudSettings=$null; stage='protection'; installer=$null; installed=$null
-  windowObserved=$false; observedSeconds=0; events=@(); error=$null
+  cloudSettings=$null; stage='protection'; definitionsUpdate=$null; installer=$null; installed=$null
+  windowObserved=$false; observedSeconds=0; events=@(); eventError=$null; error=$null
 }
 $appProcess = $null
 $installerProcess = $null
@@ -37,15 +37,31 @@ try {
     # Only strengthen the hosted runner's existing protection. No exclusions,
     # remediation changes, cloud sample settings or tamper-protection changes.
     Set-MpPreference -DisableRealtimeMonitoring $false -DisableBehaviorMonitoring $false -DisableIOAVProtection $false -ErrorAction Stop
-    Update-MpSignature -ErrorAction Stop
     $deadline = [DateTime]::UtcNow.AddSeconds(45)
     do {
-      $report.protectionBefore = Get-LumeProtectionSnapshot
-      try { Assert-LumeProtection $report.protectionBefore; break } catch {
+      try {
+        $report.protectionBefore = Get-LumeProtectionSnapshot
+        Assert-LumeProtection $report.protectionBefore
+        break
+      } catch {
         if ([DateTime]::UtcNow -ge $deadline) { throw }
         Start-Sleep -Seconds 2
       }
     } while ($true)
+    # Enabling protection can restart the service. Wait for it before updating.
+    # Use the same official CLI used by the earlier successful release workflows;
+    # Update-MpSignature failed with RPC errors on this hosted image.
+    $report.stage='definitions-update'
+    $platform=Join-Path $env:ProgramData 'Microsoft/Windows Defender/Platform'
+    $tools=@(Get-ChildItem -Path "$platform/*/MpCmdRun.exe" -File -ErrorAction SilentlyContinue |
+      Where-Object { $_.Directory.Name -match '^\d' } |
+      Sort-Object { [version]($_.VersionInfo.FileVersion -replace '[^0-9.].*$','') } -Descending)
+    $updater=if ($tools.Count) {$tools[0].FullName} else {Join-Path $env:ProgramFiles 'Windows Defender/MpCmdRun.exe'}
+    if (-not (Test-Path -LiteralPath $updater -PathType Leaf)) { throw 'MpCmdRun oficial indisponivel; teste inconclusivo.' }
+    $report.definitionsUpdate=Invoke-LumeDiagnosticProcess -FilePath $updater -Arguments '-SignatureUpdate' -LogPath (Join-Path $reports 'defender-update.txt') -TimeoutSeconds 120
+    $report.protectionAfter=Get-LumeProtectionSnapshot
+    Assert-LumeProtection $report.protectionAfter
+    $report.stage='ready'
     $report.verdict='protection-ready'
     Write-Host 'Protecao em tempo real, comportamental e de acesso confirmada no runner.'
   } else {
@@ -123,11 +139,12 @@ try {
     }
   } catch {
     $report.verdict='inconclusive-or-failed'
-    $report.error='Historico de protecao indisponivel: ' + $_.Exception.Message
+    $report.eventError='Historico de protecao indisponivel: ' + $_.Exception.Message
+    if (-not $report.error) { $report.error=$report.eventError }
   }
   $report | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $reportPath -Encoding utf8
   if ($env:GITHUB_STEP_SUMMARY) {
-    @("Teste instalado ($($report.sourceCommit)): $($report.verdict)", "Fase: $Phase. Janela observada: $($report.windowObserved).", 'Diagnostico privado; nenhuma release foi assinada ou publicada.') | Add-Content -LiteralPath $env:GITHUB_STEP_SUMMARY
+    @("Teste instalado ($($report.sourceCommit)): $($report.verdict)", "Fase: $Phase. Etapa: $($report.stage). Janela observada: $($report.windowObserved).", "Erro: $($report.error)", 'Diagnostico privado; nenhuma release foi assinada ou publicada.') | Add-Content -LiteralPath $env:GITHUB_STEP_SUMMARY
   }
 }
 if ($report.verdict -notin @('protection-ready','startup-observed')) { throw $report.error }

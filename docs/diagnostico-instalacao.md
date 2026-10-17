@@ -26,6 +26,8 @@ Somente relatórios são anexados, em artefatos privados `lume-installed-check-0
 
 `protection-check.json` registra a preparação; `installed-check.json` registra o download, instalação e abertura, se essa etapa for atingida. Um runner pode continuar diferente do Windows do usuário, inclusive na política de nuvem e nas definições. Um resultado sem eventos exige investigação adicional se a ocorrência local persistir. O bloqueio de distribuição da 0.10.0 não é removido automaticamente.
 
+A preparação aguarda até 45 segundos pela ativação das proteções e atualiza as definições por `MpCmdRun -SignatureUpdate`, com limite de 120 segundos e saída em `defender-update.txt`. Esse é o mesmo método dos workflows anteriores; o cmdlet `Update-MpSignature` falhou com erro RPC nessa imagem. Erros e limites de espera continuam interrompendo o teste. O resumo agora informa a etapa e a mensagem de erro, mesmo quando a consulta ao histórico também falha.
+
 Os testes locais dos guardas usam somente dados simulados, sem iniciar o Defender ou qualquer instalador:
 
 ```powershell
