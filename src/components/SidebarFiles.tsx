@@ -1,10 +1,17 @@
 import { t } from '../i18n';
 import { useEffect, useState, type MouseEvent, type CSSProperties } from 'react';
 import { Save, X, MoreHorizontal, ChevronRight, Plus, FolderPlus, Pencil } from 'lucide-react';
-import { GROUP_COLORS, isDirty, type DocumentTab, type TabGroup } from '../documents';
+import {
+  GROUP_COLORS,
+  isDirty,
+  type DocumentTab,
+  type TabGroup,
+  type GroupPlacement,
+} from '../documents';
 import { DocumentSymbol } from './DocumentSymbol';
 import { DropArea, TAB_DRAG_TYPE } from './DropArea';
 import { SoftCollapse } from './SoftCollapse';
+import { GroupButton } from './GroupButton';
 export interface FileActions {
   onSelect: (id: string, event?: MouseEvent) => void;
   onClose: (id: string) => void;
@@ -15,6 +22,7 @@ export interface FileActions {
   onEditGroup: (group: TabGroup) => void;
   onRemoveGroup: (id: string) => void;
   onChooseIcon: (id: string) => void;
+  onReorderGroup: (source: string, target: string, placement: GroupPlacement) => void;
 }
 export function SidebarFiles({
   tabs,
@@ -191,21 +199,26 @@ export function SidebarFiles({
             style={{ '--group-color': GROUP_COLORS[group.color] } as CSSProperties}
             busy={busy}
             onAssign={(ids) => actions.onAssign(ids, group.id)}
+            groupId={group.id}
+            onReorderGroup={actions.onReorderGroup}
           >
             <div className="sidebar-group-header">
-              <button
+              <GroupButton
                 className="group-toggle"
-                aria-expanded={!group.collapsed}
-                aria-label={t(group.collapsed ? 'Expandir grupo {name}' : 'Recolher grupo {name}', {
+                group={group}
+                groups={groups}
+                busy={busy}
+                label={t(group.collapsed ? 'Expandir grupo {name}' : 'Recolher grupo {name}', {
                   name: group.name,
                 })}
-                onClick={() => actions.onToggleGroup(group.id)}
+                onToggle={actions.onToggleGroup}
+                onReorder={actions.onReorderGroup}
               >
                 <ChevronRight size={12} className={group.collapsed ? '' : 'expanded'} />
                 <span className="group-color-dot" />
                 <span>{group.name}</span>
                 <small>{tabs.filter((tab) => tab.groupId === group.id).length}</small>
-              </button>
+              </GroupButton>
               <button
                 className="group-options"
                 aria-label={t('Opções do grupo {name}', { name: group.name })}

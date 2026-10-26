@@ -18,6 +18,8 @@ export const DOCUMENT_ICONS = {
   project: 'Projeto',
   meeting: 'Reunião',
   calendar: 'Calendário',
+  shopping: 'Compras',
+  process: 'Processo',
 } as const;
 export type DocumentIcon = keyof typeof DOCUMENT_ICONS;
 export const GROUP_COLORS = {
@@ -40,6 +42,21 @@ export interface TabGroup {
   name: string;
   color: GroupColor;
   collapsed: boolean;
+}
+export type GroupPlacement = 'before' | 'after';
+export function reorderGroups(
+  groups: TabGroup[],
+  sourceId: string,
+  targetId: string,
+  placement: GroupPlacement,
+): TabGroup[] {
+  const source = groups.find((group) => group.id === sourceId);
+  if (!source || sourceId === targetId || !groups.some((group) => group.id === targetId))
+    return groups;
+  const result = groups.filter((group) => group.id !== sourceId);
+  const index = result.findIndex((group) => group.id === targetId);
+  result.splice(index + (placement === 'after' ? 1 : 0), 0, source);
+  return result.every((group, index) => group === groups[index]) ? groups : result;
 }
 export interface DocumentTab {
   id: string;

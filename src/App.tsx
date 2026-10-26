@@ -55,6 +55,8 @@ import {
   isDirty,
   newDocument,
   restoreSession,
+  reorderGroups,
+  type GroupPlacement,
   type DocumentTab,
   type TabGroup,
   type GroupColor,
@@ -87,6 +89,7 @@ import { SelectionToolbar } from './components/SelectionToolbar';
 import { fileKey, parseFileIcons, rememberIcon } from './fileIcons';
 import { useUpdates, UpdatePreparationError } from './useUpdates';
 import { ThemeIcon } from './components/ThemeIcon';
+import { BrandDot } from './components/BrandDot';
 import { t, useLanguage } from './i18n';
 import { version as appVersion } from '../package.json';
 import { VisualEditor } from './components/VisualEditor';
@@ -633,6 +636,10 @@ export default function App() {
     if (tab?.path) recordIcon(tab.path, icon);
     setIconTabId(null);
   };
+  const moveGroup = (source: string, target: string, placement: GroupPlacement) => {
+    if (operations.current) return;
+    setGroups((current) => reorderGroups(current, source, target, placement));
+  };
   const toggleGroup = (id: string) =>
     setGroups((current) =>
       current.map((group) => (group.id === id ? { ...group, collapsed: !group.collapsed } : group)),
@@ -1072,6 +1079,7 @@ export default function App() {
   return (
     <>
       <NativeTitlebar
+        theme={theme}
         title={`${active && isDirty(active) ? '● ' : ''}${active?.name || 'Lume Notes'} — Lume Notes ${appVersion}`}
       />
       <div
@@ -1099,7 +1107,8 @@ export default function App() {
               <span />
             </div>
             <span>
-              lume<span className="brand-dot">.</span>
+              lume
+              <BrandDot theme={theme} />
             </span>
             <span className="brand-tag">NOTES</span>
           </div>
@@ -1143,6 +1152,7 @@ export default function App() {
             onAssign={assignGroup}
             onNewGroup={(tabIds) => setGroupDialog({ group: null, tabIds })}
             onToggleGroup={toggleGroup}
+            onReorderGroup={moveGroup}
             onEditGroup={(group) => setGroupDialog({ group })}
             onRemoveGroup={removeGroup}
             onChooseIcon={setIconTabId}
@@ -1262,6 +1272,7 @@ export default function App() {
                 onClose={(id) => void closeTab(id)}
                 onNew={() => newTab('ungrouped')}
                 onToggleGroup={toggleGroup}
+                onReorderGroup={moveGroup}
                 onAssign={assignGroup}
               />
               <div className="toolbar">

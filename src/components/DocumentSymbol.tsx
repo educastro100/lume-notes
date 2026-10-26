@@ -15,6 +15,8 @@ import {
   FolderKanban,
   Users,
   CalendarDays,
+  ShoppingCart,
+  Workflow,
 } from 'lucide-react';
 import { type DocumentIcon } from '../documents';
 
@@ -35,6 +37,8 @@ const symbols = {
   project: FolderKanban,
   meeting: Users,
   calendar: CalendarDays,
+  shopping: ShoppingCart,
+  process: Workflow,
 };
 export function DocumentSymbol({ icon, size = 16 }: { icon: DocumentIcon; size?: number }) {
   const Symbol = symbols[icon];

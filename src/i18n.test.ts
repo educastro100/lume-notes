@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, expect, it } from 'vitest';
 import translations from './translations.json';
+import spanish from './translations.es.json';
 import { LANGUAGES, parseLocale, setLanguage, t } from './i18n';
 
 afterEach(() => setLanguage('pt-BR'));
@@ -19,4 +20,21 @@ it('persists language choice, validates stored values and leaves document names 
   );
   expect(parseLocale('__proto__')).toBe('pt-BR');
   for (const locale of Object.keys(LANGUAGES)) expect(parseLocale(locale)).toBe(locale);
+});
+
+it('translates every interface message to Spanish, preserving substitution tokens and saved language', () => {
+  const rows = spanish as Record<string, string>;
+  for (const source of Object.keys(translations)) {
+    expect(rows[source], source).toBeTruthy();
+    expect((rows[source].match(/\{\w+\}/g) || []).sort(), source).toEqual(
+      (source.match(/\{\w+\}/g) || []).sort(),
+    );
+  }
+  setLanguage('es');
+  expect(localStorage.getItem('lume.language')).toBe('es');
+  expect(parseLocale('es')).toBe('es');
+  expect(t('Salvar')).toBe('Guardar');
+  expect(t('Fechar {name}', { name: 'Minhas notas.md' })).toBe('Cerrar Minhas notas.md');
+  expect(t('Compras')).toBe('Compras');
+  expect(t('Processo')).toBe('Proceso');
 });

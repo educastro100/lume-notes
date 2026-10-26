@@ -1655,5 +1655,14 @@
     "Update nicht abgeschlossen",
     "Η ενημέρωση δεν ολοκληρώθηκε",
     "更新未完成"
+  ],
+  "Compras": ["Shopping", "Achats", "Einkäufe", "Αγορές", "购物"],
+  "Processo": ["Process", "Processus", "Prozess", "Διαδικασία", "流程"],
+  "Arraste para reordenar · Alt + setas também move o grupo": [
+    "Drag to reorder · Alt + arrows also moves the group",
+    "Glissez pour réorganiser · Alt + flèches déplace aussi le groupe",
+    "Zum Sortieren ziehen · Alt + Pfeiltasten verschiebt die Gruppe ebenfalls",
+    "Σύρετε για αναδιάταξη · Alt + βέλη μετακινεί επίσης την ομάδα",
+    "拖动以重新排序 · Alt + 方向键也可移动分组"
   ]
 }

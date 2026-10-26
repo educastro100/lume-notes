@@ -64,3 +64,9 @@ O script oficial de preparo das imagens GitHub adiciona exclusões para `C:\` e 
 O diagnóstico agora registra e verifica exclusões, remove somente as exclusões de unidade conhecidas no runner temporário e preserva o log interno disponível. Nenhum novo workflow foi iniciado para essa mudança. A coleta local de histórico foi revisada para incluir as preferências de nuvem, sem varredura ou alteração de proteção. O nome da ameaça já é conhecido pelo relato; os recursos afetados, horários e ações locais são necessários para correlacionar a ocorrência com a versão distribuída.
 
 Fontes: [configuração oficial da imagem GitHub](https://github.com/actions/runner-images/blob/main/images/windows/scripts/build/Configure-WindowsDefender.ps1) e [diagnóstico de conectividade do Defender](https://learn.microsoft.com/en-us/defender-endpoint/configure-network-connections-microsoft-defender-antivirus).
+
+## Complemento — histórico de proteção apresentado pelo usuário
+
+O print posterior identifica `Trojan:Win32/Bearfoos.B!ml` em 16/10/2026 às 23:53, status Removido, no instalador `Lume-Notes-0.10.0-Windows-x64-setup.exe` da pasta Downloads. A variante A mencionada antes se baseava no relato inicial por comparação com a ocorrência anterior. Este registro comprova o bloqueio do instalador baixado, sem demonstrar por si só a remoção do executável instalado. O alerta genérico não revela a regra ou o comportamento exato que motivou a classificação.
+
+Em 26/10/2026, o projeto passou a preparar a abertura do código sob MIT e a avaliar assinatura Authenticode. Isso não encerra a investigação dos pacotes já bloqueados nem constitui um certificado obtido.

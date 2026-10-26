@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   candidate:
-    if: github.event.repository.private == true && github.ref == 'refs/heads/main'
+    if: github.repository == 'educastro100/lume-notes' && github.ref == 'refs/heads/main'
     runs-on: windows-2022
     timeout-minutes: 45
     defaults:
@@ -23,7 +23,7 @@ jobs:
       RUSTUP_TOOLCHAIN: 1.99.0-x86_64-pc-windows-msvc
       CARGO_TARGET_DIR: ${{ github.workspace }}/src-tauri/target
     steps:
-      - name: Checkout do codigo privado
+      - name: Checkout do codigo-fonte
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
@@ -55,7 +55,7 @@ jobs:
       - name: Conferir pacote final e exigir varredura do Defender
         id: inspect
         run: ./scripts/inspect-diagnostic.ps1 -ReleaseCandidate
-      - name: Guardar relatorios privados
+      - name: Guardar relatorios de compilacao
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
@@ -63,7 +63,7 @@ jobs:
           path: diagnostics/reports/
           if-no-files-found: warn
           retention-days: 14
-      - name: Guardar candidato privado para assinatura local
+      - name: Guardar candidato NAO INSTALAR para assinatura local
         if: steps.inspect.outputs.artifacts_ready == 'true'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:

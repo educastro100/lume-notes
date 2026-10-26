@@ -59,3 +59,60 @@ describe('drag destinations', () => {
     act(() => root.unmount());
   });
 });
+
+it('separates group reordering from moving notes, clears cancelled drops and honors busy state', () => {
+  const host = document.createElement('div');
+  document.body.append(host);
+  const root = createRoot(host),
+    reorder = vi.fn(),
+    assign = vi.fn();
+  const render = (busy = false, horizontal = false) =>
+    act(() =>
+      root.render(
+        <DropArea
+          groupId="b"
+          onReorderGroup={reorder}
+          onAssign={assign}
+          busy={busy}
+          horizontal={horizontal}
+        >
+          group
+        </DropArea>,
+      ),
+    );
+  render();
+  const node = host.firstElementChild!;
+  node.getBoundingClientRect = () => ({ left: 0, top: 0, width: 100, height: 100 }) as DOMRect;
+  const fire = (type: string, x = 10, y = 90, source = 'a') => {
+    const event = new Event(type, { bubbles: true, cancelable: true });
+    Object.assign(event, {
+      dataTransfer: { types: ['application/x-lume-group'], getData: () => source },
+      clientX: x,
+      clientY: y,
+    });
+    act(() => node.dispatchEvent(event));
+    return event;
+  };
+  expect(fire('dragover').defaultPrevented).toBe(true);
+  expect(node.classList.contains('group-drop-after')).toBe(true);
+  expect(node.classList.contains('drop-hover')).toBe(false);
+  act(() => document.dispatchEvent(new Event('dragend')));
+  expect(node.classList.contains('group-drop-after')).toBe(false);
+  fire('drop');
+  expect(reorder).toHaveBeenLastCalledWith('a', 'b', 'after');
+  expect(assign).not.toHaveBeenCalled();
+  render(false, true);
+  fire('dragover');
+  expect(node.classList.contains('group-drop-before')).toBe(true);
+  fire('drop');
+  expect(reorder).toHaveBeenLastCalledWith('a', 'b', 'before');
+  reorder.mockClear();
+  fire('drop', 10, 90, 'b');
+  expect(reorder).not.toHaveBeenCalled();
+  render(true);
+  expect(fire('dragover').defaultPrevented).toBe(false);
+  fire('drop');
+  expect(reorder).not.toHaveBeenCalled();
+  act(() => root.unmount());
+  host.remove();
+});

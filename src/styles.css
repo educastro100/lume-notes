@@ -2032,6 +2032,7 @@ h1 {
 }
 :root[data-theme-ready] {
   transition:
+    --brand-color 650ms ease,
     --paper 650ms ease,
     --surface 650ms ease,
     --sidebar 650ms ease,
@@ -3072,4 +3073,117 @@ h1 {
   .spin {
     animation: none;
   }
+}
+
+/* A small light follows the same day cycle as the writing space. */
+@property --brand-color {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #5b7353;
+}
+:root {
+  --brand-color: #5b7353;
+}
+:root[data-theme='morning'] {
+  --brand-color: #b58329;
+}
+:root[data-theme='sunset'] {
+  --brand-color: #c26b42;
+}
+:root[data-theme='dark'] {
+  --brand-color: #8bb4da;
+}
+:root[data-theme='midnight'] {
+  --brand-color: #b4afe8;
+}
+
+.brand-dot {
+  position: relative;
+  display: inline-block;
+  color: var(--brand-color);
+  text-shadow: 0 0 12px color-mix(in srgb, var(--brand-color) 38%, transparent);
+}
+.brand-dot-glow {
+  position: absolute;
+  width: 0.25em;
+  height: 0.25em;
+  border-radius: 50%;
+  left: 50%;
+  bottom: 0.14em;
+  background: var(--brand-color);
+  pointer-events: none;
+  animation: lume-light 800ms ease-out both;
+}
+@keyframes lume-light {
+  from {
+    transform: translateX(-50%) scale(0.7);
+    opacity: 0.6;
+    filter: blur(1px);
+  }
+  to {
+    transform: translateX(-50%) scale(4);
+    opacity: 0;
+    filter: blur(3px);
+  }
+}
+.group-toggle[draggable='true'],
+.tab-group-chip[draggable='true'] {
+  cursor: grab;
+}
+.group-toggle[draggable='true']:active,
+.tab-group-chip[draggable='true']:active {
+  cursor: grabbing;
+}
+.sidebar-group,
+.tab-group-block {
+  position: relative;
+}
+.group-drop-before::before,
+.group-drop-after::after {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  background: var(--group-color);
+  border-radius: 3px;
+  box-shadow: 0 0 7px color-mix(in srgb, var(--group-color) 25%, transparent);
+}
+.sidebar-group.group-drop-before::before,
+.sidebar-group.group-drop-after::after {
+  left: 5px;
+  right: 5px;
+  height: 3px;
+}
+.sidebar-group.group-drop-before::before {
+  top: 0;
+}
+.sidebar-group.group-drop-after::after {
+  bottom: 0;
+}
+.tab-group-block.group-drop-before::before,
+.tab-group-block.group-drop-after::after {
+  top: 5px;
+  bottom: 5px;
+  width: 3px;
+}
+.tab-group-block.group-drop-before::before {
+  left: 0;
+}
+.tab-group-block.group-drop-after::after {
+  right: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root[data-theme-ready] {
+    transition: none;
+  }
+  .brand-dot-glow {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+/* Keep the drop target stable while crossing the label's SVG and count. */
+.group-toggle > *,
+.tab-group-chip > * {
+  pointer-events: none;
 }

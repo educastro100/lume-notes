@@ -1,3 +1,5 @@
+> Atualização de 26/10/2026: o projeto está preparando a abertura sob MIT. O workflow de candidato também aceita o repositório oficial público em main; nessa situação, logs e artefatos são públicos. As instruções históricas abaixo que os chamam de privados se referem ao fluxo anterior. A assinatura Authenticode ainda está pendente; veja [Code signing policy](code-signing.md). Os bloqueios de 0.9.0 e 0.10.0 continuam válidos.
+
 # Preparar uma release pelo GitHub Actions
 
 O workflow manual **Preparar release Windows** gera um candidato no repositório privado. Usa Windows 2022, MSVC x64, NSIS oficial e as mesmas versões travadas do diagnóstico aprovado. Não recebe chave privada, não utiliza credenciais do usuário e não publica arquivos. A versão anterior 0.9.0 continua bloqueada na política versionada.

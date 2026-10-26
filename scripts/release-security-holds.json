@@ -8,7 +8,7 @@
   },
   "0.10.0": {
     "status": "blocked",
-    "reason": "Usuario relata nova deteccao Trojan:Win32/Bearfoos.A!ml apos atualizar para 0.10.0. Leitura do executavel candidato bloqueada pelo Windows com erro de virus ou software possivelmente indesejado. Varreduras anteriores negativas nao encerram a investigacao; nao publicar nem reinstalar.",
+    "reason": "Historico de protecao fornecido pelo usuario mostra Trojan:Win32/Bearfoos.B!ml e remocao do instalador Lume-Notes-0.10.0-Windows-x64-setup.exe em Downloads em 16/10/2026 23:53. A variante A foi relatada inicialmente por referencia a ocorrencia anterior; este evento identifica a variante B. Varreduras anteriores negativas nao encerram a investigacao; nao publicar nem reinstalar.",
     "installer_sha256": "50f8bfcdfffd2114f7db98296636c6a93802637078a991d83fcd6ff100ed2041",
     "payload_sha256": "e0ce3d5ad7557a8cc1ab6442d0ab419de2bd8dffbd53ddc60022912829030314",
     "report": "docs/auditoria-seguranca-0.10.0.md"

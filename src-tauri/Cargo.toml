@@ -1,9 +1,11 @@
 [package]
 name = "lume-notes"
-version = "0.10.0"
+version = "0.11.0"
 description = "Um espaço tranquilo para escrever."
 authors = ["Eduardo"]
 edition = "2021"
+license = "MIT"
+repository = "https://github.com/educastro100/lume-notes"
 
 [build-dependencies]
 embed-resource = "3"

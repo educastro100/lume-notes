@@ -1,9 +1,11 @@
 import { useSyncExternalStore } from 'react';
 import translations from './translations.json';
+import spanish from './translations.es.json';
 
 export const LANGUAGES = {
   'pt-BR': 'Português (Brasil)',
   en: 'English',
+  es: 'Español',
   fr: 'Français',
   de: 'Deutsch',
   el: 'Ελληνικά',
@@ -42,6 +44,11 @@ export function useLanguage() {
 export function t(source: string, values: Record<string, string | number> = {}): string {
   const index = ['en', 'fr', 'de', 'el', 'zh-Hans'].indexOf(current);
   const rows = translations as Record<string, string[]>;
-  const result = index < 0 ? source : rows[source]?.[index] || source;
+  const result =
+    current === 'es'
+      ? (spanish as Record<string, string>)[source] || source
+      : index < 0
+        ? source
+        : rows[source]?.[index] || source;
   return result.replace(/\{(\w+)\}/g, (token, key: string) => String(values[key] ?? token));
 }

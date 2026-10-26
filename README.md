@@ -1,14 +1,16 @@
 # Lume Notes
 
-> **0.9.0: distribuição suspensa.** O Defender detectou `Trojan:Win32/Bearfoos.A!ml` no executável do instalador. Não instalar nem publicar esse pacote. Consulte a [auditoria](docs/auditoria-seguranca-0.9.0.md) e o [diagnóstico em ambiente limpo](docs/diagnostico-windows.md).
+Um espaço tranquilo para escrever. Editor local de texto e Markdown para Windows, com edição visual, grupos de abas, recuperação de rascunhos e temas que acompanham o dia.
 
-Versão **0.10.0 em desenvolvimento** — um editor local de texto e Markdown, com grupos de abas e um espaço tranquilo para escrever. A versão publicada é a [0.9.1](https://github.com/educastro100/lume-notes-releases/releases/latest), com instalação e atualização pelo aplicativo já validadas.
+**Código sob a licença [MIT](LICENSE). Versão 0.11.0 em desenvolvimento.** A publicação do repositório e a obtenção de assinatura Windows estão em preparação; tornar o código público não certifica automaticamente o executável.
+
+> **Estado da distribuição:** os pacotes 0.9.0 e 0.10.0 estão bloqueados para investigação das detecções do Defender. A 0.10.0 foi publicada anteriormente, mas as verificações negativas anteriores não encerraram o caso. Não reinstale esses pacotes nem use os artefatos de diagnóstico como versão final. Consulte a [auditoria da 0.10.0](docs/auditoria-seguranca-0.10.0.md) e a [política de assinatura](docs/code-signing.md).
 
 Editor de texto desktop em **Tauri 2 + Rust + React + TypeScript + Tiptap + CodeMirror 6**, criado para Windows x64. A interface usa fontes locais, sem depender de serviços externos.
 
 ## Organização do projeto
 
-O código-fonte fica na raiz. Repositório no GitHub: [educastro100/lume-notes](https://github.com/educastro100/lume-notes). O pacote local 0.9.0 está bloqueado para investigação. O canal público de instaladores é [Lume Releases](https://github.com/educastro100/lume-notes-releases/releases/latest). `releases/` é ignorada pelo Git; o canal público contém somente instaladores, assinaturas e metadados de atualização.
+O código-fonte sob licença MIT fica na raiz. Repositório no GitHub: [educastro100/lume-notes](https://github.com/educastro100/lume-notes). Os pacotes 0.9.0 e 0.10.0 estão bloqueados para investigação. O canal de instaladores e atualizações continua separado em [Lume Releases](https://github.com/educastro100/lume-notes-releases/releases/latest). `releases/` é ignorada pelo Git; o canal público contém somente instaladores, assinaturas e metadados de atualização.
 
 A distribuição e o processo de atualização estão documentados em [docs/distribuicao.md](docs/distribuicao.md). A validação anterior está em [docs/validacao-0.8.0.md](docs/validacao-0.8.0.md).
 
@@ -18,9 +20,9 @@ A próxima versão usa o fluxo [Preparar release Windows](docs/release-actions.m
 
 ## Usar o aplicativo
 
-Baixe o arquivo que termina em `-setup.exe` nos Assets da [release publicada](https://github.com/educastro100/lume-notes-releases/releases/latest). O instalador usa instalação por usuário, atalhos e Microsoft Edge WebView2 Runtime. O pacote antigo 0.9.0 continua bloqueado; as amostras de diagnóstico não são distribuídas como versão final.
+Quando houver uma versão liberada, baixe o arquivo que termina em `-setup.exe` nos Assets do [canal de releases](https://github.com/educastro100/lume-notes-releases/releases). Confira o estado da distribuição acima antes de instalar. O instalador usa instalação por usuário, atalhos e Microsoft Edge WebView2 Runtime. Os pacotes 0.9.0 e 0.10.0 continuam bloqueados; as amostras de diagnóstico não são distribuídas como versão final.
 
-Esta versão é local e não exige conta. Não há sincronização ou recursos de IA. A verificação de atualizações consulta apenas o canal público do GitHub; notas e nomes de arquivos não são enviados. O executável desta compilação não tem assinatura comercial.
+Esta versão é local e não exige conta. Não há sincronização ou recursos de IA. A verificação de atualizações consulta apenas o canal público do GitHub; notas e nomes de arquivos não são enviados. Os pacotes anteriores não possuem assinatura Authenticode. A assinatura `.sig` do atualizador é uma proteção diferente; consulte [Code signing policy](docs/code-signing.md).
 
 A distribuição principal agora usa instalador NSIS. As versões portáteis anteriores continuam disponíveis localmente. O número completo da versão aparece no rodapé do painel e no título da janela. Feche versões anteriores antes de abrir a atualização, pois elas compartilham os dados locais.
 
@@ -29,10 +31,10 @@ A distribuição principal agora usa instalador NSIS. As versões portáteis ant
 - Abas, painel de arquivos abertos e histórico de desfazer/refazer por aba durante a sessão.
 - Salvar e fechar diretamente pelo painel lateral, com proteção para alterações ainda não salvas.
 - Grupos de abas com nome e cor: criar, renomear, recolher e desagrupar sem fechar os arquivos. Use o menu ⋯ de um arquivo para movê-lo ou arraste sua aba para um grupo. O + das abas cria uma nota sem grupo; Nova nota/Ctrl+N usa o grupo da nota ativa.
-- Nomes, cores, associações e estado de recolhimento dos grupos ficam salvos na sessão. Rascunhos da versão 0.1 são migrados automaticamente.
+- Nomes, cores, ordem, associações e estado de recolhimento dos grupos ficam salvos na sessão. Arraste o nome de um grupo na lateral ou nas abas superiores para reordenar; Alt + setas também move o grupo. Rascunhos da versão 0.1 são migrados automaticamente.
 - Edição visual de Markdown: negrito, itálico, sublinhado, código, divisórias, listas com marcadores e listas numeradas. Suporte a títulos, tabelas, tarefas e citações.
 - Novas notas abrem em Markdown com edição visual. O modo Código Markdown oferece split opcional e mantém sua escolha por documento.
-- Dezesseis ícones para identificar os assuntos dos documentos, incluindo Roteiro, Filme, Vídeo, Incidente, Requisição, Projeto, Reunião e Calendário. Clique no ícone ao lado do título ou use o menu ⋯ da nota; a escolha é lembrada pelo caminho do arquivo mesmo após fechar a aba, sem alterar seu texto.
+- Dezoito ícones para identificar os assuntos dos documentos, incluindo Roteiro, Filme, Vídeo, Incidente, Requisição, Projeto, Reunião, Calendário, Compras e Processo. Clique no ícone ao lado do título ou use o menu ⋯ da nota; a escolha é lembrada pelo caminho do arquivo mesmo após fechar a aba, sem alterar seu texto.
 - Arraste uma aba para a área sem grupo na faixa de abas ou no painel para retirá-la do grupo atual. O destino só fica destacado enquanto o arraste está sobre ele.
 - Shift seleciona um intervalo de arquivos; Ctrl adiciona/remove um arquivo da seleção. Use o menu ⋯ de um dos selecionados para criar um grupo ou mover todos para um grupo existente. Grupos abrem e recolhem com transição suave.
 - Abrir múltiplos arquivos, salvar e salvar como, com diálogos do Windows.
@@ -138,7 +140,7 @@ O código-fonte inclui README, histórico de versões, guia de contribuição, r
 
 ## Novidades da versão 0.6
 
-Configurações no rodapé esquerdo permitem escolher entre português, inglês, francês, alemão, grego e chinês simplificado. A preferência fica salva localmente e só altera a interface.
+Configurações no rodapé esquerdo permitem escolher entre português, inglês, espanhol, francês, alemão, grego e chinês simplificado. A preferência fica salva localmente e só altera a interface.
 
 F8 alterna o modo foco; Esc ou o botão discreto no canto superior direito retorna ao editor completo. O tema Madrugada completa Dia, Tarde e Noite; cores e ícones mudam suavemente. O sistema com movimento reduzido desativa as transições.
 
@@ -183,3 +185,13 @@ A mensagem “Uma ideia de cada vez. O resto pode esperar.”, o aviso de armaze
 O tema Manhã completa o ciclo. Os períodos automáticos têm quatro ou cinco horas: Madrugada 0h–5h, Manhã 5h–10h, Dia 10h–15h, Tarde 15h–19h e Noite 19h–0h, no horário local. As preferências anteriores continuam válidas.
 
 O botão **Abrir do computador** fica ao lado de **Nova nota** no topo esquerdo. Incidente, Requisição, Projeto, Reunião e Calendário completam a grade de ícones. A ativação de Markdown pela formatação de um texto mostra um aviso para salvar; o caminho original é mantido, e **Salvar como** permite criar uma cópia `.md`.
+
+## Licença e contribuição
+
+O código próprio do Lume é distribuído sob a [licença MIT](LICENSE). As dependências mantêm suas próprias licenças e avisos. O campo npm `private: true` apenas impede publicar o aplicativo por engano no npm; não controla a visibilidade do GitHub.
+
+O roteiro de publicação está em [Abrir o código](docs/open-source.md). Consulte [CONTRIBUTING.md](CONTRIBUTING.md) para desenvolver e testar. As notas de versão ficam em [CHANGELOG.md](CHANGELOG.md). A [política de segurança](SECURITY.md) explica como relatar problemas sem publicar dados pessoais.
+
+## Code signing policy
+
+A assinatura Authenticode está **pendente**, sem certificado emitido ou aprovação da SignPath Foundation. A proposta é compilar a partir deste código público no Actions e assinar os arquivos finais por um serviço aprovado. Veja [requisitos, estado e fluxo planejado](docs/code-signing.md). A abertura do código e uma assinatura válida não garantem ausência de detecções do antivírus.

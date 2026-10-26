@@ -97,7 +97,7 @@ try {
     $lumeCandidateFolder = Join-Path $lumeBase 'release-candidate'
     $lumeReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $lumeReports 'diagnostic.json')
     & node (Join-Path $PSScriptRoot 'release-candidate.mjs') create $lumeRelease (Join-Path $lumeReports 'diagnostic.json') $lumeCandidateFolder
-    if ($LASTEXITCODE -ne 0) { throw 'Falha ao preparar o candidato privado.' }
+    if ($LASTEXITCODE -ne 0) { throw 'Falha ao preparar o candidato.' }
     $lumeReady = $true
   } else {
   # Only these two samples are attached, in the private repository. Never upload the source tree or keys.
@@ -117,5 +117,5 @@ try {
   $lumeReport | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath (Join-Path $lumeReports 'diagnostic.json')
   @('Diagnostico do Lume (sem publicacao)',"Commit: $env:GITHUB_SHA","Conteudo conferido: $($lumeReport.contentsVerified)","Defender: $($lumeReport.defenderVerdict)",'Amostras somente para analise. Nao instalar. A versao 0.9.0 continua bloqueada.') | Add-Content -LiteralPath $env:GITHUB_STEP_SUMMARY
   "artifacts_ready=$($lumeReady.ToString().ToLowerInvariant())" | Add-Content -LiteralPath $env:GITHUB_OUTPUT
-  if ($ReleaseCandidate) { 'Candidato privado: exige assinatura e verificacao local antes da publicacao. Nenhuma chave privada foi utilizada no CI.' | Add-Content -LiteralPath $env:GITHUB_STEP_SUMMARY }
+  if ($ReleaseCandidate) { 'Candidato NAO INSTALAR: exige assinatura e verificacao antes da publicacao como release. Artefatos de repositorio publico sao visiveis publicamente. Nenhuma chave privada foi utilizada no CI.' | Add-Content -LiteralPath $env:GITHUB_STEP_SUMMARY }
 }

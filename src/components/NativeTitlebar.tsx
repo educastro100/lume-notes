@@ -3,8 +3,10 @@ import { getCurrentWindow } from '@tauri-apps/api/window';
 import { Minus, Square, Copy, X } from 'lucide-react';
 import { native } from '../platform';
 import { t } from '../i18n';
+import type { Theme } from '../preferences';
+import { BrandDot } from './BrandDot';
 
-export function NativeTitlebar({ title }: { title: string }) {
+export function NativeTitlebar({ title, theme }: { title: string; theme: Theme }) {
   const [maximized, setMaximized] = useState(false);
   useEffect(() => {
     if (!native) return;
@@ -38,7 +40,8 @@ export function NativeTitlebar({ title }: { title: string }) {
     <div className="native-titlebar">
       <div className="native-drag-area" data-tauri-drag-region>
         <span className="native-brand" data-tauri-drag-region>
-          lume.
+          lume
+          <BrandDot theme={theme} />
         </span>
         <span className="native-window-title" data-tauri-drag-region>
           {title}

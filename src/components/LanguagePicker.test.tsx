@@ -24,7 +24,7 @@ it('shows local flags for every language, supports keyboard choice and dismisses
     );
   act(() => combo.click());
   expect(combo.getAttribute('aria-expanded')).toBe('true');
-  expect(host.querySelectorAll('[role="option"] .country-flag')).toHaveLength(6);
+  expect(host.querySelectorAll('[role="option"] .country-flag')).toHaveLength(7);
   key('End');
   key('Enter');
   expect(change).toHaveBeenCalledWith('zh-Hans');

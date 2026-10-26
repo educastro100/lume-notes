@@ -21,6 +21,7 @@ it('shows Save for unsaved drafts and modified files, hides it for clean saved f
     onEditGroup: vi.fn(),
     onRemoveGroup: vi.fn(),
     onChooseIcon: vi.fn(),
+    onReorderGroup: vi.fn(),
   };
   const render = (saved = clean) =>
     act(() =>

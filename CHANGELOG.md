@@ -1,4 +1,14 @@
-# Lume Notes 0.10.0 — em desenvolvimento
+# Lume Notes 0.11.0 — em desenvolvimento
+
+- Código próprio licenciado sob MIT, documentação para contribuição e preparação para abrir o repositório.
+- Opções de assinatura Windows verificadas; caminho proposto pela SignPath Foundation, ainda sem aprovação ou certificado. Abertura do código não é correção automática do alerta do Defender.
+- Espanhol completo com bandeira local e preferência de idioma persistida.
+- Reordenação dos grupos por arraste na lateral e nas abas, com indicação de posição e alternativa Alt + setas. A ordem é recuperada ao reabrir.
+- Pontinho do Lume acompanha cada tema, com transição de cor e breve brilho, também na barra da janela. Respeita movimento reduzido.
+- Ícones Compras e Processo com persistência na sessão e por caminho de arquivo.
+- Workflow de candidato preparado para o repositório público, sem chave de assinatura no CI. Workflows antigos de diagnóstico continuam restritos a repositórios privados.
+
+# Lume Notes 0.10.0 — publicada anteriormente; distribuição bloqueada
 
 - Código em linha aceita negrito, itálico e sublinhado em conjunto, preservando as marcas, espaços e caracteres literais ao salvar e reabrir.
 - Espaçamento uniforme entre itens, parágrafos e listas aninhadas no editor visual e na prévia.

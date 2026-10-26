@@ -4,7 +4,14 @@ import { Plus, X, ChevronRight } from 'lucide-react';
 import { DocumentSymbol } from './DocumentSymbol';
 import { DropArea, TAB_DRAG_TYPE } from './DropArea';
 import { SoftCollapse } from './SoftCollapse';
-import { GROUP_COLORS, isDirty, type DocumentTab, type TabGroup } from '../documents';
+import { GroupButton } from './GroupButton';
+import {
+  GROUP_COLORS,
+  isDirty,
+  type DocumentTab,
+  type TabGroup,
+  type GroupPlacement,
+} from '../documents';
 export function TabStrip({
   tabs,
   groups,
@@ -16,6 +23,7 @@ export function TabStrip({
   onNew,
   onToggleGroup,
   onAssign,
+  onReorderGroup,
 }: {
   tabs: DocumentTab[];
   groups: TabGroup[];
@@ -27,6 +35,7 @@ export function TabStrip({
   onNew: () => void;
   onToggleGroup: (id: string) => void;
   onAssign: (ids: string[], groupId: string | null) => void;
+  onReorderGroup: (source: string, target: string, placement: GroupPlacement) => void;
 }) {
   const tabElement = (tab: DocumentTab) => (
     <div
@@ -70,19 +79,25 @@ export function TabStrip({
           style={{ '--group-color': GROUP_COLORS[group.color] } as CSSProperties}
           busy={busy}
           onAssign={(ids) => onAssign(ids, group.id)}
+          groupId={group.id}
+          onReorderGroup={onReorderGroup}
+          horizontal
         >
-          <button
+          <GroupButton
             className="tab-group-chip"
-            aria-label={t(group.collapsed ? 'Expandir abas de {name}' : 'Recolher abas de {name}', {
+            group={group}
+            groups={groups}
+            busy={busy}
+            label={t(group.collapsed ? 'Expandir abas de {name}' : 'Recolher abas de {name}', {
               name: group.name,
             })}
-            aria-expanded={!group.collapsed}
-            onClick={() => onToggleGroup(group.id)}
+            onToggle={onToggleGroup}
+            onReorder={onReorderGroup}
           >
             <ChevronRight size={12} className={group.collapsed ? '' : 'expanded'} />
             {group.name}
             <span>{tabs.filter((tab) => tab.groupId === group.id).length}</span>
-          </button>
+          </GroupButton>
           <SoftCollapse open={!group.collapsed} horizontal>
             <div className="group-tab-items">
               {tabs.filter((tab) => tab.groupId === group.id).map(tabElement)}

@@ -349,3 +349,49 @@ it('reuses the remembered file icon after the tab has been closed', async () => 
   const saved = JSON.parse(vi.mocked(storeDrafts).mock.calls.at(-1)![0]);
   expect(saved.tabs[0].icon).toBe('film');
 });
+
+it('reorders whole groups from either surface and restores the order without changing notes or collapsed state', async () => {
+  const first = { ...newDocument('primeiro.md', 'texto preservado'), groupId: 'a' };
+  const second = { ...newDocument('segundo.md', 'outro texto'), groupId: 'b', icon: 'process' };
+  const groups = [
+    { id: 'a', name: 'Trabalho', color: 'sage', collapsed: false },
+    { id: 'b', name: 'Pessoal', color: 'blue', collapsed: true },
+    { id: 'c', name: 'Vazio', color: 'rose', collapsed: false },
+  ];
+  const original = { version: 2, tabs: [first, second], activeId: first.id, groups };
+  vi.mocked(loadDrafts).mockResolvedValue(JSON.stringify(original));
+  await act(async () => root.render(<App />));
+  const order = (selector: string) =>
+    Array.from(host.querySelectorAll(selector)).map((node) => node.textContent);
+  const drop = async (selector: string, source: string, after: boolean) => {
+    const target = host.querySelector(selector)!;
+    target.getBoundingClientRect = () => ({ left: 0, top: 0, width: 100, height: 100 }) as DOMRect;
+    const event = new Event('drop', { bubbles: true, cancelable: true });
+    Object.assign(event, {
+      dataTransfer: { types: ['application/x-lume-group'], getData: () => source },
+      clientX: after ? 90 : 10,
+      clientY: after ? 90 : 10,
+    });
+    await act(async () => target.dispatchEvent(event));
+  };
+  await drop('.sidebar-group:nth-child(3)', 'a', true);
+  expect(order('.sidebar-group .group-toggle')).toEqual(['Pessoal1', 'Vazio0', 'Trabalho1']);
+  expect(order('.tab-group-chip')).toEqual(['Pessoal1', 'Vazio0', 'Trabalho1']);
+  await drop('.tab-group-block:first-child', 'c', false);
+  expect(order('.sidebar-group .group-toggle')).toEqual(['Vazio0', 'Pessoal1', 'Trabalho1']);
+  await persistDrafts();
+  const raw = vi.mocked(storeDrafts).mock.calls.at(-1)![0];
+  const saved = JSON.parse(raw);
+  expect(saved.groups).toEqual([groups[2], groups[1], groups[0]]);
+  expect(saved.tabs).toEqual(original.tabs);
+  expect(saved.activeId).toBe(original.activeId);
+  expect(saveDocument).not.toHaveBeenCalled();
+  await act(async () => root.unmount());
+  root = createRoot(host);
+  vi.mocked(loadDrafts).mockResolvedValue(raw);
+  await act(async () => root.render(<App />));
+  expect(order('.sidebar-group .group-toggle')).toEqual(['Vazio0', 'Pessoal1', 'Trabalho1']);
+  expect(
+    host.querySelector('.tab-group-block:nth-child(2)')?.classList.contains('is-collapsed'),
+  ).toBe(true);
+});

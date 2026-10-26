@@ -29,6 +29,14 @@ export function CountryFlag({ locale }: { locale: Locale }) {
           </g>
         </>
       )}
+      {locale === 'es' && (
+        <>
+          <path fill="#b82e3e" d="M0 0h30v20H0z" />
+          <path fill="#f5ce48" d="M0 5h30v10H0z" />
+          <path fill="#b82e3e" d="M8 8h4v4a2 2 0 0 1-4 0z" />
+          <path fill="#f5ce48" d="M9 9h2v3H9z" />
+        </>
+      )}
       {locale === 'fr' && (
         <>
           <path fill="#fff" d="M0 0h30v20H0z" />
