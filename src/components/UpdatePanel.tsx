@@ -1,7 +1,8 @@
+import { useState } from 'react';
 import { Download, RefreshCw, ArrowUpRight } from 'lucide-react';
 import type { UpdateController } from '../useUpdates';
 import { t } from '../i18n';
-import { openReleaseDownloads } from '../platform';
+import { openReleaseDownloads, openStoreLibrary } from '../platform';
 import { version } from '../../package.json';
 export function UpdatePanel({
   updates,
@@ -12,6 +13,7 @@ export function UpdatePanel({
   automatic: boolean;
   onAutomatic: (value: boolean) => void;
 }) {
+  const [storeError, setStoreError] = useState(false);
   const busy = ['checking', 'downloading', 'installing'].includes(updates.phase);
   return (
     <section className="settings-section update-panel" aria-labelledby="updates-title">
@@ -19,7 +21,21 @@ export function UpdatePanel({
         {t('Atualizações')}
         <span className="version-chip">v{version}</span>
       </h3>
-      {updates.installed === false ? (
+      {updates.store ? (
+        <>
+          <p>{t('As atualizações desta edição são gerenciadas pela Microsoft Store.')}</p>
+          <button
+            className="integration-button"
+            onClick={() => {
+              setStoreError(false);
+              void openStoreLibrary().catch(() => setStoreError(true));
+            }}
+          >
+            {t('Abrir Microsoft Store')}
+            <ArrowUpRight size={13} />
+          </button>
+        </>
+      ) : updates.installed === false ? (
         <>
           <p>
             {t(
@@ -91,6 +107,11 @@ export function UpdatePanel({
             )}
           </div>
         </>
+      )}
+      {storeError && (
+        <p role="alert" className="settings-error">
+          {t('Não foi possível abrir a Microsoft Store. Tente novamente.')}
+        </p>
       )}
       {updates.error && (
         <p role="alert" className="settings-error">

@@ -1664,5 +1664,33 @@
     "Zum Sortieren ziehen · Alt + Pfeiltasten verschiebt die Gruppe ebenfalls",
     "Σύρετε για αναδιάταξη · Alt + βέλη μετακινεί επίσης την ομάδα",
     "拖动以重新排序 · Alt + 方向键也可移动分组"
+  ],
+  "As atualizações desta edição são gerenciadas pela Microsoft Store.": [
+    "Updates for this edition are managed by the Microsoft Store.",
+    "Les mises à jour de cette édition sont gérées par le Microsoft Store.",
+    "Updates dieser Edition werden vom Microsoft Store verwaltet.",
+    "Οι ενημερώσεις αυτής της έκδοσης διαχειρίζονται από το Microsoft Store.",
+    "此版本的更新由 Microsoft Store 管理。"
+  ],
+  "Abrir Microsoft Store": [
+    "Open Microsoft Store",
+    "Ouvrir le Microsoft Store",
+    "Microsoft Store öffnen",
+    "Άνοιγμα Microsoft Store",
+    "打开 Microsoft Store"
+  ],
+  "O Abrir com desta edição é gerenciado pelo Windows.": [
+    "Open with for this edition is managed by Windows.",
+    "Ouvrir avec est géré par Windows pour cette édition.",
+    "Öffnen mit wird für diese Edition von Windows verwaltet.",
+    "Το Άνοιγμα με αυτής της έκδοσης διαχειρίζεται από τα Windows.",
+    "此版本的打开方式由 Windows 管理。"
+  ],
+  "Não foi possível abrir a Microsoft Store. Tente novamente.": [
+    "Could not open Microsoft Store. Try again.",
+    "Impossible d’ouvrir le Microsoft Store. Réessayez.",
+    "Microsoft Store konnte nicht geöffnet werden. Versuchen Sie es erneut.",
+    "Δεν ήταν δυνατό το άνοιγμα του Microsoft Store. Δοκιμάστε ξανά.",
+    "无法打开 Microsoft Store。请重试。"
   ]
 }

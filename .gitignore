@@ -24,3 +24,6 @@ notes/
 
 # Artefatos temporários do workflow de diagnóstico.
 /diagnostics/
+
+# Microsoft Store packaging output (unsigned submission packages).
+/store-artifacts/

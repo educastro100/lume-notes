@@ -95,11 +95,13 @@ mod registry {
 
 #[tauri::command]
 pub fn open_with_status() -> Result<bool,String> {
+    if cfg!(feature="microsoft-store") { return Ok(true); }
     #[cfg(windows)] {registry::status()}
     #[cfg(not(windows))] {Ok(false)}
 }
 #[tauri::command]
 pub fn set_open_with(enabled:bool) -> Result<bool,String> {
+    if cfg!(feature="microsoft-store") { return Err("A integração desta edição é gerenciada pelo Windows.".into()); }
     #[cfg(windows)] {registry::set(enabled)}
     #[cfg(not(windows))] {let _=enabled;Err("Integração disponível no Windows.".into())}
 }
@@ -126,6 +128,7 @@ mod tests {
 
 #[tauri::command]
 pub fn is_installed() -> Result<bool,String> {
+    if cfg!(feature="microsoft-store") { return Ok(true); }
     #[cfg(windows)] {registry::installed()}
     #[cfg(not(windows))] {Ok(false)}
 }
@@ -151,8 +154,12 @@ fn open_system_page(uri:&str) -> Result<(),String> {
 pub async fn open_default_apps() -> Result<(),String> {
     #[cfg(windows)] {
         tauri::async_runtime::spawn_blocking(|| {
-            registry::set(true)?;
-            open_system_page("ms-settings:defaultapps?registeredAppUser=Lume%20Notes")
+            if cfg!(feature="microsoft-store") {
+                open_system_page("ms-settings:defaultapps")
+            } else {
+                registry::set(true)?;
+                open_system_page("ms-settings:defaultapps?registeredAppUser=Lume%20Notes")
+            }
         }).await.map_err(|e| e.to_string())?
     }
     #[cfg(not(windows))] {Err("Disponível no Windows.".into())}
@@ -192,5 +199,28 @@ mod project_page_tests {
         for value in ["https://evil.example", "file:///C:/", "cmd.exe", "", "__proto__"] {
             assert!(project_page_url(value).is_err());
         }
+    }
+}
+
+#[tauri::command]
+pub async fn open_store_library() -> Result<(), String> {
+    if !cfg!(feature="microsoft-store") { return Err("Disponível na edição Microsoft Store.".into()); }
+    #[cfg(windows)] {
+        tauri::async_runtime::spawn_blocking(|| open_system_page("ms-windows-store://downloadsandupdates"))
+            .await.map_err(|e| e.to_string())?
+    }
+    #[cfg(not(windows))] { Err("Disponível no Windows.".into()) }
+}
+#[cfg(all(windows, feature="microsoft-store"))]
+pub fn explain_missing_webview() {
+    use std::os::windows::ffi::OsStrExt;
+    let wide=|value:&str|std::ffi::OsStr::new(value).encode_wide().chain(Some(0)).collect::<Vec<u16>>();
+    let title=wide("Lume Notes — Microsoft Edge WebView2");
+    let body=wide("O Lume precisa do Microsoft Edge WebView2 Runtime. Deseja abrir a página oficial para instalá-lo? Depois da instalação, abra o Lume novamente.\n\nLume requires Microsoft Edge WebView2 Runtime. Open the official download page?");
+    #[link(name="user32")]
+    extern "system" { fn MessageBoxW(hwnd:isize,text:*const u16,title:*const u16,flags:u32)->i32; }
+    // MB_YESNO | MB_ICONINFORMATION. No installer is downloaded or launched by Lume.
+    if unsafe {MessageBoxW(0,body.as_ptr(),title.as_ptr(),0x04|0x40)}==6 {
+        let _=open_system_page("https://developer.microsoft.com/microsoft-edge/webview2/");
     }
 }

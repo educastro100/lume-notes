@@ -2,7 +2,7 @@
 
 Um espaço tranquilo para escrever. Editor local de texto e Markdown para Windows, com edição visual, grupos de abas, recuperação de rascunhos e temas que acompanham o dia.
 
-**Código sob a licença [MIT](LICENSE). Versão 0.11.0 em desenvolvimento.** A publicação do repositório e a obtenção de assinatura Windows estão em preparação; tornar o código público não certifica automaticamente o executável.
+**Código sob a licença [MIT](LICENSE). Versão 0.11.0 em desenvolvimento.** O código está público. A distribuição pela Microsoft Store está em preparação; veja o [fluxo MSIX](docs/microsoft-store.md).
 
 > **Estado da distribuição:** os pacotes 0.9.0 e 0.10.0 estão bloqueados para investigação das detecções do Defender. A 0.10.0 foi publicada anteriormente, mas as verificações negativas anteriores não encerraram o caso. Não reinstale esses pacotes nem use os artefatos de diagnóstico como versão final. Consulte a [auditoria da 0.10.0](docs/auditoria-seguranca-0.10.0.md) e a [política de assinatura](docs/code-signing.md).
 
@@ -14,7 +14,7 @@ O código-fonte sob licença MIT fica na raiz. Repositório no GitHub: [educastr
 
 A distribuição e o processo de atualização estão documentados em [docs/distribuicao.md](docs/distribuicao.md). A validação anterior está em [docs/validacao-0.8.0.md](docs/validacao-0.8.0.md).
 
-A próxima versão usa o fluxo [Preparar release Windows](docs/release-actions.md): compilação e varredura pelo Actions, seguida de assinatura local com a chave existente. O workflow não publica automaticamente.
+A próxima edição para a Microsoft Store usa o workflow [Preparar Microsoft Store](docs/microsoft-store.md): compilação no Actions e MSIX para submissão no Partner Center. A loja assina após a certificação. O fluxo [Preparar release Windows](docs/release-actions.md) permanece separado para o canal NSIS do GitHub; nenhum dos workflows publica automaticamente.
 
 ![Lume Notes 0.8.0](docs/images/lume-notes-0.8.0.png)
 
@@ -22,9 +22,9 @@ A próxima versão usa o fluxo [Preparar release Windows](docs/release-actions.m
 
 Quando houver uma versão liberada, baixe o arquivo que termina em `-setup.exe` nos Assets do [canal de releases](https://github.com/educastro100/lume-notes-releases/releases). Confira o estado da distribuição acima antes de instalar. O instalador usa instalação por usuário, atalhos e Microsoft Edge WebView2 Runtime. Os pacotes 0.9.0 e 0.10.0 continuam bloqueados; as amostras de diagnóstico não são distribuídas como versão final.
 
-Esta versão é local e não exige conta. Não há sincronização ou recursos de IA. A verificação de atualizações consulta apenas o canal público do GitHub; notas e nomes de arquivos não são enviados. Os pacotes anteriores não possuem assinatura Authenticode. A assinatura `.sig` do atualizador é uma proteção diferente; consulte [Code signing policy](docs/code-signing.md).
+Esta versão é local e não exige conta. Não há sincronização ou recursos de IA. Na edição NSIS, a verificação de atualizações consulta o canal público do GitHub; na edição Store, as atualizações são gerenciadas pela loja. Notas e nomes de arquivos não são enviados pelo Lume. Os pacotes anteriores não possuem assinatura Authenticode. A assinatura `.sig` do atualizador é uma proteção diferente; consulte [Code signing policy](docs/code-signing.md).
 
-A distribuição principal agora usa instalador NSIS. As versões portáteis anteriores continuam disponíveis localmente. O número completo da versão aparece no rodapé do painel e no título da janela. Feche versões anteriores antes de abrir a atualização, pois elas compartilham os dados locais.
+O canal GitHub usa instalador NSIS; a edição da Store usa MSIX. As versões portáteis anteriores continuam disponíveis localmente. O número completo da versão aparece no rodapé do painel e no título da janela. Feche versões anteriores antes de abrir a atualização, pois elas compartilham os dados locais.
 
 ## Recursos
 

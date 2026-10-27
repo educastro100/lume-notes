@@ -1,10 +1,10 @@
 # Code signing policy
 
-Estado em 26/10/2026: código licenciado sob MIT, abertura do repositório em preparação. **Sem certificado Authenticode provisionado e sem aprovação da SignPath Foundation. Nenhuma nova versão assinada foi gerada nesta etapa.**
+Estado em 27/10/2026: código público sob MIT. A SignPath Foundation recusou a candidatura por insuficiência de sinais públicos de adoção e reputação. Não há certificado Authenticode provisionado. O caminho escolhido agora é o [MSIX para Microsoft Store](microsoft-store.md), cuja assinatura é realizada pela Microsoft após a certificação.
 
-## Caminho proposto
+## Histórico da proposta SignPath
 
-A [SignPath Foundation](https://signpath.org/) oferece assinatura gratuita a projetos open source aprovados. Ela verifica o projeto e a origem dos binários; abrir um repositório não concede automaticamente o serviço. Os [termos](https://signpath.org/terms) exigem licença aprovada pela OSI, manutenção ativa, documentação, reputação verificável, autenticação multifator e aprovação manual das solicitações de assinatura. A aceitação do Lume permanece pendente.
+A [SignPath Foundation](https://signpath.org/) oferece assinatura gratuita a projetos open source aprovados. Ela verifica o projeto e a origem dos binários; abrir um repositório não concede automaticamente o serviço. Os [termos](https://signpath.org/terms) exigem licença aprovada pela OSI, manutenção ativa, documentação, reputação verificável, autenticação multifator e aprovação manual das solicitações de assinatura. A candidatura do Lume foi recusada em 27/10/2026; uma nova avaliação depende de maior reconhecimento público. Não existe aprovação pendente para esta candidatura.
 
 Responsável proposto por desenvolvimento, revisão e aprovação: [educastro100](https://github.com/educastro100). Contribuições externas devem ser revisadas antes da integração. O provedor deve aprovar essa estrutura e o fluxo de build. Não usamos badge ou afirmação de assinatura concedida antes dessa aprovação.
 
@@ -31,7 +31,7 @@ Assinatura não é um laudo de ausência de malware. Não remove automaticamente
 
 ## Privacidade
 
-O Lume mantém textos, rascunhos e preferências no computador. Consultas de atualização usam o canal público do GitHub; abertura de links ocorre por ação do usuário. Textos e nomes de arquivos não são enviados pelo aplicativo a esses serviços. Serviços de terceiros podem receber os dados normais de conexão quando essas funções são utilizadas. O WebView2 segue as políticas da plataforma Microsoft. Chaves de assinatura e relatórios locais do Defender não fazem parte do código público.
+O Lume mantém textos, rascunhos e preferências no computador. Na edição NSIS, consultas de atualização usam o canal público do GitHub; na edição MSIX, a Microsoft Store gerencia as atualizações. Abertura de links ocorre por ação do usuário. Textos e nomes de arquivos não são enviados pelo aplicativo a esses serviços. Serviços de terceiros podem receber os dados normais de conexão quando essas funções são utilizadas. O WebView2 segue as políticas da plataforma Microsoft. Chaves de assinatura e relatórios locais do Defender não fazem parte do código público.
 
 ## Workflows públicos
 

@@ -1,7 +1,7 @@
 # Lume Notes 0.11.0 — em desenvolvimento
 
 - Código próprio licenciado sob MIT, documentação para contribuição e preparação para abrir o repositório.
-- Opções de assinatura Windows verificadas; caminho proposto pela SignPath Foundation, ainda sem aprovação ou certificado. Abertura do código não é correção automática do alerta do Defender.
+- Edição Microsoft Store preparada com identidade reservada, workflow MSVC x64 que valida o MSIX pelo MakeAppx no CI. Atualizações gerenciadas pela loja e Abrir com declarado no pacote. Submissão e certificação ainda pendentes.
 - Espanhol completo com bandeira local e preferência de idioma persistida.
 - Reordenação dos grupos por arraste na lateral e nas abas, com indicação de posição e alternativa Alt + setas. A ordem é recuperada ao reabrir.
 - Pontinho do Lume acompanha cada tema, com transição de cor e breve brilho, também na barra da janela. Respeita movimento reduzido.

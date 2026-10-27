@@ -126,7 +126,15 @@ fn store_session(app: tauri::AppHandle, value: String) -> Result<(), String> {
 fn main() {
     let cwd=std::env::current_dir().unwrap_or_else(|_|PathBuf::from("."));
     let initial=open_with::argument_files(std::env::args(),&cwd);
-    tauri::Builder::default()
+    #[cfg(all(windows, feature="microsoft-store"))]
+    if tauri::webview_version().is_err() {
+        open_with::explain_missing_webview();
+        return;
+    }
+    let builder=tauri::Builder::default();
+    #[cfg(not(feature="microsoft-store"))]
+    let builder=builder.plugin(tauri_plugin_updater::Builder::new().build());
+    builder
         .plugin(tauri_plugin_single_instance::init(|app,args,cwd| {
             let incoming=open_with::argument_files(args,Path::new(&cwd));
             app.state::<PendingFiles>().0.lock().unwrap_or_else(|error|error.into_inner()).extend(incoming);
@@ -134,10 +142,9 @@ fn main() {
             if let Some(window)=app.get_webview_window("main") {let _=window.show(); let _=window.unminimize(); let _=window.set_focus();}
         }))
         .manage(PendingFiles(Mutex::new(initial)))
-        .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_clipboard_manager::init())
-        .invoke_handler(tauri::generate_handler![read_file,save_file,rename_file,load_session,store_session,take_pending_files,open_with::open_with_status,open_with::set_open_with,open_with::is_installed,open_with::open_default_apps,open_with::open_release_downloads,open_with::open_project_page])
+        .invoke_handler(tauri::generate_handler![read_file,save_file,rename_file,load_session,store_session,take_pending_files,open_with::open_with_status,open_with::set_open_with,open_with::is_installed,open_with::open_default_apps,open_with::open_release_downloads,open_with::open_project_page,open_with::open_store_library])
         .run(tauri::generate_context!()).expect("Não foi possível iniciar o Lume Notes");
 }
 #[cfg(test)]

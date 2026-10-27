@@ -2,11 +2,13 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { check, type Update } from '@tauri-apps/plugin-updater';
 import { native, isInstalled } from './platform';
 import { t } from './i18n';
+import { STORE_BUILD } from './distribution';
 
 export type UpdatePhase =
   'idle' | 'checking' | 'available' | 'downloading' | 'installing' | 'current' | 'error';
 export class UpdatePreparationError extends Error {}
 export interface UpdateController {
+  store?: boolean;
   installed: boolean | null;
   phase: UpdatePhase;
   version: string;
@@ -50,6 +52,10 @@ export function useUpdates({
   }, []);
   useEffect(() => {
     if (!native || !enabled) return;
+    if (STORE_BUILD) {
+      setInstalled(true);
+      return;
+    }
     let active = true;
     void isInstalled()
       .then((value) => {
@@ -66,7 +72,7 @@ export function useUpdates({
     };
   }, [enabled]);
   const checkNow = useCallback(async () => {
-    if (!native || !enabled || !installed || working.current) return;
+    if (STORE_BUILD || !native || !enabled || !installed || working.current) return;
     working.current = true;
     setPhase('checking');
     setError('');
@@ -102,7 +108,7 @@ export function useUpdates({
     }
   }, [enabled, installed]);
   useEffect(() => {
-    if (!automatic || !enabled || !native || !installed) return;
+    if (STORE_BUILD || !automatic || !enabled || !native || !installed) return;
     let last = 0;
     try {
       last = Number(localStorage.getItem('lume.update-check.v1')) || 0;
@@ -116,7 +122,7 @@ export function useUpdates({
   }, [automatic, enabled, installed, checkNow]);
   const install = useCallback(async () => {
     const candidate = update.current;
-    if (!candidate || working.current || !installed) return;
+    if (STORE_BUILD || !candidate || working.current || !installed) return;
     working.current = true;
     setError('');
     let stage: 'download' | 'install' = 'download';
@@ -169,6 +175,7 @@ export function useUpdates({
     }
   }, [installed]);
   return {
+    store: STORE_BUILD,
     installed,
     phase,
     version,

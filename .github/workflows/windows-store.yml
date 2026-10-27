@@ -1,0 +1,57 @@
+name: Preparar Microsoft Store
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: lume-store-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  msix:
+    if: github.repository == 'educastro100/lume-notes' && github.ref == 'refs/heads/main'
+    runs-on: windows-2022
+    timeout-minutes: 45
+    defaults:
+      run:
+        shell: pwsh
+    env:
+      CI: 'true'
+      VITE_LUME_DISTRIBUTION: microsoft-store
+      RUSTUP_TOOLCHAIN: 1.99.0-x86_64-pc-windows-msvc
+      RUSTFLAGS: -C target-feature=+crt-static
+      CARGO_TARGET_DIR: ${{ github.workspace }}/src-tauri/target
+    steps:
+      - name: Checkout do codigo-fonte
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24.21.0'
+          package-manager-cache: false
+      - name: Preparar Rust MSVC
+        run: |
+          rustup toolchain install 1.99.0-x86_64-pc-windows-msvc --profile minimal --no-self-update
+          if ($LASTEXITCODE -ne 0) { throw 'Falha ao preparar Rust/MSVC.' }
+      - name: Dependencias travadas
+        run: npm ci
+      - name: Testes JavaScript
+        run: npm run test:ci
+        env:
+          VITE_LUME_DISTRIBUTION: ''
+      - name: Frontend da Store para os testes nativos
+        run: npm run build
+      - name: Testes Rust da edicao Store
+        run: cargo test --locked --release --features microsoft-store --manifest-path src-tauri/Cargo.toml --target x86_64-pc-windows-msvc
+      - name: Compilar edicao Microsoft Store
+        run: npm run tauri -- build --ci --no-bundle --features microsoft-store --target x86_64-pc-windows-msvc --config src-tauri/tauri.microsoft-store.conf.json -- --locked
+      - name: Gerar MSIX e conferir manifesto e conteudo
+        run: ./scripts/build-msix.ps1 -Executable "$env:CARGO_TARGET_DIR/x86_64-pc-windows-msvc/release/lume-notes.exe"
+      - name: Guardar pacote para submissao
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: lume-store-msix-${{ github.run_id }}
+          path: store-artifacts/submission/
+          if-no-files-found: error
+          retention-days: 14

@@ -5,6 +5,7 @@ import { t, type Locale } from '../i18n';
 import { LanguagePicker } from './LanguagePicker';
 import { HelpSection, ShortcutsSection } from './HelpSection';
 import { UpdatePanel } from './UpdatePanel';
+import { STORE_BUILD } from '../distribution';
 import type { UpdateController } from '../useUpdates';
 
 const pages = [
@@ -207,33 +208,37 @@ export function SettingsDialog({
                   <h3>{t('Integração com o Windows')}</h3>
                   <p>
                     {t(
-                      'Adicione o Lume ao menu Abrir com para arquivos de texto e Markdown. O aplicativo padrão não será alterado.',
+                      STORE_BUILD
+                        ? 'O Abrir com desta edição é gerenciado pelo Windows.'
+                        : 'Adicione o Lume ao menu Abrir com para arquivos de texto e Markdown. O aplicativo padrão não será alterado.',
                     )}
                   </p>
-                  <button
-                    className="integration-button"
-                    disabled={locked || integrating || registered === null}
-                    onClick={() => {
-                      setIntegrating(true);
-                      setIntegrationError('');
-                      void setOpenWith(updates?.installed ? true : !registered)
-                        .then(setRegistered)
-                        .catch((error) =>
-                          setIntegrationError(String(error).replace(/^Error: /, '')),
-                        )
-                        .finally(() => setIntegrating(false));
-                    }}
-                  >
-                    {t(
-                      integrating
-                        ? 'Atualizando…'
-                        : registered
-                          ? updates?.installed
-                            ? 'Reparar integração'
-                            : 'Remover do Abrir com'
-                          : 'Adicionar ao Abrir com',
-                    )}
-                  </button>
+                  {!STORE_BUILD && (
+                    <button
+                      className="integration-button"
+                      disabled={locked || integrating || registered === null}
+                      onClick={() => {
+                        setIntegrating(true);
+                        setIntegrationError('');
+                        void setOpenWith(updates?.installed ? true : !registered)
+                          .then(setRegistered)
+                          .catch((error) =>
+                            setIntegrationError(String(error).replace(/^Error: /, '')),
+                          )
+                          .finally(() => setIntegrating(false));
+                      }}
+                    >
+                      {t(
+                        integrating
+                          ? 'Atualizando…'
+                          : registered
+                            ? updates?.installed
+                              ? 'Reparar integração'
+                              : 'Remover do Abrir com'
+                            : 'Adicionar ao Abrir com',
+                      )}
+                    </button>
+                  )}
                   <button
                     className="integration-button default-apps-button"
                     disabled={locked || integrating}
